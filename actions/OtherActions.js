@@ -1,0 +1,1 @@
+export const CHANGE_IS_AUTH = 'CHANGE_IS_AUTH'
