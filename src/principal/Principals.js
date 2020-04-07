@@ -6,7 +6,7 @@ import {
     Animated,
     Dimensions,
     Text,
-    DatePickerAndroid
+    // DatePickerAndroid
 } from 'react-native'
 import styles from './statics/styles/Style'
 import { connect } from 'react-redux'
