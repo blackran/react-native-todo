@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1586250515907" clover="3.2.0">
-  <project timestamp="1586250515908" name="All files">
-    <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2" elements="12" coveredelements="12" complexity="0" loc="8" ncloc="8" packages="1" files="1" classes="1"/>
-    <file name="OrderBy.js" path="/home/files/hybrid_pojects/TODO/application/src/principal/OrderBy.js">
-      <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
-      <line num="49" count="2" type="stmt"/>
-      <line num="50" count="8" type="stmt"/>
-      <line num="53" count="2" type="stmt"/>
-      <line num="55" count="2" type="stmt"/>
-      <line num="56" count="8" type="stmt"/>
-      <line num="57" count="32" type="cond" truecount="2" falsecount="0"/>
-      <line num="58" count="8" type="stmt"/>
-      <line num="63" count="2" type="stmt"/>
+<coverage generated="1586541815225" clover="3.2.0">
+  <project timestamp="1586541815225" name="All files">
+    <metrics statements="21" coveredstatements="21" conditionals="4" coveredconditionals="3" methods="4" coveredmethods="4" elements="29" coveredelements="28" complexity="0" loc="21" ncloc="21" packages="1" files="1" classes="1"/>
+    <file name="DatePicker.js" path="/home/files/hybrid_pojects/TODO/application/src/principal/layouts/DatePicker/DatePicker.js">
+      <metrics statements="21" coveredstatements="21" conditionals="4" coveredconditionals="3" methods="4" coveredmethods="4"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="4" count="4" type="stmt"/>
+      <line num="5" count="4" type="stmt"/>
+      <line num="6" count="4" type="cond" truecount="1" falsecount="1"/>
+      <line num="7" count="4" type="stmt"/>
+      <line num="9" count="4" type="cond" truecount="2" falsecount="0"/>
+      <line num="10" count="3" type="stmt"/>
+      <line num="12" count="4" type="stmt"/>
+      <line num="14" count="1" type="stmt"/>
+      <line num="16" count="1" type="stmt"/>
+      <line num="17" count="1" type="stmt"/>
+      <line num="19" count="1" type="stmt"/>
+      <line num="22" count="1" type="stmt"/>
+      <line num="23" count="1" type="stmt"/>
+      <line num="24" count="1" type="stmt"/>
+      <line num="26" count="1" type="stmt"/>
+      <line num="28" count="1" type="stmt"/>
+      <line num="29" count="1" type="stmt"/>
+      <line num="30" count="1" type="stmt"/>
+      <line num="31" count="1" type="stmt"/>
+      <line num="33" count="1" type="stmt"/>
     </file>
   </project>
 </coverage>

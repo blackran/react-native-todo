@@ -1,6 +1,6 @@
 import { createStackNavigator } from 'react-navigation-stack'
 import { createAppContainer } from 'react-navigation'
-import Principal from './principal/DrawNavigation'
+import Principal from './principal/layouts/DrawNavigation/DrawNavigation'
 import Sign from './sign/Sign'
 import Login from './login/Login'
 import Details from './principal/layouts/details/Details'

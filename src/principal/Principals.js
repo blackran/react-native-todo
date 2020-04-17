@@ -5,8 +5,7 @@ import {
     View,
     Animated,
     Dimensions,
-    Text,
-    // DatePickerAndroid
+    Text
 } from 'react-native'
 import styles from './statics/styles/Style'
 import { connect } from 'react-redux'
@@ -33,6 +32,15 @@ class Principals extends Component {
         }
 
         this.height = 40
+        this.jours = [
+            'Alahady',
+            'Alatsinainy',
+            'Talata',
+            'Alarobia',
+            'Alakamisy',
+            'Zoma',
+            'Sabotsy'
+        ]
     }
 
     componentDidMount () {
@@ -133,25 +141,12 @@ class Principals extends Component {
     }
 
     filterByDay () {
-        if (this.props.task.dataTasks.length > 0) {
-            this.setState({
-                dataFilter: this.props.task.dataTasks.filter(e => {
-                    return e.dayTasks === this.state.active
-                })
-            })
-        }
+        this.setState({
+            dataFilter: this.props.task.dataTasks[this.jours[this.state.active]]
+        })
     }
 
     render () {
-        const jours = [
-            'Alahady',
-            'Alatsinainy',
-            'Talata',
-            'Alarobia',
-            'Alakamisy',
-            'Zoma',
-            'Sabotsy'
-        ]
         // console.log(this.props.navigation.state.params)
         return (
             <View
@@ -184,7 +179,7 @@ class Principals extends Component {
                         {/* <View style={styles.myscroll}> */}
                         <View
                             style={{
-                                height: this.height * (jours.length + 2)
+                                height: this.height * (this.jours.length + 2)
                             }}>
                             <View
                                 style={{
@@ -200,10 +195,9 @@ class Principals extends Component {
                                         fontSize: 12
                                     }}>  </Text>
                             </View>
-                            <DatePickerAndroid/>
 
                             {
-                                jours.map((e, index) => {
+                                this.jours.map((e, index) => {
                                     return (
                                         <View
                                             key={index}
@@ -257,10 +251,16 @@ class Principals extends Component {
                             ? this.state.dataFilter.map((e, i) => {
                                 return (
                                     <Animated.View key={e.idTasks}>
-                                        <Move delais={i * 100} xD={width} yD={0} key={e.numAnnonce}>
-                                            {/* <MovableView onMove={ values => console.warn(values) }> */}
-                                            <Block datas={e} />
-                                            {/* </MovableView> */}
+                                        <Move
+                                            delais={i * 100}
+                                            xD={width}
+                                            yD={0}
+                                            key={e.numAnnonce}
+                                        >
+                                            <Block
+                                                datas={e}
+                                                jour={this.jours[this.state.active]}
+                                            />
                                         </Move>
                                     </Animated.View>
                                 )
