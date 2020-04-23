@@ -23,11 +23,15 @@ export function convertStringNumber(date:string): number {
 }
 
 export function betweenTwoString(debut: string, fin: string): number {
-    var stock = convertStringNumber(fin) - convertStringNumber(debut)
-    if(stock < 0) {
-        return stock + (24 * 60 * 60 * 1000)
+    if(debut && fin){
+        var stock = convertStringNumber(fin) - convertStringNumber(debut)
+        if(stock < 0) {
+            return stock + (24 * 60 * 60 * 1000)
+        } else {
+            return stock
+        }
     } else {
-        return stock
+        return 0
     }
 }
 
@@ -37,6 +41,10 @@ export function convertDateToArray (second: number): Array<number> {
     var minute: number = Math.abs(Math.round((second - ( heure * 60 * 60 * 1000 ))/ (60 * 1000)))
     return [heure, minute]
 }
+
+// export function convertDateToString(second: number): string {
+//      return convertArrayToString(convertDateToArray(second))
+// }
 
 export function betweenTwoDate (begin: Array<number>, end: Array<number>): Array<number> {
     var stock = convertStringNumber(convertArrayToString(end)) - convertStringNumber(convertArrayToString(begin))

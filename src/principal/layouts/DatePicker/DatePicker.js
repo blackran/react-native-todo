@@ -23,12 +23,17 @@ function convertStringNumber(date) {
 }
 exports.convertStringNumber = convertStringNumber;
 function betweenTwoString(debut, fin) {
-    var stock = convertStringNumber(fin) - convertStringNumber(debut);
-    if (stock < 0) {
-        return stock + (24 * 60 * 60 * 1000);
+    if (debut && fin) {
+        var stock = convertStringNumber(fin) - convertStringNumber(debut);
+        if (stock < 0) {
+            return stock + (24 * 60 * 60 * 1000);
+        }
+        else {
+            return stock;
+        }
     }
     else {
-        return stock;
+        return 0;
     }
 }
 exports.betweenTwoString = betweenTwoString;
@@ -39,6 +44,9 @@ function convertDateToArray(second) {
     return [heure, minute];
 }
 exports.convertDateToArray = convertDateToArray;
+// export function convertDateToString(second: number): string {
+//      return convertArrayToString(convertDateToArray(second))
+// }
 function betweenTwoDate(begin, end) {
     var stock = convertStringNumber(convertArrayToString(end)) - convertStringNumber(convertArrayToString(begin));
     var day = '07';

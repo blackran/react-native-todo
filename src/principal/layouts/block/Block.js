@@ -4,7 +4,13 @@ import check from './statics/images/check.png'
 import clock from './statics/images/clock.png'
 import { connect } from 'react-redux'
 // import { Stopwatch, Timer } from 'react-native-stopwatch-timer'
-import { betweenTwoString } from '../DatePicker/DatePicker'
+import {
+    betweenTwoString,
+    betweenTwoDate,
+    convertStringToArray,
+    convertDateToArray,
+    convertArrayToString
+} from '../DatePicker/DatePicker'
 import { INIT_DATA_TASKS } from '../../../../actions/TasksActions'
 
 class Block extends Component {
@@ -12,7 +18,7 @@ class Block extends Component {
         super(props)
         this.state = {
             // date: this.props.datas.durationTasks,
-            date: betweenTwoString(this.props.datas.heureDebut, this.props.datas.heureFin),
+            date: 1,
             stockInterval: null,
             // finishAt: Date.now() + this.props.datas.durationTasks
             finishAt: Date.now() + betweenTwoString(this.props.datas.heureDebut, this.props.datas.heureFin)
@@ -50,7 +56,8 @@ class Block extends Component {
                 // var start = new Date()
                 if (this.state.date > 0) {
                     this.setState((state) => {
-                        return { date: state.finishAt - Date.now() > 0 ? state.finishAt - Date.now() : 0 }
+                        var stock = betweenTwoString(convertArrayToString([new Date().getHours(), new Date().getMinutes()]), this.props.task.dateDebutAndFin[1])
+                        return { date: stock > 0 ? stock : 0 }
                     })
                 } else {
                     Vibration.vibrate([500, 1000, 1000], true)
@@ -64,11 +71,13 @@ class Block extends Component {
                 // console.log(new Date() - start)
             }, 1000)
             this.setState({ stockInterval: stock })
+        } else {
+            this.setState({ date: betweenTwoString(this.props.task.dateDebutAndFin[0], this.props.task.dateDebutAndFin[1]) })
         }
     }
 
     UNSAFE_componentWillMount () {
-        this.chrono()
+        this.chrono(), 1000
     }
 
     componentWillUnmount () {
@@ -144,7 +153,14 @@ class Block extends Component {
                         textDecorationLine: finish ? 'line-through' : 'none',
                         color: finish ? '#716e6e' : '#222222'
                     }}>
-                        { finish ? '00:00:00' : this.secondToDate(betweenTwoString(debut, fin)) }
+                        {
+                            finish ? '00:00:00' : (
+                                this.props.task.idTaskActive === this.props.datas.idTasks
+                                    ? this.secondToDate(this.state.date)
+                                    // ? console.log('ca fonctione')
+                                    : this.secondToDate(betweenTwoString(debut, fin))
+                            )
+                        }
                     </Text>
                     <Image
                         source={finish ? check : clock}

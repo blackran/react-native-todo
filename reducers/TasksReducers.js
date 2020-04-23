@@ -2,174 +2,10 @@ import { ADD_TASKS, REMOVE_TASKS, TOGGLE_CHECK, INIT_DATA_TASKS, CHANGE_SHOW_EDI
 // import shortid from 'shortid'
 // import AsyncStorage from '@react-native-community/async-storage'
 import { isBetweenTwoDate, convertArrayToString } from '../src/principal/layouts/DatePicker/DatePicker.ts'
+import { TASKS } from './data/task'
 
 const initState = {
-    dataTasks: {
-        Alahady: [
-            {
-                idTasks: 1,
-                contentTasks: 'alahady',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '07:00',
-                heureFin: '07:30',
-                pseudoUtilisateur: 'blackran',
-                rang: 1
-            },
-            {
-                idTasks: 2,
-                contentTasks: 'matory',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '09:00',
-                heureFin: '10:30',
-                pseudoUtilisateur: 'admin',
-                rang: 2
-            }
-        ],
-        Alatsinainy: [
-            {
-                idTasks: 1,
-                contentTasks: 'alatsinainy',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '07:00',
-                heureFin: '07:30',
-                pseudoUtilisateur: 'blackran',
-                rang: 1
-            },
-            {
-                idTasks: 2,
-                contentTasks: 'matory',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '09:00',
-                heureFin: '10:30',
-                pseudoUtilisateur: 'admin',
-                rang: 2
-            }
-        ],
-        Talata: [
-            {
-                idTasks: 1,
-                contentTasks: 'talata',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '07:00',
-                heureFin: '07:30',
-                pseudoUtilisateur: 'blackran',
-                rang: 1
-            },
-            {
-                idTasks: 2,
-                contentTasks: 'matory',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '09:00',
-                heureFin: '10:30',
-                pseudoUtilisateur: 'admin',
-                rang: 2
-            }
-        ],
-        Alarobia: [
-            {
-                idTasks: 1,
-                contentTasks: 'alarabia',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '07:00',
-                heureFin: '07:30',
-                pseudoUtilisateur: 'blackran',
-                rang: 1
-            },
-            {
-                idTasks: 2,
-                contentTasks: 'matory',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '09:00',
-                heureFin: '10:30',
-                pseudoUtilisateur: 'admin',
-                rang: 2
-            }
-        ],
-        Alakamisy: [
-            {
-                idTasks: 1,
-                contentTasks: 'alakamisy',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '07:00',
-                heureFin: '07:30',
-                pseudoUtilisateur: 'blackran',
-                rang: 1
-            },
-            {
-                idTasks: 2,
-                contentTasks: 'matory',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '09:00',
-                heureFin: '10:30',
-                pseudoUtilisateur: 'admin',
-                rang: 2
-            }
-        ],
-        Zoma: [
-            {
-                idTasks: 1,
-                contentTasks: 'zoma',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '07:00',
-                heureFin: '07:30',
-                pseudoUtilisateur: 'blackran',
-                rang: 1
-            },
-            {
-                idTasks: 2,
-                contentTasks: 'matory',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '09:00',
-                heureFin: '10:30',
-                pseudoUtilisateur: 'admin',
-                rang: 2
-            }
-        ],
-        Sabotsy: [
-            {
-                idTasks: 1,
-                contentTasks: 'sabotsy',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '07:00',
-                heureFin: '07:30',
-                pseudoUtilisateur: 'blackran',
-                rang: 1
-            },
-            {
-                idTasks: 2,
-                contentTasks: 'matory',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '09:00',
-                heureFin: '10:30',
-                pseudoUtilisateur: 'admin',
-                rang: 2
-            },
-            {
-                idTasks: 3,
-                contentTasks: 'misakafo',
-                durationTasks: 1800000,
-                finish: true,
-                heureDebut: '10:30',
-                heureFin: '11:30',
-                pseudoUtilisateur: 'admin',
-                rang: 3
-            }
-        ]
-    },
+    dataTasks: TASKS,
     showEdit: false,
     length: 0,
     showPut: false,
@@ -191,7 +27,6 @@ function dateDAF (state, active) {
             'Sabotsy'
         ]
         const jour = listJours[new Date().getDay()]
-        console.log(jour)
         active = 0
 
         for (var i = 0; i < state.dataTasks[jour].length; i++) {
@@ -210,7 +45,7 @@ function dateDAF (state, active) {
             }
         }
 
-        active = 2
+        state.idTaskActive = active
 
         var activeTask = state.dataTasks[jour].filter(value => {
             return value.idTasks === (active)
