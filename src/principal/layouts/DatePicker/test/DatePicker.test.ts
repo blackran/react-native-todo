@@ -43,7 +43,7 @@ describe('DatePicker', () => {
     it.skip('betweenTwoString', () => {
         const begin1 = '23:00'
         const end1 = '01:00'
-        var stock2 = (convertStringNumber(end1) - convertStringNumber(begin1))
+        let stock2 = (convertStringNumber(end1) - convertStringNumber(begin1))
         console.log(stock2)
         console.log(stock2 + (24 * 60 * 60 * 1000))
         const stock1 = betweenTwoString(begin1, end1)

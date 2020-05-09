@@ -1,49 +1,8 @@
 import React, { Component } from 'react'
-import {
-    // PanResponder, TouchableHighlight,
-    ScrollView,
-    View,
-    Dimensions,
-    Text
-} from 'react-native'
-import styles from './statics/styles/Style'
-import { connect } from 'react-redux'
-// import { Icon } from 'react-native-elements'
-import axios from 'axios'
-// import Move from '../animation/Move'
-import Block from './layouts/block/Block'
-// import OrderBy from './OrderBy'
-// import MovableView from 'react-native-movable-view'
-const { width } = Dimensions.get('window')
+import { View, ScrollView, Text } from 'react-native'
+import styles from '../../../principal/statics/styles/Style'
 
-class Principals extends Component {
-    constructor (props) {
-        super(props)
-        this.state = {
-            data: [],
-            searchValue: '',
-            active: new Date().getDay(),
-            page: 0,
-            now: new Date().getDay(),
-            dataFilter: [],
-            fontSize: [12, 12, 12, 12, 12, 12, 12],
-            date: '00:00:00',
-            stockInterval: null,
-            lengthTaskFinish: 0
-        }
-
-        this.height = 40
-        this.jours = [
-            'Alahady',
-            'Alatsinainy',
-            'Talata',
-            'Alarobia',
-            'Alakamisy',
-            'Zoma',
-            'Sabotsy'
-        ]
-    }
-
+class ScrollDatePicker extends Component {
     componentDidMount () {
         this.props.initDataTasks()
         setTimeout(() => this.listView.scrollTo({
@@ -51,15 +10,6 @@ class Principals extends Component {
             y: (new Date().getDay() * this.height),
             animated: true
         }), 1)
-        this.filterByDay()
-        this.chonoHorloge()
-        setTimeout(() =>
-            this.lengthTaskFinish(),
-        1)
-    }
-
-    componentWillUnmount () {
-        clearInterval(this.state.stockInterval)
     }
 
     OnScroll (e) {
@@ -76,7 +26,7 @@ class Principals extends Component {
     fontSizeAnimation (event) {
         const scrollValue = (Math.abs(
             (Math.round(event.nativeEvent.contentOffset.y / this.height) * this.height) -
-            event.nativeEvent.contentOffset.y) % 14
+                event.nativeEvent.contentOffset.y) % 14
         )
 
         if (this.state.value !== Math.round(event.nativeEvent.contentOffset.y / this.height)) {
@@ -125,33 +75,6 @@ class Principals extends Component {
             this.fontSizeAnimation(e)
         }
         this.filterByDay()
-        setTimeout(() =>
-            this.lengthTaskFinish(),
-        1)
-    }
-
-    filterByDay () {
-        this.setState({
-            dataFilter: this.props.task.dataTasks[this.jours[this.state.active]]
-        })
-    }
-
-    nextData (i, datas) {
-        const datanow = datas[this.jours[this.state.active]]
-        let stock = datanow[i + 1]
-        if (datanow.length === i + 1) {
-            let active = this.state.active + 1
-            if (this.state.active === 6) {
-                active = 0
-            }
-            const datatomorow = datas[this.jours[active]]
-            stock = datatomorow[0]
-        }
-        if (stock) {
-            return stock.heureDebut
-        } else {
-            return '00:00:00'
-        }
     }
 
     setDouble (e) {
@@ -162,50 +85,10 @@ class Principals extends Component {
         }
     }
 
-    dateNowToString () {
-        const date = new Date()
-        return this.setDouble(date.getHours()) + ':' + this.setDouble(date.getMinutes()) + ':' + this.setDouble(date.getSeconds())
-    }
-
-    chonoHorloge () {
-        const stock = setInterval(() => {
-            this.setState((state) => {
-                return { date: this.dateNowToString() }
-            })
-        }, 1000)
-        this.setState({ stockInterval: stock })
-    }
-
-    lengthTaskFinish () {
-        if (this.state.dataFilter.length > 0) {
-            const stock = this.state.dataFilter.filter(e => {
-                if (this.state.active < this.state.now) {
-                    return true
-                } else {
-                    return e.idTasks < this.props.task.idTaskActive
-                }
-            })
-            this.setState({ lengthTaskFinish: stock.length })
-        }
-    }
-
     render () {
         return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#222222'
-                }}>
-                <View
-                    style={{
-                        width: '100%',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingRight: 10
-                    }}>
+            <View>
+                <View>
                     <ScrollView
                         style={{ ...styles.myscroll, height: this.height * 3 }}
                         showsVerticalScrollIndicator={false}
@@ -246,7 +129,7 @@ class Principals extends Component {
                                                 height: this.height,
                                                 justifyContent: 'center',
                                                 alignItems: 'center',
-                                                padding: 0
+                                                padding: 0,
                                                 // width: width
                                             }}>
                                             <Text
@@ -278,68 +161,16 @@ class Principals extends Component {
                         </View>
                         {/* </View> */}
                     </ScrollView>
-                    <View
-                        style={{
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}
-                    >
-                        <Text style={{ color: 'white' }}>
-                            Vita { this.setDouble(this.state.lengthTaskFinish) }/{ this.setDouble(this.state.dataFilter.length) }
-                        </Text>
-                        <Text style={{ color: 'white' }}>{ this.state.date }</Text>
-                    </View>
                 </View>
-
-                {/* body of application */}
-
-                <ScrollView style={{ width: width, ...styles.root }}>
-                    {
-                        this.state.dataFilter.length > 0
-                            ? this.state.dataFilter.map((e, i) => {
-                                const stock = this.state.active === this.state.now
-                                return (
-                                    <Block
-                                        key={e.idTasks}
-                                        i={i}
-                                        finish={
-                                            (this.state.active < this.state.now) ? true
-                                                : (e.idTasks < this.props.task.idTaskActive)
-                                        }
-                                        datas={e}
-                                        start={ (this.props.task.idTaskActive === e.idTasks) && stock }
-                                        now = { stock }
-                                        debut={
-                                            ((this.state.active < this.state.now) ? true
-                                                : e.idTasks < this.props.task.idTaskActive)
-                                                ? this.nextData(i, this.props.task.dataTasks)
-                                                : e.heureDebut
-                                        }
-                                        navigation = {this.props.navigation}
-                                        fin={this.nextData(i, this.props.task.dataTasks)}/>
-
-                                )
-                            }) : null
-                    }
-                </ScrollView>
+                <View>
+                    <ScrollView></ScrollView>
+                </View>
+                <View>
+                    <ScrollView></ScrollView>
+                </View>
             </View>
         )
     }
 }
 
-const mapStateToProps = state => {
-    return { other: state.Other, task: state.Tasks }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        changeShowEdit: (data) => {
-            dispatch({ type: 'CHANGE_SHOW_EDIT', data })
-        },
-        initDataTasks: () => {
-            dispatch({ type: 'INIT_DATA_TASKS' })
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Principals)
+export default ScrollDatePicker

@@ -1,18 +1,18 @@
 import { createStackNavigator } from 'react-navigation-stack'
 import { createAppContainer } from 'react-navigation'
 import Principal from './principal/layouts/DrawNavigation/DrawNavigation'
-import Sign from './sign/Sign'
 import Login from './login/Login'
 import Details from './principal/layouts/details/Details'
 import Loading from './loading/Loading'
+import Notification from './principal/layouts/notification/Notification'
 // import Example from './principal/Example'
 
 const RootStack = createStackNavigator({
     Loading: { screen: Loading },
-    Sign: { screen: Sign },
     Login: { screen: Login },
     Principal: { screen: Principal },
-    Details: { screen: Details }
+    Details: { screen: Details },
+    Notification: { screen: Notification }
 },
 {
     initialRouteName: 'Principal',

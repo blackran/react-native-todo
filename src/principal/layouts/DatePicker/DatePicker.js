@@ -3,23 +3,27 @@ exports.__esModule = true;
 function convertArrayToString(date) {
     var heure = date[0] + '';
     var minute = date[1] + '';
+    var second = date[2] + '';
     if (date[0] < 10) {
         heure = '0' + date[0];
     }
     if (date[1] < 10) {
         minute = '0' + date[1];
     }
-    return heure + ':' + minute;
+    if (date[2] < 10) {
+        second = '0' + date[2];
+    }
+    return heure + ':' + minute + ':' + second;
 }
 exports.convertArrayToString = convertArrayToString;
 function convertStringToArray(date) {
-    var stock = date.split(':');
-    return [parseInt(stock[0]), parseInt(stock[1])];
+    var _a = date.split(':'), debut = _a[0], fin = _a[1], second = _a[2];
+    return [parseInt(debut, 10), parseInt(fin, 10), parseInt(second, 10)];
 }
 exports.convertStringToArray = convertStringToArray;
 function convertStringNumber(date) {
-    var _a = date.split(':'), heure = _a[0], minute = _a[1];
-    return ((parseInt(heure) * 60 * 60 * 1000) + (parseInt(minute) * 60 * 1000));
+    var _a = date.split(':'), heure = _a[0], minute = _a[1], second = _a[2];
+    return ((parseInt(heure, 10) * 60 * 60 * 1000) + (parseInt(minute, 10) * 60 * 1000) + (parseInt(second, 10) * 1000));
 }
 exports.convertStringNumber = convertStringNumber;
 function betweenTwoString(debut, fin) {
@@ -37,11 +41,12 @@ function betweenTwoString(debut, fin) {
     }
 }
 exports.betweenTwoString = betweenTwoString;
-function convertDateToArray(second) {
+function convertDateToArray(seconds) {
     // var minute = second / 60 * 1000
-    var heure = parseInt((Math.abs(second / (60 * 60 * 1000)) + '').split('.')[0]);
-    var minute = Math.abs(Math.round((second - (heure * 60 * 60 * 1000)) / (60 * 1000)));
-    return [heure, minute];
+    var heure = parseInt((Math.abs(seconds / (60 * 60 * 1000)) + '').split('.')[0], 10);
+    var minute = Math.abs(Math.round((seconds - (heure * 60 * 60 * 1000)) / (60 * 1000)));
+    var second = Math.abs(seconds - (heure * (60 * 60 * 1000)) - (minute * (60 * 1000)));
+    return [heure, minute, second];
 }
 exports.convertDateToArray = convertDateToArray;
 // export function convertDateToString(second: number): string {

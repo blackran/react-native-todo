@@ -1,0 +1,8 @@
+{
+  "project": "./tsconfig.json",
+  "extends": "tslint-config-standard",
+  "rules": {
+    "no-unused-styles": true,
+    "ter-indent": ["error", 4]
+  }
+}

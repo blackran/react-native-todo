@@ -2,20 +2,22 @@ import { ADD_TASKS, REMOVE_TASKS, TOGGLE_CHECK, INIT_DATA_TASKS, CHANGE_SHOW_EDI
 // import shortid from 'shortid'
 // import AsyncStorage from '@react-native-community/async-storage'
 import { isBetweenTwoDate, convertArrayToString } from '../src/principal/layouts/DatePicker/DatePicker.ts'
-import { TASKS } from './data/task'
+// import { TASKS } from './data/task'
+import Task from './data/Task'
 
 const initState = {
-    dataTasks: TASKS,
+    dataTasks: Task(),
     showEdit: false,
     length: 0,
     showPut: false,
-    idTaskActive: 2,
+    idTaskActive: 0,
     dateDebutAndFin: []
 }
 
 function dateDAF (state, active) {
-    var datenow = convertArrayToString([new Date().getHours(), new Date().getMinutes()])
-    var response = []
+    const now = new Date()
+    const datenow = convertArrayToString([now.getHours(), now.getMinutes(), now.getSeconds()])
+    let response = []
     if (state) {
         const listJours = [
             'Alahady',
@@ -29,33 +31,30 @@ function dateDAF (state, active) {
         const jour = listJours[new Date().getDay()]
         active = 0
 
-        for (var i = 0; i < state.dataTasks[jour].length; i++) {
-            // console.log('=======================================')
-            // console.log('i', i)
-            var debut = state.dataTasks[jour][i].heureDebut
-            var fin = null
+        for (let i = 0; i < state.dataTasks[jour].length; i++) {
+            const debut = state.dataTasks[jour][i].heureDebut
+            let fin = null
             if (i === state.dataTasks[jour].length - 1) {
-                fin = state.dataTasks[listJours[new Date().getDay() + 1]][0].heureDebut
+                // fin = state.dataTasks[listJours[new Date().getDay() + 1]][0].heureDebut
+                fin = state.dataTasks[listJours[0]][0].heureDebut
             } else {
                 fin = state.dataTasks[jour][i + 1].heureDebut
             }
-            // console.log(debut, fin, datenow)
             if (isBetweenTwoDate(debut, fin, datenow)) {
                 active = state.dataTasks[jour][i].idTasks
             }
         }
 
         state.idTaskActive = active
-
-        var activeTask = state.dataTasks[jour].filter(value => {
+        const activeTask = state.dataTasks[jour].filter(value => {
             return value.idTasks === (active)
         })
-        var nextActive = state.dataTasks[jour].filter(value => {
+        let nextActive = state.dataTasks[jour].filter(value => {
             return value.idTasks === (active + 1)
         })
 
-        if (nextActive.length === 0) {
-            var nameDay = listJours[new Date().getDay() + 1]
+        if (nextActive === undefined) {
+            const nameDay = listJours[new Date().getDay() + 1]
             nextActive = state.dataTasks[nameDay]
         }
 
@@ -63,11 +62,12 @@ function dateDAF (state, active) {
             response = [activeTask[0].heureDebut, nextActive[0].heureDebut]
         }
     }
-    return response
+    return [response, active ]
 }
 
 const TasksReducers = (state = initState, action) => {
     // state.length = state.dataTasks.filter(e => { return e.finishTasks === true }).length
+    let date = null
     switch (action.type) {
     case ADD_TASKS:
         // var stock = [
@@ -86,8 +86,10 @@ const TasksReducers = (state = initState, action) => {
         // )
         return null
     case INIT_DATA_TASKS:
+        // console.log(Task().Sabotsy)
         if (state) {
-            return Object.assign({}, state, { dateDebutAndFin: dateDAF(state, state.idTaskActive) })
+            date = dateDAF(state, state.idTaskActive)
+            return Object.assign({}, state, { idTaskActive: date[1], dateDebutAndFin: date[0] })
         } else {
             return null
         }
@@ -127,13 +129,13 @@ const TasksReducers = (state = initState, action) => {
         //     {}, state
         //     , { dataTasks: [...stocknot, stocks] }
         // )
-        return null
+        break
     case TASK_NOW:
         // var task_now = state.dataTasks[action.day]
         //     task_now.map(e=>{
         //         if(e.heureDebut)
         //     })
-
+        break
     default:
         return state
     }

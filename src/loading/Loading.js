@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import {
     View,
     Text,
-    ActivityIndicator
+    ActivityIndicator,
+    StyleSheet
 } from 'react-native'
 
 class Loading extends Component {
@@ -14,11 +15,19 @@ class Loading extends Component {
 
     render () {
         return (
-            <View>
+            <View style={styles.body}>
                 <ActivityIndicator color='black' size={50}/>
             </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    body: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+})
 
 export default Loading

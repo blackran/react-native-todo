@@ -1,7 +1,7 @@
-import { StyleSheet } from 'react-native'
+import { Dimensions, StyleSheet, } from 'react-native'
 
 const height = 50
-const width = 300
+const { width } = Dimensions.get('window')
 export default StyleSheet.create({
     root: {
         flex: 1,
@@ -13,10 +13,8 @@ export default StyleSheet.create({
         height: height
     },
     myscroll: {
-        // borderWidth: 1,
-        // borderColor: 'green',
         overflow: 'hidden',
         marginRight: 10,
-        width: 200
+        width: 100
     }
 })
