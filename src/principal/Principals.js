@@ -9,7 +9,7 @@ import {
 import styles from './statics/styles/Style'
 import { connect } from 'react-redux'
 // import { Icon } from 'react-native-elements'
-import axios from 'axios'
+// import axios from 'axios'
 // import Move from '../animation/Move'
 import Block from './layouts/block/Block'
 // import OrderBy from './OrderBy'
@@ -190,14 +190,29 @@ class Principals extends Component {
     }
 
     render () {
+        const { color } = this.props
         return (
             <View
                 style={{
                     flex: 1,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: '#222222'
+                    backgroundColor: color.primary.default
                 }}>
+                <View
+                    style={{
+                        backgroundColor: color.primary.default,
+                        height: 40,
+                        width: width,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        paddingLeft: 5,
+                        paddingRight: 5
+                    }}>
+                    <Text style={{ color: 'white' }}>navigation</Text>
+                    <Text style={{ color: 'white' }}>recheche</Text>
+                </View>
                 <View
                     style={{
                         width: '100%',
@@ -328,7 +343,7 @@ class Principals extends Component {
 }
 
 const mapStateToProps = state => {
-    return { other: state.Other, task: state.Tasks }
+    return { other: state.Other, task: state.Tasks, color: state.Color }
 }
 
 const mapDispatchToProps = dispatch => {

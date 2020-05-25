@@ -93,6 +93,10 @@ class Chrono extends Component {
 
     }
 
+    componentWillUnmount () {
+        clearInterval(this.state.stockInterval)
+    }
+
 
     render () {
         return <Text style={{ ...this.state.style }}>{ this.secondToDate(this.state.date) }</Text>

@@ -7,8 +7,9 @@ class Notification extends Component {
     constructor (props) {
         super(props)
         this.state = {
-            date: 15 * 60 * 1000,
-            stockInterval: null
+            date: 5 * 60 * 1000,
+            stockInterval: null,
+            stock: 5 * 60 * 1000
         }
     }
 
@@ -60,13 +61,13 @@ class Notification extends Component {
 
     startNotification () {
         this.setState({
-            date: 1 * 60 * 1000
+            date: 5 * 60 * 1000,
+            stock: 5 * 60 * 1000
         })
         this.chrono()
     }
 
     componentDidMount () {
-        console.log()
         this.startNotification()
     }
 
@@ -75,16 +76,38 @@ class Notification extends Component {
     }
 
     render () {
-        const { navigation } = this.props
+        const { navigation, color } = this.props
+        const { date, stock } = this.state
         return (
             <View style={styles.body}>
                 <View>
-                    <Image source={check} style={styles.image}/>
-                    <Text>vita ny</Text>
-                    <Text>{ navigation.state.params.lastTask }</Text>
-                    <Text>Mianatra</Text>
-                    <Text>Afaka</Text>
-                    <Text style={{ ...this.props.style }}>{ this.secondToDate(this.state.date) }</Text>
+                    {/* <Image source={check} style={styles.image}/> */}
+                    <View
+                        style={{
+                            borderWidth: 3,
+                            borderColor: this.state.date < (this.state.stock * 0.1) ? color.secondary.dark : color.primary.dark,
+                            width: 150,
+                            height: 150,
+                            borderRadius: 150,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 20
+                        }}
+                    >
+                        <Text
+                            style={{
+                                ...this.props.style,
+                                fontSize: 30,
+                                color: date < (stock * 0.1) ? 'red' : 'black'
+                            }}
+                        >{ this.secondToDate(date) }</Text>
+                    </View>
+                    {/* <Text>vita ny</Text> */}
+                    {/* /!* <Text>{ navigation.state.params.lastTask }</Text> *!/ */}
+                    {/* <Text> Matory </Text> */}
+                    {/* <Text>Mianatra</Text> */}
+                    {/* <Text>Afaka</Text> */}
+                    {/* <Text style={{ ...this.props.style }}>{ this.secondToDate(this.state.date) }</Text> */}
                 </View>
             </View>
         )
@@ -95,6 +118,7 @@ const styles = StyleSheet.create({
     body: {
         flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: '#ddd'
     },
     image: {
@@ -104,7 +128,7 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps (state) {
-    return {}
+    return { color: state.Color}
 }
 
 export default connect(

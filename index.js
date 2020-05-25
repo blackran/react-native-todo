@@ -3,7 +3,7 @@
  */
 
 import 'react-native-gesture-handler'
-import { AppRegistry, View } from 'react-native'
+import { AppRegistry, View, StatusBar } from 'react-native'
 import App from './src/App'
 import { name as appName } from './app.json'
 import { Provider } from 'react-redux'
@@ -15,6 +15,7 @@ class AppWithStore extends React.Component {
         return (
             <Provider store={store}>
                 <View style={{ flex: 1 }}>
+                    {/* <StatusBar hidden={true}/> */}
                     <App />
                 </View>
             </Provider>

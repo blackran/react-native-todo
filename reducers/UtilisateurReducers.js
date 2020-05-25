@@ -1,23 +1,13 @@
 import { ADD_UTILISATEUR } from '../actions/UtilisateurActions'
 
 const initState = {
-    dataUtilisateur: [
-        {
-            pseudoUtilisateur: 'admin',
-            passwordUtilisateur: 'admin'
-        },
-        {
-            pseudoUtilisateur: 'blackran',
-            passwordUtilisateur: 'iloveyou'
-        }
-    ]
+    dataUtilisateur: {}
 }
 
 const UtilisateurReducers = (state = initState, action) => {
     switch (action.type) {
     case ADD_UTILISATEUR:
-        var stock = [...state.dataUtilisateur, action.data]
-        return Object.assign({}, state, { dataUtilisateur: stock })
+        return Object.assign({}, state, { dataUtilisateur: action.data })
     default:
         return state
     }

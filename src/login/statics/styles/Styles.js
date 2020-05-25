@@ -4,17 +4,19 @@ const { height, width } = Dimensions.get('window')
 export default StyleSheet.create({
     body: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
         // paddingBottom: 20,
-        backgroundColor: '#222222',
+        // backgroundColor: '#222222',
         width: width,
         height: height,
-        marginTop: height / 3,
-        borderWidth: 1
+        top: height / 3,
+        position: 'absolute'
     },
     containerImageLogin: {
-        backgroundColor: '#fffedf',
+        // borderWidth: 1,
+        borderColor: 'black',
+        backgroundColor: '#fff',
+        // backgroundColor: '#fffedf',
         borderRadius: 70,
         height: 70,
         width: 70,

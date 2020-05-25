@@ -5,6 +5,7 @@ import AnnonceReducers from './AnnonceReducers'
 import AnnonceEtudiantReducers from './AnnonceEtudiantReducers'
 import UtilisateurReducers from './UtilisateurReducers'
 import OtherReducers from './OtherReducers'
+import ColorReducers from './ColorReducers'
 
 export default combineReducers(
     {
@@ -13,6 +14,7 @@ export default combineReducers(
         Annonce: AnnonceReducers,
         AnnonceEtudiant: AnnonceEtudiantReducers,
         Utilisateur: UtilisateurReducers,
-        Other: OtherReducers
+        Other: OtherReducers,
+        Color: ColorReducers
     }
 )

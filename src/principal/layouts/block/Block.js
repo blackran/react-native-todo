@@ -113,8 +113,12 @@ class Block extends Component {
         }
     }
 
+    limiterWord (phrase, len) {
+        return phrase.split(' ').slice(0, len).join(' ') + ' ...'
+    }
+
     render () {
-        const { datas, fin, start, now, i, finish } = this.props
+        const { datas, fin, start, i, finish, color } = this.props
         // const { finish } = this.state
         return (
             <Animated.View>
@@ -122,25 +126,30 @@ class Block extends Component {
                     delais={i * 100}
                     xD={width}
                     yD={0}
-                >
-                    <View style={{
+                    styles={{
                         flex: 1,
-                        flexDirection: 'row',
                         justifyContent: 'space-between',
                         margin: 2,
                         marginLeft: 10,
                         marginRight: 10,
-                        marginBottom: 2,
-                        backgroundColor: finish ? '#4a4949' : '#716e6e',
+                        marginBottom: 5,
+                        backgroundColor: finish
+                            ? color.primary.light + '99'
+                            : (start ? color.primary.dark + '55' : color.primary.dark + '33'),
+                        opacity: finish ? 0.5 : 1,
                         padding: 10,
-                        borderRadius: 5
+                        borderRadius: 5,
+                        paddingBottom: 15
+                        // boxShadow: '0 3px 5px -1px rgba(0,0,0,0.2), 0 6px 10px 0 rgba(0,0,0,0.14), 0 1px 18px 0 rgba(0,0,0,0.12)',
+                        // transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0'
                     }}>
-                        <View>
+                    <View style={{ flexDirection: 'row', marginBottom: 5 }}>
+                        <View style={{ flexDirection: 'column' }}>
                             <Text style={{
                                 fontSize: 24,
                                 textDecorationLine: finish ? 'line-through' : 'none',
-                                color: finish ? '#716e6e' : '#222222'
-                            }}>{ datas.contentTasks }</Text>
+                                color: finish ? color.fontColor.light : (start ? color.fontColor.light : color.fontColor.dark)
+                            }}>{ datas.titleTasks }</Text>
                         </View>
                         <View style={{
                             flex: 1,
@@ -149,18 +158,22 @@ class Block extends Component {
                             alignItems: 'center'
                             // borderWidth: 1
                         }}>
-                            <Chrono
-                                style={{
-                                    fontSize: 24,
-                                    textDecorationLine: finish ? 'line-through' : 'none',
-                                    color: finish ? '#716e6e' : '#222222'
-                                }}
-                                navigation = {this.props.navigation}
-                                content={datas.contentTasks}
-                                debut={this.debut()}
-                                fin={fin}
-                                start={start}
-                            />
+                            {
+                                !finish
+                                    ? <Chrono
+                                        style={{
+                                            fontSize: 24,
+                                            textDecorationLine: finish ? 'line-through' : 'none',
+                                            color: finish ? color.fontColor.light : (start ? color.fontColor.light : color.fontColor.dark)
+                                        }}
+                                        navigation={this.props.navigation}
+                                        content={datas.contentTasks}
+                                        debut={this.debut()}
+                                        fin={fin}
+                                        start={start}
+                                    /> : null
+                            }
+
                             <Image
                                 source={finish ? check : clock}
                                 style={{
@@ -169,7 +182,16 @@ class Block extends Component {
                                     marginLeft: 5
                                 }}/>
                         </View>
-
+                    </View>
+                    <View>
+                        <Text
+                            style={{
+                                color: finish
+                                    ? color.fontColor.light
+                                    : (start ? color.fontColor.light + 'aa' : color.fontColor.dark),
+                                opacity: 0.8
+                            }}
+                        >{ start ? datas.contentTasks : this.limiterWord(datas.contentTasks, 3) }</Text>
                     </View>
                 </Move>
             </Animated.View>
@@ -178,7 +200,7 @@ class Block extends Component {
 }
 
 const mapStateToProps = state => {
-    return { other: state.Other, task: state.Tasks }
+    return { other: state.Other, task: state.Tasks, color: state.Color }
 }
 
 const mapDispatchToProps = dispatch => {

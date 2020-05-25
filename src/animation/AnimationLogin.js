@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import { Animated, Dimensions, View, ScrollView } from 'react-native'
+import { Animated, Dimensions, View, ScrollView, Text } from 'react-native'
 import styles from '../login/statics/styles/Styles'
 import { Image } from 'react-native-elements'
-import logo from '../statics/images/logo-universite-fianarantsoa.png'
-import sign from '../statics/images/sign2.png'
+import sign from '../statics/images/logo-universite-fianarantsoa.png'
+import login from '../statics/images/sign2.png'
 import Scale from './Scale'
+import KeyboardListener from 'react-native-keyboard-listener'
 
-const { height, width } = Dimensions.get('window')
+const { height } = Dimensions.get('window')
 
 class AnimationLogin extends Component {
     constructor (props) {
@@ -15,7 +16,8 @@ class AnimationLogin extends Component {
             pan: new Animated.ValueXY({ x: this.props.xD, y: this.props.yD }),
             opacity: new Animated.Value(0),
             isLogin: true,
-            border: new Animated.Value(0)
+            border: new Animated.Value(0),
+            keyboardOpen: false
         }
     }
 
@@ -105,35 +107,42 @@ class AnimationLogin extends Component {
 
     render () {
         return (
-            <ScrollView>
-                <View
-                    style={{
-                        flex: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: '#4a4949'
-                    }}>
-                    <Scale delais={height} styles={styles.containerImageLogin}>
-                        <Image
-                            source={this.state.isLogin ? logo : sign}
-                            style={{
-                                width: 50,
-                                height: 50
-                            }}
-                        />
-                    </Scale>
-                    <Animated.View
+            <View
+                style={{
+                    // flex: 1,
+                    height: this.state.keyboardOpen ? (height + height / 3) : height,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: this.props.headerBackgroundColor
+                }}
+            >
+                <Scale delais={height} styles={styles.containerImageLogin}>
+                    <Image
+                        source={this.state.isLogin ? login : sign}
                         style={{
-                            transform: this.state.pan.getTranslateTransform(),
-                            borderTopLeftRadius: this.state.border,
-                            borderTopRightRadius: this.state.border,
-                            ...this.props.styles
+                            width: 50,
+                            height: 50
+                        }}
+                    />
+                </Scale>
+                <Animated.View
+                    style={{
+                        height: 1000,
+                        transform: this.state.pan.getTranslateTransform(),
+                        borderTopLeftRadius: this.state.border,
+                        borderTopRightRadius: this.state.border,
+                        ...this.props.styles
                         // opacity: this.state.opacity
-                        }}>
-                        { this.props.children }
-                    </Animated.View>
-                </View>
-            </ScrollView>
+                    }}>
+                    <View>
+                        <KeyboardListener
+                            onWillShow={() => { this.setState({ keyboardOpen: true }) }}
+                            onWillHide={() => { this.setState({ keyboardOpen: false }) }}
+                        />
+                    </View>
+                    { this.props.children }
+                </Animated.View>
+            </View>
         )
     }
 }

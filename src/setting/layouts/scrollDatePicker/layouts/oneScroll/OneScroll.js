@@ -1,22 +1,49 @@
 import React, { Component } from 'react'
-import { View, ScrollView, Text } from 'react-native'
-import styles from '../../../principal/statics/styles/Style'
+import { View, ScrollView, Text, Dimensions } from 'react-native'
 
-class ScrollDatePicker extends Component {
+const { width } = Dimensions.get('window')
+
+class OneScroll extends Component {
+    constructor (props) {
+        super(props)
+        this.state = {
+            active: 0,
+            fontSize: [12, 12, 12, 12, 12, 12, 12],
+            default: 0
+        }
+        this.height = 40
+        this.datas = this.ranger(parseInt(this.props.length, 10))
+    }
+
+    ranger (len) {
+        const stock = []
+        for (let i = 0; i < len + 1; i++) {
+            stock.push(i)
+        }
+        return stock
+    }
+
     componentDidMount () {
-        this.props.initDataTasks()
+        this.setState({ default: this.props.value, active: this.props.value })
         setTimeout(() => this.listView.scrollTo({
             x: 0,
-            y: (new Date().getDay() * this.height),
+            y: (this.props.value * this.height),
             animated: true
         }), 1)
     }
 
+    componentDidUpdate () {
+        if (this.state.default !== this.props.value && this.listView !== null) {
+            this.listView.scrollTo({
+                x: 0,
+                y: (this.props.value * this.height),
+                animated: true
+            })
+            this.setState({ default: this.props.value, active: this.props.value })
+        }
+    }
+
     OnScroll (e) {
-        // console.log('===========================================================\n')
-        // console.log(e.nativeEvent.velocity.y > 0)
-        // console.log(Math.round(e.nativeEvent.contentOffset.y+60 / 60))
-        // console.log('===========================================================\n')
         if (this.state.value !== Math.round(e.nativeEvent.contentOffset.y / this.height)) {
             this.fontSizeAnimation(e)
             this.setState({ active: Math.round(e.nativeEvent.contentOffset.y / this.height) })
@@ -73,8 +100,9 @@ class ScrollDatePicker extends Component {
                 active: Math.round(e.nativeEvent.contentOffset.y / this.height)
             })
             this.fontSizeAnimation(e)
+            // this.props.onChange.onChange(Math.round(e.nativeEvent.contentOffset.y / this.height))
+            this.props.onChange(Math.round(e.nativeEvent.contentOffset.y / this.height))
         }
-        this.filterByDay()
     }
 
     setDouble (e) {
@@ -90,22 +118,21 @@ class ScrollDatePicker extends Component {
             <View>
                 <View>
                     <ScrollView
-                        style={{ ...styles.myscroll, height: this.height * 3 }}
+                        style={{ height: this.height * 3 }}
                         showsVerticalScrollIndicator={false}
-                        onScroll={ this.OnScroll.bind(this) }
+                        onScroll={this.OnScroll.bind(this)}
                         // onScrollEndDrag={ this.OnEndScroll.bind(this) }
-                        onMomentumScrollEnd={ this.OnEndScroll.bind(this) }
+                        onMomentumScrollEnd={this.OnEndScroll.bind(this)}
                         centerContent={false}
                         ref={e => {
                             this.listView = e
                             return null
                         }}
                     >
-                        {/* <View style={styles.myscroll}> */}
                         <View
                             style={{
-                                height: this.height * (this.jours.length + 2),
-                                width: 210
+                                height: this.height * (this.datas.length + 2),
+                                width: 70
                             }}>
                             <View
                                 style={{
@@ -115,13 +142,13 @@ class ScrollDatePicker extends Component {
                                 }}>
                                 <Text
                                     style={{
-                                        color: 'white',
+                                        color: this.props.fontColor,
                                         fontSize: 12
-                                    }}>  </Text>
+                                    }}> </Text>
                             </View>
 
                             {
-                                this.jours.map((e, index) => {
+                                this.datas.map((e, index) => {
                                     return (
                                         <View
                                             key={index}
@@ -129,16 +156,16 @@ class ScrollDatePicker extends Component {
                                                 height: this.height,
                                                 justifyContent: 'center',
                                                 alignItems: 'center',
-                                                padding: 0,
+                                                padding: 0
                                                 // width: width
                                             }}>
                                             <Text
                                                 style={{
-                                                    color: 'white',
+                                                    color: this.props.fontColor,
                                                     // fontSize: this.state.fontSize[index],
                                                     fontSize: this.state.active === index ? (width / 10) : 14,
                                                     opacity: this.state.now === index ? 1 : (this.state.now === index ? 0.9 : 0.5)
-                                                }}> {e} </Text>
+                                                }}> {this.setDouble(e)} </Text>
                                         </View>)
                                 })
                             }
@@ -153,7 +180,7 @@ class ScrollDatePicker extends Component {
                                 }}>
                                 <Text
                                     style={{
-                                        color: 'white',
+                                        color: this.props.fontColor,
                                         fontSize: 12
                                     }}> </Text>
                             </View>
@@ -162,15 +189,9 @@ class ScrollDatePicker extends Component {
                         {/* </View> */}
                     </ScrollView>
                 </View>
-                <View>
-                    <ScrollView></ScrollView>
-                </View>
-                <View>
-                    <ScrollView></ScrollView>
-                </View>
             </View>
         )
     }
 }
 
-export default ScrollDatePicker
+export default OneScroll

@@ -8,7 +8,7 @@ export default StyleSheet.create({
         borderRadius: 5,
         paddingLeft: 25,
         fontSize: 20,
-        marginTop: 5,
+        marginBottom: 15,
         width: width,
         height: height
     },
@@ -37,8 +37,8 @@ export default StyleSheet.create({
     },
     buttonReactNativeElement: {
         backgroundColor: '#222222',
-        borderWidth: 1,
-        borderColor: '#575656',
+        // borderWidth: 1,
+        // borderColor: '#575656',
         width: width,
         height: height,
         marginTop: 20

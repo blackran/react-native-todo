@@ -5,17 +5,18 @@ import Login from './login/Login'
 import Details from './principal/layouts/details/Details'
 import Loading from './loading/Loading'
 import Notification from './principal/layouts/notification/Notification'
-// import Example from './principal/Example'
+import Setting from './setting/Setting'
 
 const RootStack = createStackNavigator({
     Loading: { screen: Loading },
     Login: { screen: Login },
     Principal: { screen: Principal },
     Details: { screen: Details },
-    Notification: { screen: Notification }
+    Notification: { screen: Notification },
+    Setting: { screen: Setting }
 },
 {
-    initialRouteName: 'Principal',
+    initialRouteName: 'Login',
     headerMode: 'none',
     navigationOptions: {
         headerVisible: false

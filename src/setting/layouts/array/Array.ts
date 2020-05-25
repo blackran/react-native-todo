@@ -1,9 +1,9 @@
-export function removeJump (data: Array<object>): Array<object> {
-    let loop = true
+export function removeJump(data: Array<object>): Array<object> {
+    var loop = true
     while (loop) {
         loop = false
-        for (let i = 0; i < data.length; i++) {
-            if (data[i]['rang'] !== i) {
+        for(var i = 0; i<data.length; i++){
+            if(data[i]['rang'] !== i){
                 data[i]['rang'] = i
                 loop = true
             }
@@ -12,9 +12,9 @@ export function removeJump (data: Array<object>): Array<object> {
     return data
 }
 
-export function moveTo (data: Array<object>, column: string, value: number, to: number): Array<object> {
-    for (let i = 0; i < data.length; i++) {
-        if (data[i][column] === value) {
+export function moveTo(data: Array<object>, column: string, value:number, to: number): Array<object> {
+    for(var i = 0; i< data.length; i++) {
+        if(data[i][column] === value){
             data[i][column] = to
         } else if (data[i][column] >= to) {
             data[i][column] = data[i][column] + 1
@@ -42,3 +42,6 @@ export function order (data, column): Array<object> {
 
     return newData
 }
+
+
+

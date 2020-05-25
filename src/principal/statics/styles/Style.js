@@ -4,8 +4,8 @@ const height = 50
 const { width } = Dimensions.get('window')
 export default StyleSheet.create({
     root: {
-        flex: 1,
-        backgroundColor: '#222222'
+        flex: 1
+        // backgroundColor: '#222222'
     },
     inputStyle: {
         flex: 2,

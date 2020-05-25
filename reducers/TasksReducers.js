@@ -1,17 +1,29 @@
-import { ADD_TASKS, REMOVE_TASKS, TOGGLE_CHECK, INIT_DATA_TASKS, CHANGE_SHOW_EDIT, CHANGE_SHOW_PUT, TASK_NOW } from '../actions/TasksActions'
+import {
+    PUT_TASKS,
+    PUT_ALL_DATA,
+    REMOVE_TASKS,
+    TOGGLE_CHECK,
+    INIT_DATA_TASKS,
+    CHANGE_SHOW_EDIT,
+    CHANGE_SHOW_PUT,
+    TASK_NOW,
+    ON_CHANGE_DATE_PICKER
+} from '../actions/TasksActions'
 // import shortid from 'shortid'
 // import AsyncStorage from '@react-native-community/async-storage'
 import { isBetweenTwoDate, convertArrayToString } from '../src/principal/layouts/DatePicker/DatePicker.ts'
 // import { TASKS } from './data/task'
 import Task from './data/Task'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const initState = {
-    dataTasks: Task(),
+    dataTasks: {},
     showEdit: false,
     length: 0,
     showPut: false,
     idTaskActive: 0,
-    dateDebutAndFin: []
+    dateDebutAndFin: [],
+    heureDebut: '00:00:00'
 }
 
 function dateDAF (state, active) {
@@ -62,61 +74,100 @@ function dateDAF (state, active) {
             response = [activeTask[0].heureDebut, nextActive[0].heureDebut]
         }
     }
-    return [response, active ]
+    return [response, active]
 }
 
 const TasksReducers = (state = initState, action) => {
     // state.length = state.dataTasks.filter(e => { return e.finishTasks === true }).length
     let date = null
+    let stock = null
     switch (action.type) {
-    case ADD_TASKS:
-        // var stock = [
-        //     ...state.dataTasks,
-        //     {
-        //         idTasks: shortid.generate(),
-        //         contentTasks: action.data,
-        //         finishTasks: false,
-        //         createAt: Date.now()
-        //     }
-        // ]
+    case PUT_TASKS:
+        // AsyncStorage.removeItem('todoNante')
+        // stock = {
+        //     tasks: [
+        //         {
+        //             data: action.data,
+        //             pseudoUtilisateur: 'blackran'
+        //         },
+        //         {
+        //             data: {},
+        //             pseudoUtilisateur: 'root'
+        //         }
+        //     ],
+        //     users:
+        //     [
+        //         {
+        //             pseudoUtilisateur: 'root',
+        //             passwordUtilisateur: 'password'
+        //         },
+        //         {
+        //             pseudoUtilisateur: 'blackran',
+        //             passwordUtilisateur: 'iloveyou'
+        //         }
+        //     ],
+        //     colors:
+        //     [
+        //         {
+        //             name: 'gray',
+        //             pseudoUtilisateur: 'blackran'
+        //         },
+        //         {
+        //             name: 'red',
+        //             pseudoUtilisateur: 'root'
+        //         }
+        //     ],
+        //     songs:
+        //     [
+        //         {
+        //             type: 'vibreur',
+        //             path: '/home/test/nantenaina.mp3',
+        //             pseudoUtilisateur: 'blackran'
+        //         }
+        //     ]
+        // }
         // AsyncStorage.setItem('todoNante', JSON.stringify(stock))
-        // return Object.assign(
-        //     {}, state
-        //     , { dataTasks: stock }
-        // )
-        return null
-    case INIT_DATA_TASKS:
-        // console.log(Task().Sabotsy)
+        return Object.assign({}, state, { dataTasks: action.data })
+
+    case
+        PUT_ALL_DATA:
+        break
+
+    case
+        INIT_DATA_TASKS:
         if (state) {
             date = dateDAF(state, state.idTaskActive)
-            return Object.assign({}, state, { idTaskActive: date[1], dateDebutAndFin: date[0] })
+            return Object.assign({}, state, {
+                idTaskActive: date[1],
+                dateDebutAndFin: date[0]
+            })
         } else {
             return null
         }
-        // state.dataTasks = []
-        //
-        // // AsyncStorage.removeItem('todoNante')
-        // return Object.assign(
-        //     {}, state
-        //     , { dataTasks: action.data }
-        // )
-    case REMOVE_TASKS:
+    case
+        REMOVE_TASKS:
         return null
-        // var stock = state.dataTasks.filter(e => {
-        //     return e.finishTasks !== true
-        // })
-        // AsyncStorage.setItem('todoNante', JSON.stringify(stock))
-        // return Object.assign({}, state, { dataTasks: stock })
-    case CHANGE_SHOW_EDIT:
+    // var stock = state.dataTasks.filter(e => {
+    //     return e.finishTasks !== true
+    // })
+    // AsyncStorage.setItem('todoNante', JSON.stringify(stock))
+    // return Object.assign({}, state, { dataTasks: stock })
+    case
+        CHANGE_SHOW_EDIT:
         // return Object.assign({}, state, { showEdit: action.data })
         return null
 
-    case CHANGE_SHOW_PUT:
+    case
+        CHANGE_SHOW_PUT:
         // console.log('test')
         // return Object.assign({}, state, { showPut: action.data })
         return null
+    case
+        ON_CHANGE_DATE_PICKER:
+        return Object.assign({}, state, { heureDebut: action.data })
 
-    case TOGGLE_CHECK:
+    case
+        TOGGLE_CHECK:
         // var stock = state.dataTasks.filter(e => {
         //     return e.idTasks === action.id
         // })[0]
@@ -130,7 +181,8 @@ const TasksReducers = (state = initState, action) => {
         //     , { dataTasks: [...stocknot, stocks] }
         // )
         break
-    case TASK_NOW:
+    case
+        TASK_NOW:
         // var task_now = state.dataTasks[action.day]
         //     task_now.map(e=>{
         //         if(e.heureDebut)

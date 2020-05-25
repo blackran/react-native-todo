@@ -51,9 +51,9 @@ class Move extends Component {
         return (
             <Animated.View
                 style={{
-                    ...this.props.styles,
                     transform: this.state.pan.getTranslateTransform(),
-                    opacity: this.state.opacity
+                    opacity: this.state.opacity,
+                    ...this.props.styles,
                 }}>
                 { this.props.children }
             </Animated.View>
