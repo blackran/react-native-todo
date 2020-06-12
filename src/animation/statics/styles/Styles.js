@@ -8,7 +8,6 @@ export default StyleSheet.create({
         width: width,
         height: height,
         position: 'absolute',
-        borderWidth: 1,
         marginBottom: height / 2
     },
     containerImageLogin: {
@@ -18,7 +17,6 @@ export default StyleSheet.create({
         height: 70,
         width: 70,
         justifyContent: 'center',
-        position: 'absolute',
-        top: height / 5
+        position: 'absolute'
     }
 })

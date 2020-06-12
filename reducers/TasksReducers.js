@@ -1,17 +1,11 @@
 import {
-    PUT_TASKS,
-    PUT_ALL_DATA,
-    REMOVE_TASKS,
-    TOGGLE_CHECK,
     INIT_DATA_TASKS,
-    CHANGE_SHOW_EDIT,
-    CHANGE_SHOW_PUT,
-    TASK_NOW,
+    DATA_FILTER,
     ON_CHANGE_DATE_PICKER
 } from '../actions/TasksActions'
 // import shortid from 'shortid'
 // import AsyncStorage from '@react-native-community/async-storage'
-import { isBetweenTwoDate, convertArrayToString } from '../src/principal/layouts/DatePicker/DatePicker.ts'
+import { convertStringNumber } from '../src/principal/layouts/DatePicker/DatePicker'
 // import { TASKS } from './data/task'
 
 const initState = {
@@ -21,50 +15,63 @@ const initState = {
     showPut: false,
     idTaskActive: 0,
     dateDebutAndFin: [],
-    heureDebut: '00:00:00'
+    heureDebut: '00:00:00',
+    dataFilter: []
 }
 
 export function isBetweenTwoNumber (debut, fin, numb) {
     return (debut <= numb && numb <= fin)
 }
+const listJours = [
+    'Alahady',
+    'Alatsinainy',
+    'Talata',
+    'Alarobia',
+    'Alakamisy',
+    'Zoma',
+    'Sabotsy'
+]
 
 function dateDAF (state, active) {
+    const oneDay = 24 * 60 * 60 * 1000
     const now = new Date()
-    const datenow = convertArrayToString([now.getHours(), now.getMinutes(), now.getSeconds()])
+    const datenow = (oneDay * now.getDay()) + convertStringNumber(now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds())
     let response = []
     if (state) {
-        const listJours = [
-            'Alahady',
-            'Alatsinainy',
-            'Talata',
-            'Alarobia',
-            'Alakamisy',
-            'Zoma',
-            'Sabotsy'
-        ]
-        const jour = listJours[new Date().getDay()]
+        let jourPrev = listJours[listJours.length - 1]
+        if (now.getDay() !== 0) {
+            jourPrev = listJours[new Date().getDay() - 1]
+        }
+        const jourNow = listJours[new Date().getDay()]
+
+        let jourNext = listJours[new Date().getDay() + 1]
+        if (now.getDay() !== listJours.length - 1) {
+            jourNext = listJours[0]
+        }
         active = 0
 
-        for (let i = 0; i < state.dataTasks[jour].length; i++) {
-            const debut = state.dataTasks[jour][i].heureDebut
+        for (let i = 0; i < state.dataTasks[jourNow].length; i++) {
+            let debut = null
             let fin = null
 
-            if (i === state.dataTasks[jour].length - 1) {
-                // fin = state.dataTasks[listJours[new Date().getDay() + 1]][0].heureDebut
-                fin = state.dataTasks[listJours[0]][0].heureDebut
-            } else {
-                fin = state.dataTasks[jour][i + 1].heureDebut
+            if (i === 0) {
+                debut = state.dataTasks[jourPrev].idTasks
+                fin = state.dataTasks[jourNow].idTasks
+                if (i === state.dataTasks[jourNow].length - 1) {
+                    debut = state.dataTasks[jourNow][i].idTasks
+                    fin = state.dataTasks[jourNext][i].idTasks
+                }
             }
-            if (isBetweenTwoDate(debut, fin, datenow)) {
-                active = state.dataTasks[jour][i].idTasks
+            if (isBetweenTwoNumber(debut, fin, datenow)) {
+                active = state.dataTasks[jourNow][i].idTasks
             }
         }
         console.log('TasksReducers: ', active)
         state.idTaskActive = active
-        const activeTask = state.dataTasks[jour].filter(value => {
+        const activeTask = state.dataTasks[jourNow].filter(value => {
             return value.idTasks === (active)
         })
-        let nextActive = state.dataTasks[jour].filter(value => {
+        let nextActive = state.dataTasks[jourNow].filter(value => {
             return value.idTasks === (active + 1)
         })
 
@@ -84,113 +91,27 @@ const TasksReducers = (state = initState, action) => {
     // state.length = state.dataTasks.filter(e => { return e.finishTasks === true }).length
     let date = null
     let stock = null
+    let dataLastPrev = null
     switch (action.type) {
-    case PUT_TASKS:
-        // AsyncStorage.removeItem('todoNante')
-        // stock = {
-        //     tasks: [
-        //         {
-        //             data: action.data,
-        //             pseudoUtilisateur: 'blackran'
-        //         },
-        //         {
-        //             data: {},
-        //             pseudoUtilisateur: 'root'
-        //         }
-        //     ],
-        //     users:
-        //     [
-        //         {
-        //             pseudoUtilisateur: 'root',
-        //             passwordUtilisateur: 'password'
-        //         },
-        //         {
-        //             pseudoUtilisateur: 'blackran',
-        //             passwordUtilisateur: 'iloveyou'
-        //         }
-        //     ],
-        //     colors:
-        //     [
-        //         {
-        //             name: 'gray',
-        //             pseudoUtilisateur: 'blackran'
-        //         },
-        //         {
-        //             name: 'red',
-        //             pseudoUtilisateur: 'root'
-        //         }
-        //     ],
-        //     songs:
-        //     [
-        //         {
-        //             type: 'vibreur',
-        //             path: '/home/test/nantenaina.mp3',
-        //             pseudoUtilisateur: 'blackran'
-        //         }
-        //     ]
-        // }
-        // AsyncStorage.setItem('todoNante', JSON.stringify(stock))
-        return Object.assign({}, state, { dataTasks: action.data })
-
-    case
-        PUT_ALL_DATA:
-        break
-
-    case
-        INIT_DATA_TASKS:
+    case INIT_DATA_TASKS:
         if (state) {
             date = dateDAF(state, state.idTaskActive)
             return Object.assign({}, state, {
                 idTaskActive: date[1],
                 dateDebutAndFin: date[0]
             })
-        } else {
-            return null
         }
-    case
-        REMOVE_TASKS:
-        return null
-    // var stock = state.dataTasks.filter(e => {
-    //     return e.finishTasks !== true
-    // })
-    // AsyncStorage.setItem('todoNante', JSON.stringify(stock))
-    // return Object.assign({}, state, { dataTasks: stock })
-    case
-        CHANGE_SHOW_EDIT:
-        // return Object.assign({}, state, { showEdit: action.data })
-        return null
-
-    case
-        CHANGE_SHOW_PUT:
-        // console.log('test')
-        // return Object.assign({}, state, { showPut: action.data })
-        return null
-    case
-        ON_CHANGE_DATE_PICKER:
+        return date
+    case DATA_FILTER:
+        dataLastPrev = state.dataTasks[listJours[listJours.length - 1]]
+        if (action.active !== 0) {
+            dataLastPrev = state.dataTasks[listJours[action.active - 1]]
+        }
+        stock = [dataLastPrev, ...state.dataTasks[listJours[action.active]]]
+        return Object.assign({}, state, { dataFilter: stock })
+    case ON_CHANGE_DATE_PICKER:
         return Object.assign({}, state, { heureDebut: action.data })
 
-    case
-        TOGGLE_CHECK:
-        // var stock = state.dataTasks.filter(e => {
-        //     return e.idTasks === action.id
-        // })[0]
-        // var stocknot = state.dataTasks.filter(e => {
-        //     return e.idTasks !== action.id
-        // })
-        // var stocks = { idTasks: stock.idTasks, contentTasks: stock.contentTasks, finishTasks: !stock.finishTasks, createAt: stock.createAt }
-        // AsyncStorage.setItem('todoNante', JSON.stringify([...stocknot, stocks]))
-        // return Object.assign(
-        //     {}, state
-        //     , { dataTasks: [...stocknot, stocks] }
-        // )
-        break
-    case
-        TASK_NOW:
-        // var task_now = state.dataTasks[action.day]
-        //     task_now.map(e=>{
-        //         if(e.heureDebut)
-        //     })
-        break
     default:
         return state
     }

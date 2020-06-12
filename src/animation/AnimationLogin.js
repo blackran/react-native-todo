@@ -6,18 +6,22 @@ import sign from './statics/images/sign.png'
 import login from './statics/images/login.png'
 import Scale from './Scale'
 
-const { height } = Dimensions.get('window')
+const { height, width } = Dimensions.get('window')
 
 class AnimationLogin extends Component {
     constructor (props) {
         super(props)
         this.state = {
-            pan: new Animated.ValueXY({ x: this.props.xD, y: this.props.yD }),
+            pan: new Animated.ValueXY({
+                x: this.props.xD,
+                y: this.props.yD
+            }),
             opacity: new Animated.Value(0),
             isLogin: true,
             border: new Animated.Value(0),
             keyboardOpen: false
         }
+        this.marginTop = height * (40 / 100)
     }
 
     componentDidMount () {
@@ -32,7 +36,10 @@ class AnimationLogin extends Component {
                     {
                         friction: 50,
                         tension: 0,
-                        toValue: { x: 0, y: this.props.yD }
+                        toValue: {
+                            x: 0,
+                            y: this.props.yD
+                        }
                     }
                 ),
                 Animated.spring(this.state.border, {
@@ -46,7 +53,10 @@ class AnimationLogin extends Component {
                     {
                         friction: 3,
                         tension: 1,
-                        toValue: { x: 0, y: 0 }
+                        toValue: {
+                            x: 0,
+                            y: 0
+                        }
                     }
                 ),
                 Animated.spring(this.state.border, {
@@ -76,7 +86,10 @@ class AnimationLogin extends Component {
                 {
                     friction: 3,
                     tension: 1,
-                    toValue: { x: 0, y: 0 }
+                    toValue: {
+                        x: 0,
+                        y: 0
+                    }
                 }
             ),
             // Animated.spring(this.state.opacity, {
@@ -110,19 +123,26 @@ class AnimationLogin extends Component {
                 style={{
                     height: height,
                     alignItems: 'center',
-                    justifyContent: 'center',
                     backgroundColor: this.props.headerBackgroundColor
                 }}
             >
-                <Scale delais={height} styles={styles.containerImageLogin}>
-                    <Image
-                        source={this.state.isLogin ? login : sign}
-                        style={{
-                            width: 70,
-                            height: 70
-                        }}
-                    />
-                </Scale>
+                <View
+                    style={{
+                        width,
+                        height: this.marginTop,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                    <Scale delais={height} styles={styles.containerImageLogin}>
+                        <Image
+                            source={this.state.isLogin ? login : sign}
+                            style={{
+                                width: 70,
+                                height: 70
+                            }}
+                        />
+                    </Scale>
+                </View>
                 <Animated.View
                     style={{
                         height: 1000,
@@ -130,11 +150,16 @@ class AnimationLogin extends Component {
                         transform: this.state.pan.getTranslateTransform(),
                         borderTopLeftRadius: this.state.border,
                         borderTopRightRadius: this.state.border,
-                        top: height / 3,
+                        top: this.marginTop,
                         ...styles.body
                     }}>
-                    <View style={{ borderWidth: 2 }}>
-                        { this.props.children }
+                    <View style={{
+                        height: (height - this.marginTop),
+                        justifyContent: 'center'
+                    }}>
+                        <View>
+                            {this.props.children}
+                        </View>
                     </View>
                 </Animated.View>
             </View>

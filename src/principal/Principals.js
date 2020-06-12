@@ -25,7 +25,6 @@ class Principals extends Component {
             active: new Date().getDay(),
             page: 0,
             now: new Date().getDay(),
-            dataFilter: [],
             fontSize: [12, 12, 12, 12, 12, 12, 12],
             date: '00:00:00',
             stockInterval: null,
@@ -124,20 +123,14 @@ class Principals extends Component {
             })
             this.fontSizeAnimation(e)
         }
-        this.filterByDay()
+        this.props.dataFilter(Math.round(e.nativeEvent.contentOffset.y / this.height))
         setTimeout(() =>
             this.lengthTaskFinish(),
         1)
     }
 
-    filterByDay () {
-        this.setState({
-            dataFilter: this.props.task.dataTasks[this.jours[this.state.active]]
-        })
-    }
-
     nextData (i, datas) {
-        const datanow = datas[this.jours[this.state.active]]
+        const datanow = this.props.task.dataTasks[this.jours[this.state.active]]
         let stock = datanow[i + 1]
         if (datanow.length === i + 1) {
             let active = this.state.active + 1
@@ -177,8 +170,8 @@ class Principals extends Component {
     }
 
     lengthTaskFinish () {
-        if (this.state.dataFilter.length > 0) {
-            const stock = this.state.dataFilter.filter(e => {
+        if (this.props.task.dataFilter.length > 0) {
+            const stock = this.props.task.dataFilter.filter(e => {
                 if (this.state.active < this.state.now) {
                     return true
                 } else {
@@ -190,7 +183,7 @@ class Principals extends Component {
     }
 
     render () {
-        const { color } = this.props
+        const { color, task } = this.props
         return (
             <View
                 style={{
@@ -300,7 +293,7 @@ class Principals extends Component {
                         }}
                     >
                         <Text style={{ color: 'white' }}>
-                            Vita { this.setDouble(this.state.lengthTaskFinish) }/{ this.setDouble(this.state.dataFilter.length) }
+                            Vita { this.setDouble(this.state.lengthTaskFinish) }/{ this.setDouble(task.dataFilter.length) }
                         </Text>
                         <Text style={{ color: 'white' }}>{ this.state.date }</Text>
                     </View>
@@ -310,8 +303,8 @@ class Principals extends Component {
 
                 <ScrollView style={{ width: width, ...styles.root }}>
                     {
-                        this.state.dataFilter.length > 0
-                            ? this.state.dataFilter.map((e, i) => {
+                        task.dataFilter.length > 0
+                            ? task.dataFilter.map((e, i) => {
                                 const stock = this.state.active === this.state.now
                                 return (
                                     <Block
@@ -353,6 +346,9 @@ const mapDispatchToProps = dispatch => {
         },
         initDataTasks: () => {
             dispatch({ type: 'INIT_DATA_TASKS' })
+        },
+        dataFilter: (active) => {
+            dispatch({ type: 'DATA_FILTER', active })
         }
     }
 }
