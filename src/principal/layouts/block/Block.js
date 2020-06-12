@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 
 import Chrono from './layouts/chrono/Chrono'
 import Move from '../../../animation/Move'
-const { width } = Dimensions.get('window')
+const { height } = Dimensions.get('window')
 
 class Block extends Component {
     constructor (props) {
@@ -36,58 +36,6 @@ class Block extends Component {
         this.props.initDataTasks()
         this.setState({ finish: this.props.finish })
     }
-
-    // secondToDate (e) {
-    //     let response = '00:00:00'
-    //     if (e > 0) {
-    //         const oneHeure = (60 * 60 * 1000)
-    //         const oneMinute = (60 * 1000)
-    //         const oneSecond = 1000
-    //
-    //         const heure = Math.floor(e / oneHeure)
-    //         const resteHeure = (e - (heure * oneHeure)) >= 0 ? (e - (heure * oneHeure)) : 0
-    //         const minute = Math.floor(resteHeure / oneMinute)
-    //         const resteMinute = (minute * oneMinute)
-    //         const second = Math.abs(Math.floor((e - (e - resteMinute) - (resteHeure)) / oneSecond))
-    //         response = (this.setDouble(heure) + ':' + this.setDouble(minute) + ':' + this.setDouble(second))
-    //     }
-    //
-    //     return response
-    // }
-
-    // chrono () {
-    //     if (this.props.task.idTaskActive === this.props.datas.idTasks) {
-    //         const stock = setInterval(() => {
-    //             const start = new Date()
-    //             if (this.state.date > 0) {
-    //                 this.setState((state) => {
-    //                     const stock = betweenTwoString(
-    //                         convertArrayToString(
-    //                             [start.getHours(), start.getMinutes(), start.getSeconds()]
-    //                         ), this.props.task.dateDebutAndFin[1]
-    //                     )
-    //                     return { date: stock > 0 ? stock : 0 }
-    //                 })
-    //             } else {
-    //                 Vibration.vibrate([500, 1000, 1000], true)
-    //                 setTimeout(() => {
-    //                     Vibration.cancel()
-    //                     this.setState({ date: 1 })
-    //                 }, 2000)
-    //                 this.props.initDataTasks()
-    //             }
-    //         }, 1000)
-    //         this.setState({ stockInterval: stock })
-    //     } else {
-    //         this.setState({ date: betweenTwoString(this.props.task.dateDebutAndFin[0], this.props.task.dateDebutAndFin[1]) })
-    //     }
-    // }
-
-    // UNSAFE_componentWillMount () {
-    //     setTimeout(() => {
-    //         return this.chrono()
-    //     }, 2000)
-    // }
 
     componentWillUnmount () {
         clearInterval(this.state.stockInterval)
@@ -123,9 +71,9 @@ class Block extends Component {
         return (
             <Animated.View>
                 <Move
-                    delais={i * 100}
-                    xD={width}
-                    yD={0}
+                    delais={i * 10}
+                    xD={0}
+                    yD={(i + 1) * height}
                     styles={{
                         flex: 1,
                         justifyContent: 'space-between',

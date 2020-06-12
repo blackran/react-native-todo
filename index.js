@@ -3,7 +3,7 @@
  */
 
 import 'react-native-gesture-handler'
-import { AppRegistry, View, StatusBar } from 'react-native'
+import { AppRegistry, View } from 'react-native'
 import App from './src/App'
 import { name as appName } from './app.json'
 import { Provider } from 'react-redux'

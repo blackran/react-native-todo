@@ -4,8 +4,7 @@ import {
     TextInput,
     TouchableWithoutFeedback,
     Dimensions,
-    Alert,
-    ScrollView
+    Alert
 } from 'react-native'
 import {
     Button,
@@ -14,8 +13,6 @@ import {
 } from 'react-native-elements'
 
 import DefaultStyles from '../statics/styles/DefaultStyles'
-import styles from './statics/styles/Styles'
-// import logo from '../statics/images/logo-universite-fianarantsoa.png'
 import { connect } from 'react-redux'
 import Move from '../animation/Move'
 import AnimationLogin from '../animation/AnimationLogin'
@@ -106,96 +103,83 @@ class Login extends Component {
         const { color } = this.props
         return (
             <KeyboardAwareScrollView>
-                <ScrollView
-                // scrollEnabled={false}
-                    pinchGestureEnabled={false}
+                <AnimationLogin
+                    delais={2000}
+                    xD={0} yD={-200}
+                    styles={{
+                        backgroundColor: color.primary.light
+                    }}
+                    isLogin={this.state.isLogin}
+                    headerBackgroundColor={'white'}
+                    backgroundColor={'green'}
                 >
-                    <AnimationLogin
-                        delais={2000}
-                        xD={0} yD={-200}
-                        styles={{
-                            ...styles.body,
-                            backgroundColor: color.primary.light
-                        }}
-                        isLogin={this.state.isLogin}
-                        headerBackgroundColor={'white'}
-                    >
-                        <View style={{
-                            height: height - (height / 3),
-                            justifyContent: 'center'
-                        }}>
-                            <Text
+                    <View>
+                        <Text
+                            style={{
+                                fontSize: 12,
+                                color: 'red',
+                                textAlign: 'center'
+                            }}>
+                            {this.state.error ? 'pseudo ou password incorrect' : ''}
+                        </Text>
+                        <Move delais={40} xD={0} yD={-width}>
+                            <TextInput
+                                placeholder='Anarana'
+                                onChangeText={this.OnChangeLogin.bind(this)}
                                 style={{
-                                    fontSize: 12,
-                                    color: 'red',
-                                    textAlign: 'center'
-                                }}>
-                                {this.state.error ? 'pseudo ou password incorrect' : ''}
-                            </Text>
-                            <Move delais={40} xD={0} yD={-width}>
-                                <TextInput
-                                    placeholder='Anarana'
-                                    onChangeText={this.OnChangeLogin.bind(this)}
-                                    style={{
-                                        ...DefaultStyles.textinput,
-                                        backgroundColor: '#fff',
-                                        color: color.fontColor.default
-                                    }}
-                                    value={this.state.pseudo}
-                                />
-                            </Move>
-                            <Move delais={40} xD={0} yD={width}>
-                                <TextInput
-                                    placeholder='Famantarana'
-                                    onChangeText={this.OnChangePass.bind(this)}
-                                    value={this.state.pass}
-                                    style={{
-                                        ...DefaultStyles.textinput,
-                                        backgroundColor: '#fff',
-                                        color: color.fontColor.default
-                                    }}
-                                    secureTextEntry={true}
-                                    onSubmitEditing={() => this.OnSubmit()}
-                                />
-                            </Move>
+                                    ...DefaultStyles.textinput,
+                                    backgroundColor: '#fff',
+                                    color: color.fontColor.default
+                                }}
+                                value={this.state.pseudo}
+                            />
+                        </Move>
+                        <Move delais={40} xD={0} yD={width}>
+                            <TextInput
+                                placeholder='Famantarana'
+                                onChangeText={this.OnChangePass.bind(this)}
+                                value={this.state.pass}
+                                style={{
+                                    ...DefaultStyles.textinput,
+                                    backgroundColor: '#fff',
+                                    color: color.fontColor.default
+                                }}
+                                secureTextEntry={true}
+                                onSubmitEditing={() => this.OnSubmit()}
+                            />
+                        </Move>
 
-                            <Move delais={80} xD={0} yD={height}>
-                                <Button
-                                    // icon={
-                                    //     this.state.loading
-                                    //         ? <ActivityIndicator color='white'/>
-                                    //         : null
-                                    // }
-                                    loading={this.state.loading}
-                                    buttonStyle={{
-                                        ...DefaultStyles.buttonReactNativeElement,
-                                        backgroundColor: color.primary.dark
-                                    }}
-                                    onPress={this.OnSubmit.bind(this)}
-                                    title={this.state.isLogin ? ' HIDITRA' : 'TAHIRIZO'}
-                                />
-                            </Move>
-                            <Move delais={300} xD={0} yD={height}>
-                                <TouchableWithoutFeedback
-                                    onPress={this.OnClickSign.bind(this)}
-                                >
-                                    <View style={{ padding: 10 }}>
-                                        <Text
-                                            style={{
-                                                color: color.primary.default,
-                                                fontSize: 0.05 * width,
-                                                textAlign: 'center'
-                                            }}>
-                                            {
-                                                this.state.isLogin ? 'Mbola tsy manana' : 'Efa manana'
-                                            }
-                                        </Text>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            </Move>
-                        </View>
-                    </AnimationLogin>
-                </ScrollView>
+                        <Move delais={80} xD={0} yD={height}>
+                            <Button
+                                loading={this.state.loading}
+                                buttonStyle={{
+                                    ...DefaultStyles.buttonReactNativeElement,
+                                    backgroundColor: color.primary.dark
+                                }}
+                                onPress={this.OnSubmit.bind(this)}
+                                title={this.state.isLogin ? ' HIDITRA' : 'TAHIRIZO'}
+                            />
+                        </Move>
+                        <Move delais={300} xD={0} yD={height}>
+                            <TouchableWithoutFeedback
+                                onPress={this.OnClickSign.bind(this)}
+                            >
+                                <View style={{ padding: 10 }}>
+                                    <Text
+                                        style={{
+                                            color: color.primary.default,
+                                            fontSize: 0.05 * width,
+                                            textAlign: 'center'
+                                        }}>
+                                        {
+                                            this.state.isLogin ? 'Mbola tsy manana' : 'Efa manana'
+                                        }
+                                    </Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </Move>
+                    </View>
+                </AnimationLogin>
             </KeyboardAwareScrollView>
         )
     }

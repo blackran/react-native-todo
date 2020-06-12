@@ -5,24 +5,20 @@ export default StyleSheet.create({
     body: {
         flex: 1,
         alignItems: 'center',
-        // paddingBottom: 20,
-        // backgroundColor: '#222222',
         width: width,
         height: height,
-        top: height / 3,
-        position: 'absolute'
+        position: 'absolute',
+        borderWidth: 1,
+        marginBottom: height / 2
     },
     containerImageLogin: {
-        // borderWidth: 1,
         borderColor: 'black',
         backgroundColor: '#fff',
-        // backgroundColor: '#fffedf',
         borderRadius: 70,
         height: 70,
         width: 70,
         justifyContent: 'center',
-        alignItems: 'center',
         position: 'absolute',
-        top: 75
+        top: height / 5
     }
 })

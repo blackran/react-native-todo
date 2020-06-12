@@ -27,9 +27,14 @@ class OneScroll extends Component {
         this.setState({ default: this.props.value, active: this.props.value })
         setTimeout(() => this.listView.scrollTo({
             x: 0,
-            y: (this.props.value * this.height),
+            y: (this.props.length * this.height),
             animated: true
         }), 1)
+        setTimeout(() => this.listView.scrollTo({
+            x: 0,
+            y: (this.props.value * this.height),
+            animated: true
+        }), 2)
     }
 
     componentDidUpdate () {

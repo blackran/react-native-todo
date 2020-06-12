@@ -17,7 +17,7 @@ class ScrollDatePicker extends Component {
     }
 
     componentDidMount () {
-        const [ h, m, s ] = this.props.default.split(':')
+        const [h, m, s] = this.props.default.split(':')
         this.setState({
             show: this.props.show,
             h,
@@ -27,7 +27,7 @@ class ScrollDatePicker extends Component {
     }
 
     componentDidUpdate () {
-        const [ h, m, s ] = this.props.default.split(':')
+        const [h, m, s] = this.props.default.split(':')
         if (this.state.show !== this.props.show) {
             this.setState({
                 show: this.props.show

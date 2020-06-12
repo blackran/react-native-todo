@@ -37,8 +37,6 @@ export default StyleSheet.create({
     },
     buttonReactNativeElement: {
         backgroundColor: '#222222',
-        // borderWidth: 1,
-        // borderColor: '#575656',
         width: width,
         height: height,
         marginTop: 20

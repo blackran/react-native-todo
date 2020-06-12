@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, Image, StyleSheet, Text, Vibration } from 'react-native'
-import check from './statics/images/check.png'
+import { View, StyleSheet, Text, Vibration } from 'react-native'
 
 class Notification extends Component {
     constructor (props) {
@@ -76,7 +75,7 @@ class Notification extends Component {
     }
 
     render () {
-        const { navigation, color } = this.props
+        const { color } = this.props
         const { date, stock } = this.state
         return (
             <View style={styles.body}>
@@ -128,7 +127,7 @@ const styles = StyleSheet.create({
 })
 
 function mapStateToProps (state) {
-    return { color: state.Color}
+    return { color: state.Color }
 }
 
 export default connect(

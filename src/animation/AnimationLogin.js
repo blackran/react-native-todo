@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { Animated, Dimensions, View, ScrollView, Text } from 'react-native'
-import styles from '../login/statics/styles/Styles'
+import { Animated, Dimensions, View } from 'react-native'
+import styles from './statics/styles/Styles'
 import { Image } from 'react-native-elements'
-import sign from '../statics/images/logo-universite-fianarantsoa.png'
-import login from '../statics/images/sign2.png'
+import sign from './statics/images/sign.png'
+import login from './statics/images/login.png'
 import Scale from './Scale'
-import KeyboardListener from 'react-native-keyboard-listener'
 
 const { height } = Dimensions.get('window')
 
@@ -109,8 +108,7 @@ class AnimationLogin extends Component {
         return (
             <View
                 style={{
-                    // flex: 1,
-                    height: this.state.keyboardOpen ? (height + height / 3) : height,
+                    height: height,
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: this.props.headerBackgroundColor
@@ -120,27 +118,24 @@ class AnimationLogin extends Component {
                     <Image
                         source={this.state.isLogin ? login : sign}
                         style={{
-                            width: 50,
-                            height: 50
+                            width: 70,
+                            height: 70
                         }}
                     />
                 </Scale>
                 <Animated.View
                     style={{
                         height: 1000,
+                        backgroundColor: this.props.backgroundColor,
                         transform: this.state.pan.getTranslateTransform(),
                         borderTopLeftRadius: this.state.border,
                         borderTopRightRadius: this.state.border,
-                        ...this.props.styles
-                        // opacity: this.state.opacity
+                        top: height / 3,
+                        ...styles.body
                     }}>
-                    <View>
-                        <KeyboardListener
-                            onWillShow={() => { this.setState({ keyboardOpen: true }) }}
-                            onWillHide={() => { this.setState({ keyboardOpen: false }) }}
-                        />
+                    <View style={{ borderWidth: 2 }}>
+                        { this.props.children }
                     </View>
-                    { this.props.children }
                 </Animated.View>
             </View>
         )
