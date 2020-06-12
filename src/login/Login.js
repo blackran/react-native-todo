@@ -52,6 +52,7 @@ class Login extends Component {
         AsyncStorage.getItem('todoNante').then(data => {
             if (data !== null) {
                 this.setState({ loading: true })
+                console.log(data)
                 const isValid = JSON.parse(data).users.filter(e => {
                     return (e.pseudoUtilisateur === this.state.pseudo &&
                     e.passwordUtilisateur === this.state.pass)

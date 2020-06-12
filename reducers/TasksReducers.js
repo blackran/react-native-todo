@@ -13,8 +13,6 @@ import {
 // import AsyncStorage from '@react-native-community/async-storage'
 import { isBetweenTwoDate, convertArrayToString } from '../src/principal/layouts/DatePicker/DatePicker.ts'
 // import { TASKS } from './data/task'
-import Task from './data/Task'
-import AsyncStorage from '@react-native-community/async-storage'
 
 const initState = {
     dataTasks: {},
@@ -24,6 +22,10 @@ const initState = {
     idTaskActive: 0,
     dateDebutAndFin: [],
     heureDebut: '00:00:00'
+}
+
+export function isBetweenTwoNumber (debut, fin, numb) {
+    return (debut <= numb && numb <= fin)
 }
 
 function dateDAF (state, active) {
@@ -46,6 +48,7 @@ function dateDAF (state, active) {
         for (let i = 0; i < state.dataTasks[jour].length; i++) {
             const debut = state.dataTasks[jour][i].heureDebut
             let fin = null
+
             if (i === state.dataTasks[jour].length - 1) {
                 // fin = state.dataTasks[listJours[new Date().getDay() + 1]][0].heureDebut
                 fin = state.dataTasks[listJours[0]][0].heureDebut
@@ -56,7 +59,7 @@ function dateDAF (state, active) {
                 active = state.dataTasks[jour][i].idTasks
             }
         }
-
+        console.log('TasksReducers: ', active)
         state.idTaskActive = active
         const activeTask = state.dataTasks[jour].filter(value => {
             return value.idTasks === (active)
