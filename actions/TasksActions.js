@@ -1,3 +1,4 @@
 export const INIT_DATA_TASKS = 'INIT_DATA_TASKS'
 export const ON_CHANGE_DATE_PICKER = 'ON_CHANGE_DATE_PICKER'
 export const DATA_FILTER = 'DATA_FILTER'
+export const DATA_ACTIVE = 'DATA_ACTIVE'

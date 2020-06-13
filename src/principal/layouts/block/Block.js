@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { View, Text, Image, Animated, Dimensions } from 'react-native'
-import check from './statics/images/check.png'
+import check from './statics/images/check_cool.png'
 import clock from './statics/images/clock.png'
+import wait from './statics/images/wait.png'
 import { connect } from 'react-redux'
 // import { Stopwatch, Timer } from 'react-native-stopwatch-timer'
 // import {
@@ -62,12 +63,11 @@ class Block extends Component {
     }
 
     limiterWord (phrase, len) {
-        return phrase.split(' ').slice(0, len).join(' ') + ' ...'
+        return phrase && phrase.split(' ').slice(0, len).join(' ') + ' ...'
     }
 
     render () {
         const { datas, fin, start, i, finish, color } = this.props
-        // const { finish } = this.state
         return (
             <Animated.View>
                 <Move
@@ -123,11 +123,12 @@ class Block extends Component {
                             }
 
                             <Image
-                                source={finish ? check : clock}
+                                source={finish ? check : (start ? clock : wait)}
                                 style={{
                                     width: 30,
                                     height: 30,
-                                    marginLeft: 5
+                                    marginLeft: 5,
+                                    opacity: start ? 1 : 0.6
                                 }}/>
                         </View>
                     </View>

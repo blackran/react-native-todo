@@ -44,13 +44,14 @@ class Principals extends Component {
     }
 
     componentDidMount () {
+        this.props.dataFilter(this.state.active)
         this.props.initDataTasks()
+        this.props.dataActive()
         setTimeout(() => this.listView.scrollTo({
             x: 0,
             y: (new Date().getDay() * this.height),
             animated: true
         }), 1)
-        this.filterByDay()
         this.chonoHorloge()
         setTimeout(() =>
             this.lengthTaskFinish(),
@@ -75,7 +76,7 @@ class Principals extends Component {
     fontSizeAnimation (event) {
         const scrollValue = (Math.abs(
             (Math.round(event.nativeEvent.contentOffset.y / this.height) * this.height) -
-            event.nativeEvent.contentOffset.y) % 14
+                event.nativeEvent.contentOffset.y) % 14
         )
 
         if (this.state.value !== Math.round(event.nativeEvent.contentOffset.y / this.height)) {
@@ -127,21 +128,30 @@ class Principals extends Component {
         setTimeout(() =>
             this.lengthTaskFinish(),
         1)
+        this.props.dataActive()
     }
 
     nextData (i, datas) {
-        const datanow = this.props.task.dataTasks[this.jours[this.state.active]]
-        let stock = datanow[i + 1]
-        if (datanow.length === i + 1) {
+        let dayPrev = null
+        // let mocks = null
+        if (this.state.active === 0) {
+            dayPrev = this.jours[this.jours.length - 1]
+        } else {
+            dayPrev = this.jours[this.state.active - 1]
+        }
+        const dataLastPrev = this.props.task.dataTasks[dayPrev]
+        const stock = [dataLastPrev[dataLastPrev.length - 1], ...this.props.task.dataTasks[this.jours[this.state.active]]]
+        let mocks = stock[i + 1]
+        if (stock.length === i + 1) {
             let active = this.state.active + 1
             if (this.state.active === 6) {
                 active = 0
             }
             const datatomorow = datas[this.jours[active]]
-            stock = datatomorow[0]
+            mocks = datatomorow[0]
         }
-        if (stock) {
-            return stock.heureDebut
+        if (mocks) {
+            return mocks.heureDebut
         } else {
             return '00:00:00'
         }
@@ -215,11 +225,14 @@ class Principals extends Component {
                         paddingRight: 10
                     }}>
                     <ScrollView
-                        style={{ ...styles.myscroll, height: this.height * 3 }}
+                        style={{
+                            ...styles.myscroll,
+                            height: this.height * 3
+                        }}
                         showsVerticalScrollIndicator={false}
-                        onScroll={ this.OnScroll.bind(this) }
+                        onScroll={this.OnScroll.bind(this)}
                         // onScrollEndDrag={ this.OnEndScroll.bind(this) }
-                        onMomentumScrollEnd={ this.OnEndScroll.bind(this) }
+                        onMomentumScrollEnd={this.OnEndScroll.bind(this)}
                         centerContent={false}
                         ref={e => {
                             this.listView = e
@@ -242,7 +255,7 @@ class Principals extends Component {
                                     style={{
                                         color: 'white',
                                         fontSize: 12
-                                    }}>  </Text>
+                                    }}> </Text>
                             </View>
 
                             {
@@ -293,9 +306,9 @@ class Principals extends Component {
                         }}
                     >
                         <Text style={{ color: 'white' }}>
-                            Vita { this.setDouble(this.state.lengthTaskFinish) }/{ this.setDouble(task.dataFilter.length) }
+                            Vita {this.setDouble(this.state.lengthTaskFinish)}/{this.setDouble(task.dataFilter.length)}
                         </Text>
-                        <Text style={{ color: 'white' }}>{ this.state.date }</Text>
+                        <Text style={{ color: 'white' }}>{this.state.date}</Text>
                     </View>
                 </View>
 
@@ -308,22 +321,24 @@ class Principals extends Component {
                                 const stock = this.state.active === this.state.now
                                 return (
                                     <Block
-                                        key={e.idTasks}
+                                        key={i}
                                         i={i}
                                         finish={
-                                            (this.state.active < this.state.now) ? true
+                                            (this.state.active < this.state.now) ? false
                                                 : (e.idTasks < this.props.task.idTaskActive)
                                         }
                                         datas={e}
-                                        start={ (this.props.task.idTaskActive === e.idTasks) && stock }
-                                        now = { stock }
+                                        start={(this.props.task.idTaskActive === e.idTasks) && stock}
+                                        now={stock}
                                         debut={
-                                            ((this.state.active < this.state.now) ? true
-                                                : e.idTasks < this.props.task.idTaskActive)
+                                            ((this.state.active === this.state.now) &&
+                                            // ? true :
+                                              e.idTasks < this.props.task.idTaskActive
+                                            )
                                                 ? this.nextData(i, this.props.task.dataTasks)
                                                 : e.heureDebut
                                         }
-                                        navigation = {this.props.navigation}
+                                        navigation={this.props.navigation}
                                         fin={this.nextData(i, this.props.task.dataTasks)}/>
 
                                 )
@@ -336,19 +351,32 @@ class Principals extends Component {
 }
 
 const mapStateToProps = state => {
-    return { other: state.Other, task: state.Tasks, color: state.Color }
+    return {
+        other: state.Other,
+        task: state.Tasks,
+        color: state.Color
+    }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         changeShowEdit: (data) => {
-            dispatch({ type: 'CHANGE_SHOW_EDIT', data })
+            dispatch({
+                type: 'CHANGE_SHOW_EDIT',
+                data
+            })
         },
         initDataTasks: () => {
             dispatch({ type: 'INIT_DATA_TASKS' })
         },
         dataFilter: (active) => {
-            dispatch({ type: 'DATA_FILTER', active })
+            dispatch({
+                type: 'DATA_FILTER',
+                active
+            })
+        },
+        dataActive: () => {
+            dispatch({ type: 'DATA_ACTIVE' })
         }
     }
 }

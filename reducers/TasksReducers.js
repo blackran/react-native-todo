@@ -1,7 +1,8 @@
 import {
     INIT_DATA_TASKS,
     DATA_FILTER,
-    ON_CHANGE_DATE_PICKER
+    ON_CHANGE_DATE_PICKER,
+    DATA_ACTIVE
 } from '../actions/TasksActions'
 // import shortid from 'shortid'
 // import AsyncStorage from '@react-native-community/async-storage'
@@ -20,7 +21,7 @@ const initState = {
 }
 
 export function isBetweenTwoNumber (debut, fin, numb) {
-    return (debut <= numb && numb <= fin)
+    return (debut <= numb && numb <= fin) && debut && fin && numb
 }
 const listJours = [
     'Alahady',
@@ -38,35 +39,53 @@ function dateDAF (state, active) {
     const datenow = (oneDay * now.getDay()) + convertStringNumber(now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds())
     let response = []
     if (state) {
-        let jourPrev = listJours[listJours.length - 1]
+        let jourPrev = null
         if (now.getDay() !== 0) {
-            jourPrev = listJours[new Date().getDay() - 1]
+            jourPrev = listJours[now.getDay() - 1]
+        } else {
+            jourPrev = listJours[listJours.length - 1]
         }
-        const jourNow = listJours[new Date().getDay()]
+        const jourNow = listJours[now.getDay()]
 
-        let jourNext = listJours[new Date().getDay() + 1]
+        let jourNext = null
         if (now.getDay() !== listJours.length - 1) {
             jourNext = listJours[0]
+        } else {
+            jourNext = listJours[now.getDay() + 1]
         }
         active = 0
 
-        for (let i = 0; i < state.dataTasks[jourNow].length; i++) {
-            let debut = null
-            let fin = null
+        const dataLastPrev = state.dataTasks[jourPrev][state.dataTasks[jourPrev].length - 1]
+        const dataPrevNext = state.dataTasks[jourNext][0]
+        const newStock = [dataLastPrev, ...state.dataTasks[jourNow], dataPrevNext]
+        // console.log(newStock)
 
-            if (i === 0) {
-                debut = state.dataTasks[jourPrev].idTasks
-                fin = state.dataTasks[jourNow].idTasks
-                if (i === state.dataTasks[jourNow].length - 1) {
-                    debut = state.dataTasks[jourNow][i].idTasks
-                    fin = state.dataTasks[jourNext][i].idTasks
-                }
+        for (let i = 0; i < newStock.length; i++) {
+            let debut = newStock[i]
+            if (debut) {
+                debut = debut.idTasks
             }
+            let fin = newStock[i + 1]
+            if (fin) {
+                fin = fin.idTasks
+            }
+            // console.log(debut, fin, datenow, isBetweenTwoNumber(debut, fin, datenow))
+
+            // if (i === 0) {
+            //     debut = state.dataTasks[jourPrev].idTasks
+            //     fin = state.dataTasks[jourNow].idTasks
+            //     if (i === state.dataTasks[jourNow].length - 1) {
+            //         debut = state.dataTasks[jourNow][i].idTasks
+            //         fin = state.dataTasks[jourNext][0].idTasks
+            //     }
+            // } else {
+            //     debut = state.dataTasks[jourNow][i].idTasks
+            //     fin = state.dataTasks[jourNow][i + 1].idTasks
+            // }
             if (isBetweenTwoNumber(debut, fin, datenow)) {
-                active = state.dataTasks[jourNow][i].idTasks
+                active = newStock[i].idTasks
             }
         }
-        console.log('TasksReducers: ', active)
         state.idTaskActive = active
         const activeTask = state.dataTasks[jourNow].filter(value => {
             return value.idTasks === (active)
@@ -92,8 +111,16 @@ const TasksReducers = (state = initState, action) => {
     let date = null
     let stock = null
     let dataLastPrev = null
+    let response = state
     switch (action.type) {
     case INIT_DATA_TASKS:
+        if (action.data) {
+            response = Object.assign({}, state, {
+                dataTasks: action.data
+            })
+        }
+        return response
+    case DATA_ACTIVE:
         if (state) {
             date = dateDAF(state, state.idTaskActive)
             return Object.assign({}, state, {
@@ -107,7 +134,7 @@ const TasksReducers = (state = initState, action) => {
         if (action.active !== 0) {
             dataLastPrev = state.dataTasks[listJours[action.active - 1]]
         }
-        stock = [dataLastPrev, ...state.dataTasks[listJours[action.active]]]
+        stock = [dataLastPrev[dataLastPrev.length - 1], ...state.dataTasks[listJours[action.active]]]
         return Object.assign({}, state, { dataFilter: stock })
     case ON_CHANGE_DATE_PICKER:
         return Object.assign({}, state, { heureDebut: action.data })

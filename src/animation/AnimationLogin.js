@@ -11,17 +11,17 @@ const { height, width } = Dimensions.get('window')
 class AnimationLogin extends Component {
     constructor (props) {
         super(props)
+        this.marginTop = height * (40 / 100)
         this.state = {
             pan: new Animated.ValueXY({
-                x: this.props.xD,
-                y: this.props.yD
+                x: 0,
+                y: -this.marginTop
             }),
             opacity: new Animated.Value(0),
             isLogin: true,
             border: new Animated.Value(0),
             keyboardOpen: false
         }
-        this.marginTop = height * (40 / 100)
     }
 
     componentDidMount () {
@@ -38,7 +38,7 @@ class AnimationLogin extends Component {
                         tension: 0,
                         toValue: {
                             x: 0,
-                            y: this.props.yD
+                            y: -this.marginTop
                         }
                     }
                 ),
@@ -145,7 +145,6 @@ class AnimationLogin extends Component {
                 </View>
                 <Animated.View
                     style={{
-                        height: 1000,
                         backgroundColor: this.props.backgroundColor,
                         transform: this.state.pan.getTranslateTransform(),
                         borderTopLeftRadius: this.state.border,

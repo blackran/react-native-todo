@@ -49,10 +49,10 @@ class Login extends Component {
         //         color: this.props.color
         //     }
         // )
+
         AsyncStorage.getItem('todoNante').then(data => {
             if (data !== null) {
                 this.setState({ loading: true })
-                console.log(data)
                 const isValid = JSON.parse(data).users.filter(e => {
                     return (e.pseudoUtilisateur === this.state.pseudo &&
                     e.passwordUtilisateur === this.state.pass)
@@ -62,9 +62,12 @@ class Login extends Component {
                         return isValid[0].pseudoUtilisateur === e.pseudoUtilisateur
                     })[0].name)
                     this.props.addUtilisateur(isValid[0])
-                    this.props.putTasks(JSON.parse(data).tasks.filter(e => {
+                    const dat = JSON.parse(data).tasks.filter(e => {
                         return e.pseudoUtilisateur === isValid[0].pseudoUtilisateur
-                    })[0].data)
+                    })[0].data
+
+                    this.props.initDataTasks(dat)
+
                     setTimeout(() => {
                         this.setState({
                             pseudo: '',
@@ -72,7 +75,7 @@ class Login extends Component {
                         })
                         this.props.navigation.navigate('Principal',
                             {
-                                user: isValid[0].pseudoUtilisateur,
+                                user: isValid[0],
                                 color: this.props.color
                             }
                         )
@@ -88,9 +91,10 @@ class Login extends Component {
                     })
                 }
             }
-        }).catch(e => {
-            return Alert.alert(e)
         })
+        // .catch(e => {
+        //     return Alert.alert(e.message)
+        // })
         return null
     }
 
@@ -105,8 +109,6 @@ class Login extends Component {
         return (
             <KeyboardAwareScrollView>
                 <AnimationLogin
-                    delais={2000}
-                    xD={0} yD={-200}
                     styles={{
                         backgroundColor: color.primary.light
                     }}
@@ -196,12 +198,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        addTasks: (data) => {
-            dispatch({
-                type: 'ADD_TASKS',
-                data
-            })
-        },
         addUtilisateur: (data) => {
             dispatch({
                 type: 'ADD_UTILISATEUR',
@@ -220,8 +216,8 @@ const mapDispatchToProps = dispatch => {
                 data
             })
         },
-        putTasks: (data) => {
-            dispatch({ type: 'PUT_TASKS', data })
+        initDataTasks: (data) => {
+            dispatch({ type: 'INIT_DATA_TASKS', data })
         }
     }
 }
