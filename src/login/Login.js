@@ -3,8 +3,7 @@ import {
     View,
     TextInput,
     TouchableWithoutFeedback,
-    Dimensions,
-    Alert
+    Dimensions
 } from 'react-native'
 import {
     Button,
