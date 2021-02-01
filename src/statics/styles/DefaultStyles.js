@@ -6,7 +6,8 @@ export default StyleSheet.create({
     textinput: {
         // backgroundColor: '#575656',
         borderRadius: 25,
-        paddingLeft: 25,
+        paddingLeft: 50,
+        paddingRight: 50,
         fontSize: 20,
         marginBottom: 15,
         width: width,
@@ -26,7 +27,7 @@ export default StyleSheet.create({
         // backgroundColor: '#fffedf',
         borderRadius: 70,
         // height: 70,
-        width: 70,
+        width: 60,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 20

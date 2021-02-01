@@ -3,7 +3,8 @@ import {
     View,
     TextInput,
     TouchableWithoutFeedback,
-    Dimensions
+    Dimensions,
+    TouchableOpacity
 } from 'react-native'
 import {
     Button,
@@ -17,6 +18,13 @@ import Move from '../animation/Move'
 import AnimationLogin from '../animation/AnimationLogin'
 // import AsyncStorage from '@react-native-community/async-storage'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import {
+    faKey,
+    faUser,
+    faEye,
+    faEyeSlash
+} from '@fortawesome/free-solid-svg-icons'
 
 const { height, width } = Dimensions.get('window')
 
@@ -29,10 +37,13 @@ function Login (props) {
     const [state, setStateTrue] = useState({
         pseudo: 'blackran',
         pass: 'password',
+        passF: 'password',
         loading: false,
         error: false,
         delais: 100,
-        isLogin: true
+        isLogin: true,
+        isShow: false,
+        isShowF: false
     })
 
     const setState = (data) => {
@@ -45,6 +56,10 @@ function Login (props) {
 
     const OnChangePass = (e) => {
         setState({ pass: e })
+    }
+
+    const OnChangePassF = (e) => {
+        setState({ passF: e })
     }
 
     React.useEffect(() => {
@@ -75,7 +90,7 @@ function Login (props) {
                 })
             }
 
-            if (!state.isLogin) {
+            if (!state.isLogin && state.pass !== state.passF) {
                 dispatch({
                     type: 'ADD_COLOR',
                     data: {
@@ -142,7 +157,6 @@ function Login (props) {
                 })
 
                 if (dat) {
-                    console.log(dat.data)
                     dispatch({ type: 'INIT_DATA_TASKS', data: dat.data })
                 }
 
@@ -176,7 +190,7 @@ function Login (props) {
     }
 
     const OnClickSign = () => {
-        setState({ isLogin: !state.isLogin })
+        setState({ isLogin: !state.isLogin, error: false })
         return null
     }
 
@@ -203,7 +217,13 @@ function Login (props) {
                         }}>
                         {state.error ? 'pseudo ou password incorrect' : ''}
                     </Text>
-                    <Move delais={40} xD={0} yD={-width}>
+                    <Move delais={1000} xD={-width} yD={0} change={state.isLogin}>
+                        <FontAwesomeIcon
+                            icon={faUser}
+                            color={'black'}
+                            size={20}
+                            style={{ position: 'absolute', top: 15, left: 18 }}
+                        />
                         <TextInput
                             placeholder='Anarana'
                             onChangeText={OnChangeLogin}
@@ -216,7 +236,13 @@ function Login (props) {
                             value={state.pseudo}
                         />
                     </Move>
-                    <Move delais={40} xD={0} yD={width}>
+                    <Move delais={1000} xD={width / 2} yD={0} change={state.isLogin}>
+                        <FontAwesomeIcon
+                            icon={faKey}
+                            color={'black'}
+                            size={20}
+                            style={{ position: 'absolute', top: 15, left: 18 }}
+                        />
                         <TextInput
                             placeholder='Famantarana'
                             onChangeText={OnChangePass}
@@ -227,12 +253,55 @@ function Login (props) {
                                 color: color.activeColor.fontColor.dark,
                                 borderColor: color.activeColor.fontColor.dark
                             }}
-                            secureTextEntry={true}
+                            secureTextEntry={!state.isShow}
                             onSubmitEditing={() => OnSubmit()}
                         />
+                        <TouchableOpacity
+                            onPress={() => setState({ isShow: !state.isShow }) }
+                            style={{ position: 'absolute', right: 20, top: 10 }}
+                        >
+                            <FontAwesomeIcon
+                                icon={state.isShow ? faEye : faEyeSlash}
+                                color={'black'}
+                                size={30}
+                            />
+                        </TouchableOpacity>
                     </Move>
+                    { !state.isLogin &&
+                    <Move delais={1000} xD={width / 2} yD={0} change={state.isLogin}>
+                        <FontAwesomeIcon
+                            icon={faKey}
+                            color={'black'}
+                            size={20}
+                            style={{ position: 'absolute', top: 15, left: 18 }}
+                        />
+                        <TextInput
+                            placeholder='Fanamarinana'
+                            onChangeText={OnChangePassF}
+                            value={state.passF}
+                            style={{
+                                ...DefaultStyles.textinput,
+                                // backgroundColor: color.activeColor.primary.default,
+                                color: color.activeColor.fontColor.dark,
+                                borderColor: color.activeColor.fontColor.dark
+                            }}
+                            secureTextEntry={!state.isShowF}
+                            onSubmitEditing={() => OnSubmit()}
+                        />
+                        <TouchableOpacity
+                            onPress={() => setState({ isShowF: !state.isShowF }) }
+                            style={{ position: 'absolute', right: 20, top: 10 }}
+                        >
+                            <FontAwesomeIcon
+                                icon={state.isShowF ? faEye : faEyeSlash}
+                                color={'black'}
+                                size={30}
+                            />
+                        </TouchableOpacity>
+                    </Move>
+                    }
 
-                    <Move delais={80} xD={0} yD={height}>
+                    <Move delais={1000} xD={0} yD={height / 2} change={state.isLogin}>
                         <Button
                             loading={state.loading}
                             buttonStyle={{
@@ -244,7 +313,7 @@ function Login (props) {
                             title={state.isLogin ? ' HIDITRA' : 'TAHIRIZO'}
                         />
                     </Move>
-                    <Move delais={300} xD={0} yD={height}>
+                    <Move delais={3000} xD={0} yD={height / 2} change={state.isLogin}>
                         <TouchableWithoutFeedback
                             onPress={() => OnClickSign()}
                         >

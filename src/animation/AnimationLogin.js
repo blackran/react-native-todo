@@ -10,7 +10,7 @@ const { height, width } = Dimensions.get('window')
 class AnimationLogin extends Component {
     constructor (props) {
         super(props)
-        this.marginTop = height * (40 / 100)
+        this.marginTop = height * (35 / 100)
         this.state = {
             pan: new Animated.ValueXY({
                 x: 0,
@@ -139,8 +139,8 @@ class AnimationLogin extends Component {
                         <Image
                             source={this.state.isLogin ? login : sign}
                             style={{
-                                width: 70,
-                                height: 200
+                                width: 60,
+                                height: 180
                             }}
                             transition={true}
                         />

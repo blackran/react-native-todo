@@ -1,7 +1,14 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, Text, TextInput, TouchableWithoutFeedback } from 'react-native'
+import {
+    View,
+    StyleSheet,
+    Text,
+    TextInput
+    // TouchableWithoutFeedback
+} from 'react-native'
 import { Button, Icon } from 'react-native-elements'
 import { connect } from 'react-redux'
+import DatePicker from 'react-native-datepicker'
 
 class Displays extends Component {
     constructor (props) {
@@ -30,7 +37,8 @@ class Displays extends Component {
             contentTasks,
             heureDebut,
             pseudoUtilisateur,
-            edit: this.props.edit
+            edit: this.props.edit,
+            isDatePickerVisible: false
         })
     }
 
@@ -72,6 +80,21 @@ class Displays extends Component {
         return listJours.indexOf(this.props.days)
     }
 
+    //         <TouchableWithoutFeedback
+    //     onPress={() => this.props.OnFocusHeureDebut(heureDebut)}
+    // >
+    //     <Text style={{
+    //         ...styles.heures,
+    //         backgroundColor: color.activeColor.primary.light + '33',
+    //         padding: 2,
+    //         color: color.activeColor.fontColor.light,
+    //         textAlign: 'center'
+    //     }}
+    //
+    //     >{this.props.task.heureDebut}</Text>
+    // </TouchableWithoutFeedback>
+    //
+
     render () {
         const { color, days } = this.props
         const { idTasks, titleTasks, contentTasks, heureDebut, edit, pseudoUtilisateur } = this.state
@@ -89,22 +112,24 @@ class Displays extends Component {
                         edit ? <View>
                             <TextInput
                                 style={{
-                                    backgroundColor: color.activeColor.primary.light + '33',
+                                    backgroundColor: color.activeColor.primary.dark + '33',
                                     padding: 2,
                                     margin: 2,
-                                    color: color.activeColor.fontColor.light
+                                    color: color.activeColor.fontColor.dark
                                 }}
+                                selectionColor={color.activeColor.fontColor.dark}
                                 placeholder='lohanteny'
                                 onChangeText={this.OnChangeLohanteny.bind(this)}
                                 value={titleTasks}
                             />
                             <TextInput
                                 style={{
-                                    backgroundColor: color.activeColor.primary.light + '33',
+                                    backgroundColor: color.activeColor.primary.dark + '33',
                                     padding: 2,
                                     margin: 2,
-                                    color: color.activeColor.fontColor.light
+                                    color: color.activeColor.fontColor.dark
                                 }}
+                                selectionColor={color.activeColor.fontColor.dark}
                                 multiline={true}
                                 numberOfLines={2}
                                 row={3}
@@ -116,11 +141,11 @@ class Displays extends Component {
                             : <View>
                                 <Text style={{
                                     ...styles.title,
-                                    color: color.activeColor.fontColor.light + 'aa',
+                                    color: color.activeColor.fontColor.dark + 'aa',
                                     fontSize: 17
                                 }}>{titleTasks}</Text>
                                 <Text style={{
-                                    color: color.activeColor.fontColor.light + '55',
+                                    color: color.activeColor.fontColor.dark + '55',
                                     fontSize: 13
                                 }}
                                 >{this.limiterWord(contentTasks, 2)}</Text>
@@ -133,22 +158,39 @@ class Displays extends Component {
                 }}>
                     {
                         edit
-                            ? <TouchableWithoutFeedback
-                                onPress={() => this.props.OnFocusHeureDebut(heureDebut)}
-                            >
-                                <Text style={{
-                                    ...styles.heures,
-                                    backgroundColor: color.activeColor.primary.light + '33',
-                                    padding: 2,
-                                    color: color.activeColor.fontColor.light,
-                                    textAlign: 'center'
+                            ? <DatePicker
+                                style={{ width: 100 }}
+                                date={this.state.heureDebut}
+                                is24Hour={true}
+                                mode="time"
+                                placeholder="select date"
+                                format="hh:mm"
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                showIcon={false}
+                                customStyles={{
+                                    // dateIcon: {
+                                    //     position: 'absolute',
+                                    //     left: 0,
+                                    //     top: 4,
+                                    //     marginLeft: 0
+                                    // },
+                                    dateInput: {
+                                        marginRight: 10,
+                                        backgroundColor: color.activeColor.primary.dark + '33',
+                                        padding: 2,
+                                        margin: 2,
+                                        color: color.activeColor.fontColor.dark,
+                                        borderWidth: 0,
+                                        height: 33
+                                        // marginLeft: 36
+                                    }
                                 }}
-
-                                >{this.props.task.heureDebut}</Text>
-                            </TouchableWithoutFeedback>
+                                onDateChange={(date) => { this.setState({ heureDebut: date }) }}
+                            />
                             : <Text style={{
                                 ...styles.heures,
-                                color: color.activeColor.fontColor.light + 'aa'
+                                color: color.activeColor.fontColor.dark + 'aa'
                             }}>{heureDebut}</Text>
                     }
 
@@ -235,8 +277,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-start',
         // margin: 5,
-        padding: 10
-        // borderBottomWidth: 1
+        padding: 10,
+        borderBottomWidth: 1
     },
     title: {
         fontWeight: 'bold'

@@ -67,7 +67,7 @@ class Tasks extends Component {
                     text: 'Manaiky',
                     onPress: () => {
                         this.props.putAllData(
-                            InverseLoopObject(JSON.parse(JSON.stringify(this.state.data))), 
+                            InverseLoopObject(JSON.parse(JSON.stringify(this.state.data))),
                             this.props.utilisateur.connecterUtilisateur
                         )
                     }
@@ -206,7 +206,9 @@ class Tasks extends Component {
     render () {
         const { color } = this.props
         return (
-            <ThemeProvider theme={theme}>
+            <ThemeProvider
+                ThemeProvider={theme}
+            >
                 <View style={{
                     height: height,
                     justifyContent: 'flex-end'
@@ -260,13 +262,13 @@ class Tasks extends Component {
                     <ScrollView
                         style={{
                             height: height,
-                            backgroundColor: color.activeColor.primary.default,
+                            // backgroundColor: color.activeColor.primary.default,
                             flexDirection: 'column'
                         }}
                     >
                         <Text style={{
                             ...styles.title,
-                            color: color.activeColor.fontColor.light
+                            color: color.activeColor.fontColor.dark
                         }}>MIVERIMBERINA</Text>
                         <View style={{
                             ...styles.block,
@@ -312,7 +314,7 @@ class Tasks extends Component {
                                                 name='add'
                                                 size={25}
                                                 type='MaterialIcons'
-                                                color='white'
+                                                color={color.activeColor.fontColor.dark}
                                             />
                                         }
                                         // buttonStyle={{
@@ -322,9 +324,9 @@ class Tasks extends Component {
                                             marginTop: 10
                                         }}
                                         titleStyle={{
-                                            color: color.activeColor.fontColor.light
+                                            color: color.activeColor.fontColor.dark
                                         }}
-                                        color={color.activeColor.fontColor.light}
+                                        color={color.activeColor.fontColor.dark}
                                         type='clear'
                                         title='AMPIANA'/>
                             }
@@ -333,7 +335,7 @@ class Tasks extends Component {
                         <View style={styles.block}>
                             <Text style={{
                                 ...styles.title,
-                                color: color.activeColor.fontColor.light
+                                color: color.activeColor.fontColor.dark
                             }}>TSY MIVERIMBERINA</Text>
                             {
                                 Object.entries(this.state.data.rest).map(([key, subject]) => {
@@ -347,7 +349,7 @@ class Tasks extends Component {
                                         >
                                             <Text
                                                 style={{
-                                                    color: color.activeColor.fontColor.light + 'ee',
+                                                    color: color.activeColor.fontColor.dark + 'ee',
                                                     fontWeight: 'bold',
                                                     fontSize: 18
                                                 }}
@@ -355,7 +357,7 @@ class Tasks extends Component {
                                         </View>
                                         <View style={{
                                             ...styles.block,
-                                            backgroundColor: color.activeColor.primary.dark + '22'
+                                            // backgroundColor: color.activeColor.primary.dark + '22'
                                         }}>
                                             {
                                                 subject.map(e => {
@@ -387,23 +389,24 @@ class Tasks extends Component {
                                                         OnPressSave={this.OnPressSave}
                                                         edit={true}
                                                         OnFocusHeureDebut={this.OnFocusHeureDebut}
-                                                    /> : <Button
+                                                    />
+                                                    : <Button
                                                         onPress={() => this.setState({ showEdit: key })}
                                                         icon={
                                                             <Icon
                                                                 name='add'
                                                                 size={25}
                                                                 type='MaterialIcons'
-                                                                color='white'
+                                                                color={color.activeColor.fontColor.dark}
                                                             />
                                                         }
                                                         // buttonStyle={{
                                                         //     backgroundColor: color.primary.dark + '44'
                                                         // }}
                                                         titleStyle={{
-                                                            color: color.activeColor.fontColor.light
+                                                            color: color.activeColor.fontColor.dark
                                                         }}
-                                                        color={color.activeColor.fontColor.light}
+                                                        color={color.activeColor.fontColor.dark}
                                                         title='AMPIANA'
                                                         type='clear'
                                                     />
@@ -427,7 +430,7 @@ class Tasks extends Component {
                         }}
                         ManindryAjanona={this.manindryAjanona}
                         ManindryTazomina={this.ManindryTazomina}
-                        fontColor={color.activeColor.fontColor.light}
+                        fontColor={color.activeColor.fontColor.dark}
                         default={this.state.default}
                         show={this.state.show}
                         // show={true}

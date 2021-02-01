@@ -2,10 +2,6 @@ import React from 'react'
 import { createAppContainer, createSwitchNavigator } from 'react-navigation'
 // import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
 import { createDrawerNavigator } from 'react-navigation-drawer'
-// import { createStackNavigator   } from 'react-navigation-stack';
-// import Home from './components/Home/Home'
-// import Atouts from './components/Atouts/Atouts'
-// import Help from './components/Help/Help'
 import me from '../../../statics/images/login-image.jpg'
 import { View, Dimensions, Image, Text, TouchableOpacity, Alert } from 'react-native'
 import { faArrowLeft, faHome, faSignOutAlt, faCog, faTasks } from '@fortawesome/free-solid-svg-icons'
@@ -14,9 +10,6 @@ import Principals from '../../Principals'
 import Move from '../../../animation/Move'
 import Setting from '../../../setting/Setting'
 
-// const AuthStack = createStackNavigator({
-//     LoginScreen: Atouts
-// });
 import { connect } from 'react-redux'
 
 const AppStack1 = createDrawerNavigator({
@@ -51,26 +44,29 @@ const AppStack1 = createDrawerNavigator({
             style={{
                 flex: 1,
                 // backgroundColor: props.navigation.state.params.color.primary.default
-                backgroundColor: color !== undefined ? color.activeColor.primary.default : '#0a896b'
+                backgroundColor: color ? color.activeColor.primary.default : 'white'
             }}
         >
-            <Text style={{
-                textAlign: 'right',
-                margin: 5
-            }}>
-                <FontAwesomeIcon icon={faArrowLeft} color='#888' size={30}
-                    onPress={() => props.navigation.closeDrawer()}/>
-            </Text>
             <View style={{
-                height: 150,
+                height: 200,
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                borderBottomWidth: 1,
+                borderColor: color ? color.activeColor.primary.dark : 'white',
+                marginBottom: 20
             }}>
                 <Image source={me} style={{
-                    height: 120,
-                    width: 120,
-                    borderRadius: 120
+                    height: 100,
+                    width: 100,
+                    borderRadius: 100
                 }}></Image>
+                <Move delais={100} xD={-100} yD={0}>
+                    <Text style={{
+                        margin: 16,
+                        fontWeight: 'bold',
+                        color: color ? color.activeColor.fontColor.light : '#ffb21d'
+                    }}>Blackran</Text>
+                </Move>
             </View>
             <View
                 style={{
@@ -82,26 +78,15 @@ const AppStack1 = createDrawerNavigator({
             >
                 {/* <DrawerItems {...props} /> */}
                 <View>
-                    <Move delais={100} xD={-100} yD={0}>
-                        <Text style={{
-                            margin: 16,
-                            fontWeight: 'bold',
-                            color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
-                        }}>Nom: Blackran</Text>
-                    </Move>
-                    <Move delais={200} xD={-200} yD={0}>
-                        <Text style={{
-                            margin: 16,
-                            fontWeight: 'bold',
-                            color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
-                        }}>Password: password</Text>
-                    </Move>
-                </View>
-                <View>
                     <TouchableOpacity
                         onPress={() => {
                             props.navigation.closeDrawer()
-                            props.navigation.navigate('Principal')
+                            props.navigation.navigate('Principal',
+                                {
+                                    color: color
+                                }
+
+                            )
                         }}>
                         <View style={{
                             flexDirection: 'row',
@@ -111,14 +96,14 @@ const AppStack1 = createDrawerNavigator({
                             <FontAwesomeIcon
                                 icon={faTasks}
                                 color={
-                                    color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                                    color ? color.activeColor.fontColor.light : '#ffb21d'
                                 }
                                 size={24}
                             />
                             <Text style={{
                                 margin: 16,
                                 fontWeight: 'bold',
-                                color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                                color: color ? color.activeColor.fontColor.light : '#ffb21d'
                             }}>Tasks</Text>
                         </View>
                     </TouchableOpacity>
@@ -127,7 +112,11 @@ const AppStack1 = createDrawerNavigator({
                     <TouchableOpacity
                         onPress={() => {
                             props.navigation.closeDrawer()
-                            props.navigation.navigate('Setting')
+                            props.navigation.navigate('Setting',
+                                {
+                                    color: color
+                                }
+                            )
                         }}>
                         <View style={{
                             flexDirection: 'row',
@@ -136,13 +125,13 @@ const AppStack1 = createDrawerNavigator({
                         }}>
                             <FontAwesomeIcon
                                 icon={faCog}
-                                color={ color !== undefined ? color.activeColor.fontColor.light : '#ffb21d' }
+                                color={ color ? color.activeColor.fontColor.light : '#ffb21d' }
                                 size={24}
                             />
                             <Text style={{
                                 margin: 16,
                                 fontWeight: 'bold',
-                                color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                                color: color ? color.activeColor.fontColor.light : '#ffb21d'
                             }}>Configuration</Text>
                         </View>
                     </TouchableOpacity>
@@ -173,11 +162,11 @@ const AppStack1 = createDrawerNavigator({
                             marginLeft: 20
                         }}>
                             <FontAwesomeIcon
-                                icon={faSignOutAlt} color={ color !== undefined ? color.activeColor.fontColor.light : '#ffb21d' } size={24}/>
+                                icon={faSignOutAlt} color={ color ? color.activeColor.fontColor.light : '#ffb21d' } size={24}/>
                             <Text style={{
                                 margin: 16,
                                 fontWeight: 'bold',
-                                color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                                color: color ? color.activeColor.fontColor.light : '#ffb21d'
                             }}>Deconection</Text>
                         </View>
                     </TouchableOpacity>
@@ -219,7 +208,7 @@ const AppStack2 = createDrawerNavigator({
             style={{
                 flex: 1,
                 // backgroundColor: props.navigation.state.params.color.primary.default
-                backgroundColor: color !== undefined ? color.activeColor.primary.default : '#0a896b'
+                backgroundColor: color ? color.activeColor.primary.default : '#0a896b'
             }}
         >
             <Text style={{
@@ -254,14 +243,14 @@ const AppStack2 = createDrawerNavigator({
                         <Text style={{
                             margin: 16,
                             fontWeight: 'bold',
-                            color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                            color: color ? color.activeColor.fontColor.light : '#ffb21d'
                         }}>Nom: Blackran</Text>
                     </Move>
                     <Move delais={200} xD={-200} yD={0}>
                         <Text style={{
                             margin: 16,
                             fontWeight: 'bold',
-                            color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                            color: color ? color.activeColor.fontColor.light : '#ffb21d'
                         }}>Password: password</Text>
                     </Move>
                 </View>
@@ -279,14 +268,14 @@ const AppStack2 = createDrawerNavigator({
                             <FontAwesomeIcon
                                 icon={faTasks}
                                 color={
-                                    color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                                    color ? color.activeColor.fontColor.light : '#ffb21d'
                                 }
                                 size={24}
                             />
                             <Text style={{
                                 margin: 16,
                                 fontWeight: 'bold',
-                                color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                                color: color ? color.activeColor.fontColor.light : '#ffb21d'
                             }}>Tasks</Text>
                         </View>
                     </TouchableOpacity>
@@ -302,11 +291,11 @@ const AppStack2 = createDrawerNavigator({
                             alignItems: 'center',
                             marginLeft: 20
                         }}>
-                            <FontAwesomeIcon icon={faCog} color={ color !== undefined ? color.activeColor.fontColor.light : '#ffb21d' } size={24}/>
+                            <FontAwesomeIcon icon={faCog} color={ color ? color.activeColor.fontColor.light : '#ffb21d' } size={24}/>
                             <Text style={{
                                 margin: 16,
                                 fontWeight: 'bold',
-                                color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                                color: color ? color.activeColor.fontColor.light : '#ffb21d'
                             }}>Configuration</Text>
                         </View>
                     </TouchableOpacity>
@@ -336,11 +325,11 @@ const AppStack2 = createDrawerNavigator({
                             alignItems: 'center',
                             marginLeft: 20
                         }}>
-                            <FontAwesomeIcon icon={faSignOutAlt} color={ color !== undefined ? color.activeColor.fontColor.light : '#ffb21d' } size={24}/>
+                            <FontAwesomeIcon icon={faSignOutAlt} color={ color ? color.activeColor.fontColor.light : '#ffb21d' } size={24}/>
                             <Text style={{
                                 margin: 16,
                                 fontWeight: 'bold',
-                                color: color !== undefined ? color.activeColor.fontColor.light : '#ffb21d'
+                                color: color ? color.activeColor.fontColor.light : '#ffb21d'
                             }}>Deconection</Text>
                         </View>
                     </TouchableOpacity>

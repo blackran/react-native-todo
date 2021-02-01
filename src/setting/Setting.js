@@ -45,7 +45,7 @@ const MainNavigator = createMaterialTopTabNavigator(
             showIcon: true,
             showLabel: false,
             activeTintColor: '#006c99',
-            inactiveTintColor: '#999',
+            inactiveTintColor: '#a3c4d2',
             labelStyle: {
                 fontSize: 15
             },
@@ -53,9 +53,16 @@ const MainNavigator = createMaterialTopTabNavigator(
                 backgroundColor: 'transparent'
             },
             style: {
-                backgroundColor: 'gray',
-                borderTopWidth: 1,
-                borderTopColor: '#bbb'
+                backgroundColor: 'white',
+                shadowColor: '#000',
+                shadowOffset: {
+                    width: 0,
+                    height: 1
+                },
+                shadowOpacity: 0.22,
+                shadowRadius: 2.22,
+                elevation: 3
+
             // position: 'absolute',
             // left: 0,
             // right: 0,

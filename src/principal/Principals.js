@@ -32,7 +32,6 @@ function Principals (props) {
         page: 0,
         now: new Date().getDay(),
         fontSize: [12, 12, 12, 12, 12, 12, 12],
-        stockInterval: null,
         lengthTaskFinish: 0
     })
 
@@ -59,13 +58,6 @@ function Principals (props) {
         const date = new Date()
         return setDouble(date.getHours()) + ':' + setDouble(date.getMinutes()) + ':' + setDouble(date.getSeconds())
     }, [])
-
-    const chonoHorloge = useCallback(() => {
-        const stock = setInterval(() => {
-            setDateNow(dateNowToString())
-        }, 1000)
-        setState({ stockInterval: stock })
-    }, [dateNowToString, setState])
 
     const lengthTaskFinish = useCallback(() => {
         if (tasks.dataFilter.length > 0) {
@@ -97,8 +89,17 @@ function Principals (props) {
     }, [ props.dataTasks]) // eslint-disable-line
 
     useEffect(() => {
-        chonoHorloge()
-        return () => clearInterval(state.stockInterval)
+        props.navigation.navigate('Principal',
+            {
+                user: utilisateur.connecterUtilisateur,
+                color: color
+            }
+        )
+
+        const stock = setInterval(() => {
+            setDateNow(dateNowToString())
+        }, 1000)
+        return () => clearInterval(stock)
     }, []) // eslint-disable-line
 
     useEffect(() => {
@@ -300,9 +301,6 @@ function Principals (props) {
                                     fontSize: 12
                                 }}> </Text>
                         </View>
-                        {
-                            // console.log(jours)
-                        }
 
                         {
                             jours.map((e, index) => {
