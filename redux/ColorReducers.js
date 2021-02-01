@@ -1,4 +1,4 @@
-import { CHANGE_COLOR } from '../actions/ColorActions'
+import { CHANGE_COLOR, ADD_COLOR } from './actions/ColorActions'
 import invert from 'invert-color'
 
 const listColor = {
@@ -49,13 +49,21 @@ const listColor = {
 const nameColor = 'gray'
 
 const initState = {
-    ...listColor[nameColor]
+    activeColor: listColor[nameColor],
+    dataColor: [
+        {
+            nameColor: 'gray',
+            pseudoUtilisateur: 'blackran'
+        }
+    ]
 }
 
 const ColorReducers = (state = initState, action) => {
     switch (action.type) {
     case CHANGE_COLOR:
-        return Object.assign({}, state, listColor[action.data])
+        return Object.assign({}, state, { activeColor: listColor[action.data] })
+    case ADD_COLOR:
+        return Object.assign({}, state, { dataColor: [...state.dataColor, listColor[action.data]] })
     default:
         return state
     }

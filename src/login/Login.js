@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import {
     View,
     TextInput,
@@ -12,213 +12,260 @@ import {
 } from 'react-native-elements'
 
 import DefaultStyles from '../statics/styles/DefaultStyles'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Move from '../animation/Move'
 import AnimationLogin from '../animation/AnimationLogin'
-import AsyncStorage from '@react-native-community/async-storage'
+// import AsyncStorage from '@react-native-community/async-storage'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const { height, width } = Dimensions.get('window')
 
-class Login extends Component {
-    constructor (props) {
-        super(props)
-        this.state = {
-            pseudo: 'blackran',
-            pass: 'iloveyou',
-            loading: false,
-            error: false,
-            delais: 100,
-            isLogin: true
-        }
+function Login (props) {
+    const dispatch = useDispatch()
+    const { color, utilisateur, tasks } = useSelector(state => {
+        return { color: state.Color, utilisateur: state.Utilisateur, tasks: state.Tasks }
+    })
+
+    const [state, setStateTrue] = useState({
+        pseudo: 'blackran',
+        pass: 'password',
+        loading: false,
+        error: false,
+        delais: 100,
+        isLogin: true
+    })
+
+    const setState = (data) => {
+        setStateTrue(Object.assign({}, state, data))
     }
 
-    OnChangeLogin (e) {
-        this.setState({ pseudo: e })
+    const OnChangeLogin = (e) => {
+        setState({ pseudo: e })
     }
 
-    OnChangePass (e) {
-        this.setState({ pass: e })
+    const OnChangePass = (e) => {
+        setState({ pass: e })
     }
 
-    OnSubmit = () => {
-        // this.props.navigation.navigate('Principal',
+    React.useEffect(() => {
+        dispatch({
+            type: 'CHANGE_COLOR',
+            data: 'gray'
+        })
+    }, [dispatch])
+
+    const OnSubmit = () => {
+        // props.navigation.navigate('Principal',
         //     {
         //         user: 'blackran',
-        //         color: this.props.color
+        //         color
         //     }
         // )
 
-        AsyncStorage.getItem('todoNante').then(data => {
-            if (data !== null) {
-                this.setState({ loading: true })
-                const isValid = JSON.parse(data).users.filter(e => {
-                    return (e.pseudoUtilisateur === this.state.pseudo &&
-                    e.passwordUtilisateur === this.state.pass)
+        if (utilisateur) {
+            setState({ loading: true })
+            const isValid = utilisateur.dataUtilisateur.find(e => {
+                return e.pseudoUtilisateur === state.pseudo
+            })
+
+            if (!state.isLogin && isValid) {
+                return setState({
+                    loading: false,
+                    error: true
                 })
-                if (isValid.length > 0) {
-                    this.props.changeColor(JSON.parse(data).colors.filter(e => {
-                        return isValid[0].pseudoUtilisateur === e.pseudoUtilisateur
-                    })[0].name)
-                    this.props.addUtilisateur(isValid[0])
-                    const dat = JSON.parse(data).tasks.filter(e => {
-                        return e.pseudoUtilisateur === isValid[0].pseudoUtilisateur
-                    })[0].data
-
-                    this.props.initDataTasks(dat)
-
-                    setTimeout(() => {
-                        this.setState({
-                            pseudo: '',
-                            pass: ''
-                        })
-                        this.props.navigation.navigate('Principal',
-                            {
-                                user: isValid[0],
-                                color: this.props.color
-                            }
-                        )
-                        this.setState({
-                            loading: false,
-                            error: false
-                        })
-                    }, 2000)
-                } else {
-                    this.setState({
-                        loading: false,
-                        error: true
-                    })
-                }
             }
-        })
+
+            if (!state.isLogin) {
+                dispatch({
+                    type: 'ADD_COLOR',
+                    data: {
+                        nameColor: 'gray',
+                        pseudoUtilisateur: state.pseudo
+                    }
+                })
+                dispatch({
+                    type: 'ADD_UTILISATEUR',
+                    data: {
+                        pseudoUtilisateur: state.pseudo,
+                        imageUtilisateur: '',
+                        passwordUtilisateur: state.password
+                    }
+                })
+                const dat = {
+                    pseudoUtilisateur: state.pseudo,
+                    data: {
+                        Alahady: [],
+                        Alatsinainy: [],
+                        Talata: [],
+                        Alarobia: [],
+                        Alakamisy: [],
+                        Zoma: [],
+                        Sabotsy: []
+                    }
+                }
+
+                if (dat) {
+                    dispatch({ type: 'ADD_DATA_TASKS', data: dat })
+                }
+
+                setTimeout(() => {
+                    setState({
+                        pseudo: '',
+                        pass: ''
+                    })
+                    props.navigation.navigate('Principal',
+                        {
+                            user: isValid,
+                            color: color
+                        }
+                    )
+                    setState({
+                        loading: false,
+                        error: false
+                    })
+                }, 2000)
+            }
+
+            if (isValid && (isValid.passwordUtilisateur === state.pass)) {
+                dispatch({
+                    type: 'CHANGE_COLOR',
+                    data: color.dataColor.find(e => {
+                        return isValid.pseudoUtilisateur === e.pseudoUtilisateur
+                    }).nameColor
+                })
+                dispatch({
+                    type: 'INIT_UTILISATEUR',
+                    data: isValid
+                })
+                const dat = tasks.dataTasks && tasks.dataTasks.find(e => {
+                    return e.pseudoUtilisateur === isValid.pseudoUtilisateur
+                })
+
+                if (dat) {
+                    console.log(dat.data)
+                    dispatch({ type: 'INIT_DATA_TASKS', data: dat.data })
+                }
+
+                setTimeout(() => {
+                    setState({
+                        pseudo: '',
+                        pass: ''
+                    })
+                    props.navigation.navigate('Principal',
+                        {
+                            user: isValid,
+                            color: color
+                        }
+                    )
+                    setState({
+                        loading: false,
+                        error: false
+                    })
+                }, 2000)
+            } else {
+                setState({
+                    loading: false,
+                    error: true
+                })
+            }
+        }
         // .catch(e => {
         //     return Alert.alert(e.message)
         // })
         return null
     }
 
-    OnClickSign () {
-        this.setState({ isLogin: !this.state.isLogin })
-        // this.props.navigation.navigate('Sign')
+    const OnClickSign = () => {
+        setState({ isLogin: !state.isLogin })
         return null
     }
 
-    render () {
-        const { color } = this.props
-        return (
-            <KeyboardAwareScrollView>
-                <AnimationLogin
-                    styles={{
-                        backgroundColor: color.primary.light
-                    }}
-                    isLogin={this.state.isLogin}
-                    headerBackgroundColor={'white'}
-                    backgroundColor={'green'}
-                >
-                    <View>
-                        <Text
+    return (
+        <KeyboardAwareScrollView
+            onKeyboardWillShow={(frames) => {
+                console.log('Keyboard event', frames)
+            }}
+        >
+            <AnimationLogin
+                styles={{
+                    backgroundColor: color.activeColor.primary.light
+                }}
+                isLogin={state.isLogin}
+                headerBackgroundColor={'white'}
+                backgroundColor={color.activeColor.primary.light}
+            >
+                <View>
+                    <Text
+                        style={{
+                            fontSize: 12,
+                            color: 'red',
+                            textAlign: 'center'
+                        }}>
+                        {state.error ? 'pseudo ou password incorrect' : ''}
+                    </Text>
+                    <Move delais={40} xD={0} yD={-width}>
+                        <TextInput
+                            placeholder='Anarana'
+                            onChangeText={OnChangeLogin}
                             style={{
-                                fontSize: 12,
-                                color: 'red',
-                                textAlign: 'center'
-                            }}>
-                            {this.state.error ? 'pseudo ou password incorrect' : ''}
-                        </Text>
-                        <Move delais={40} xD={0} yD={-width}>
-                            <TextInput
-                                placeholder='Anarana'
-                                onChangeText={this.OnChangeLogin.bind(this)}
-                                style={{
-                                    ...DefaultStyles.textinput,
-                                    backgroundColor: '#fff',
-                                    color: color.fontColor.default
-                                }}
-                                value={this.state.pseudo}
-                            />
-                        </Move>
-                        <Move delais={40} xD={0} yD={width}>
-                            <TextInput
-                                placeholder='Famantarana'
-                                onChangeText={this.OnChangePass.bind(this)}
-                                value={this.state.pass}
-                                style={{
-                                    ...DefaultStyles.textinput,
-                                    backgroundColor: '#fff',
-                                    color: color.fontColor.default
-                                }}
-                                secureTextEntry={true}
-                                onSubmitEditing={() => this.OnSubmit()}
-                            />
-                        </Move>
+                                ...DefaultStyles.textinput,
+                                // backgroundColor: color.activeColor.primary.default,
+                                color: color.activeColor.fontColor.dark,
+                                borderColor: color.activeColor.fontColor.dark
+                            }}
+                            value={state.pseudo}
+                        />
+                    </Move>
+                    <Move delais={40} xD={0} yD={width}>
+                        <TextInput
+                            placeholder='Famantarana'
+                            onChangeText={OnChangePass}
+                            value={state.pass}
+                            style={{
+                                ...DefaultStyles.textinput,
+                                // backgroundColor: color.activeColor.primary.default,
+                                color: color.activeColor.fontColor.dark,
+                                borderColor: color.activeColor.fontColor.dark
+                            }}
+                            secureTextEntry={true}
+                            onSubmitEditing={() => OnSubmit()}
+                        />
+                    </Move>
 
-                        <Move delais={80} xD={0} yD={height}>
-                            <Button
-                                loading={this.state.loading}
-                                buttonStyle={{
-                                    ...DefaultStyles.buttonReactNativeElement,
-                                    backgroundColor: color.primary.dark
-                                }}
-                                onPress={this.OnSubmit.bind(this)}
-                                title={this.state.isLogin ? ' HIDITRA' : 'TAHIRIZO'}
-                            />
-                        </Move>
-                        <Move delais={300} xD={0} yD={height}>
-                            <TouchableWithoutFeedback
-                                onPress={this.OnClickSign.bind(this)}
-                            >
-                                <View style={{ padding: 10 }}>
-                                    <Text
-                                        style={{
-                                            color: color.primary.default,
-                                            fontSize: 0.05 * width,
-                                            textAlign: 'center'
-                                        }}>
-                                        {
-                                            this.state.isLogin ? 'Mbola tsy manana' : 'Efa manana'
-                                        }
-                                    </Text>
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </Move>
-                    </View>
-                </AnimationLogin>
-            </KeyboardAwareScrollView>
-        )
-    }
+                    <Move delais={80} xD={0} yD={height}>
+                        <Button
+                            loading={state.loading}
+                            buttonStyle={{
+                                ...DefaultStyles.buttonReactNativeElement,
+                                backgroundColor: color.activeColor.primary.dark
+
+                            }}
+                            onPress={() => OnSubmit()}
+                            title={state.isLogin ? ' HIDITRA' : 'TAHIRIZO'}
+                        />
+                    </Move>
+                    <Move delais={300} xD={0} yD={height}>
+                        <TouchableWithoutFeedback
+                            onPress={() => OnClickSign()}
+                        >
+                            <View style={{ padding: 10 }}>
+                                <Text
+                                    style={{
+                                        color: color.activeColor.primary.dark,
+                                        fontSize: 0.05 * width,
+                                        textAlign: 'center'
+                                    }}>
+                                    {
+                                        state.isLogin ? 'Mbola tsy manana' : 'Efa manana'
+                                    }
+                                </Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </Move>
+                </View>
+            </AnimationLogin>
+        </KeyboardAwareScrollView>
+    )
 }
 
-const mapStateToProps = state => {
-    return {
-        utilisateur: state.Utilisateur,
-        other: state.Other,
-        color: state.Color
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        addUtilisateur: (data) => {
-            dispatch({
-                type: 'ADD_UTILISATEUR',
-                data
-            })
-        },
-        changeShowEdit: (data) => {
-            dispatch({
-                type: 'CHANGE_SHOW_EDIT',
-                data
-            })
-        },
-        changeColor: (data) => {
-            dispatch({
-                type: 'CHANGE_COLOR',
-                data
-            })
-        },
-        initDataTasks: (data) => {
-            dispatch({ type: 'INIT_DATA_TASKS', data })
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
+export default Login

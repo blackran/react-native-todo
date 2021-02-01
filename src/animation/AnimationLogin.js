@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { Animated, Dimensions, View } from 'react-native'
+import { Animated, Dimensions, View, StatusBar, Image } from 'react-native'
 import styles from './statics/styles/Styles'
-import { Image } from 'react-native-elements'
-import sign from './statics/images/sign.png'
-import login from './statics/images/login.png'
-import Scale from './Scale'
+import login from './statics/images/marcus/hiditra.png'
+import sign from './statics/images/marcus/hanamboatra.png'
+// import Scale from './Scale'
 
 const { height, width } = Dimensions.get('window')
 
@@ -121,7 +120,7 @@ class AnimationLogin extends Component {
         return (
             <View
                 style={{
-                    height: height,
+                    height: height - StatusBar.currentHeight,
                     alignItems: 'center',
                     backgroundColor: this.props.headerBackgroundColor
                 }}
@@ -133,23 +132,39 @@ class AnimationLogin extends Component {
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                    <Scale delais={height} styles={styles.containerImageLogin}>
+                    <View
+                        delais={height}
+                        styles={styles.containerImageLogin}
+                    >
                         <Image
                             source={this.state.isLogin ? login : sign}
                             style={{
                                 width: 70,
-                                height: 70
+                                height: 200
                             }}
+                            transition={true}
                         />
-                    </Scale>
+                    </View>
                 </View>
                 <Animated.View
                     style={{
                         backgroundColor: this.props.backgroundColor,
-                        transform: this.state.pan.getTranslateTransform(),
-                        borderTopLeftRadius: this.state.border,
-                        borderTopRightRadius: this.state.border,
+                        // transform: this.state.pan.getTranslateTransform(),
+                        // borderTopLeftRadius: this.state.border,
+                        // borderTopRightRadius: this.state.border,
                         top: this.marginTop,
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+
+                        shadowColor: '#000',
+                        shadowOffset: {
+                            width: 0,
+                            height: 12
+                        },
+                        shadowOpacity: 0.58,
+                        shadowRadius: 16.00,
+
+                        elevation: 24,
                         ...styles.body
                     }}>
                     <View style={{

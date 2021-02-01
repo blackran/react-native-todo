@@ -88,8 +88,6 @@ class Block extends Component {
                         padding: 10,
                         borderRadius: 5,
                         paddingBottom: 15
-                        // boxShadow: '0 3px 5px -1px rgba(0,0,0,0.2), 0 6px 10px 0 rgba(0,0,0,0.14), 0 1px 18px 0 rgba(0,0,0,0.12)',
-                        // transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0'
                     }}>
                     <View style={{ flexDirection: 'row', marginBottom: 5 }}>
                         <View style={{ flexDirection: 'column' }}>

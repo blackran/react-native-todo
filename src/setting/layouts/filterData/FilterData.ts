@@ -19,10 +19,10 @@ interface InterfaceData {
 }
 
 export function loopObject (copyData: object): object {
-    const stockFinish = copyData[listJours[0]].filter(e => {
+    const stockFinish = copyData[listJours[0]] && copyData[listJours[0]].filter(e => {
         const stock = Object.entries(copyData).map(([key, subject]) => {
-            let d = subject
-            let h = e
+            const d = subject
+            const h = e
             h.idTasks = 0
             const w = d.filter(m => {
                 m.idTasks = 0
@@ -33,12 +33,12 @@ export function loopObject (copyData: object): object {
         return stock.indexOf(false) < 0
     })
 
-    let stockRest = JSON.parse(JSON.stringify(copyData))
+    const stockRest = JSON.parse(JSON.stringify(copyData))
     Object.entries(copyData).map(([key, subject]) => {
         let r = subject
         const stock = stockFinish.map(e => {
             r = r.filter(o => {
-                let d = o
+                const d = o
                 d.idTasks = 0
                 // console.log('=================================================================================')
                 // console.log(d, e)
@@ -59,9 +59,9 @@ function convertStringNumber (date) {
 }
 
 export function InverseLoopObject (data: object) {
-    let finish = data['finish']
-    let rest = data['rest']
-    let listTasks = {
+    const finish = data.finish
+    const rest = data.rest
+    const listTasks = {
         Alahady: [],
         Alatsinainy: [],
         Talata: [],
@@ -76,9 +76,9 @@ export function InverseLoopObject (data: object) {
     Object.entries(rest).map((data, i) => {
         // console.log('===============================================================================================')
         // @ts-ignore
-        let subject: Array<InterfaceData> = data[1]
+        const subject: Array<InterfaceData> = data[1]
         for (let j = 0; j < subject.length; j++) {
-            subject[j]['idTasks'] = (oneDay * i) + convertStringNumber(subject[j]['heureDebut'])
+            subject[j].idTasks = (oneDay * i) + convertStringNumber(subject[j].heureDebut)
             listTasks[listJours[i]].push(subject[j])
         }
 
@@ -98,9 +98,9 @@ export function InverseLoopObject (data: object) {
 }
 
 export function setTrueIdTasks (finish: Array<InterfaceData>, rest: object) {
-    let response: object = { finish: [], rest: [] }
+    const response: object = { finish: [], rest: [] }
 
-    let stockRest = {
+    const stockRest = {
         Alahady: [],
         Alatsinainy: [],
         Talata: [],
@@ -110,15 +110,14 @@ export function setTrueIdTasks (finish: Array<InterfaceData>, rest: object) {
         Sabotsy: []
     }
 
-
     const oneDay = 24 * 60 * 60 * 1000
 
     Object.entries(rest).map((data, i) => {
         // console.log('===============================================================================================')
         // @ts-ignore
-        let subject: Array<InterfaceData> = data[1]
+        const subject: Array<InterfaceData> = data[1]
         for (let j = 0; j < subject.length; j++) {
-            subject[j]['idTasks'] = (oneDay * i) + convertStringNumber(subject[j]['heureDebut'])
+            subject[j].idTasks = (oneDay * i) + convertStringNumber(subject[j].heureDebut)
             stockRest[listJours[i]].push(subject[j])
         }
     })
@@ -132,10 +131,10 @@ export function setTrueIdTasks (finish: Array<InterfaceData>, rest: object) {
         subject = order(subject, 'idTasks')
     })
 
-    let stockFinish = order(finish, 'idTasks')
+    const stockFinish = order(finish, 'idTasks')
     //
-    response['finish'] = stockFinish
-    response['rest'] = stockRest
+    response.finish = stockFinish
+    response.rest = stockRest
 
     return response
 }

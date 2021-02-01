@@ -1,21 +1,31 @@
 import { StyleSheet } from 'react-native'
 
 const height = 50
-const width = 300
+const width = 280
 export default StyleSheet.create({
     textinput: {
-        backgroundColor: '#575656',
-        borderRadius: 5,
+        // backgroundColor: '#575656',
+        borderRadius: 25,
         paddingLeft: 25,
         fontSize: 20,
         marginBottom: 15,
         width: width,
-        height: height
+        height: height,
+        borderWidth: 2,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        elevation: 3
+
     },
     containerImage: {
-        backgroundColor: '#fffedf',
+        // backgroundColor: '#fffedf',
         borderRadius: 70,
-        height: 70,
+        // height: 70,
         width: 70,
         justifyContent: 'center',
         alignItems: 'center',
@@ -36,9 +46,19 @@ export default StyleSheet.create({
         padding: 5
     },
     buttonReactNativeElement: {
-        backgroundColor: '#222222',
+        // backgroundColor: '#222222',
         width: width,
         height: height,
-        marginTop: 20
+        borderRadius: 25,
+        marginTop: 20,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        elevation: 3
+
     }
 })

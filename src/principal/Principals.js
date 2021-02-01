@@ -1,86 +1,131 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
     // PanResponder, TouchableHighlight,
     ScrollView,
     View,
     Dimensions,
-    Text
+    Text,
+    TouchableOpacity
 } from 'react-native'
 import styles from './statics/styles/Style'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 // import { Icon } from 'react-native-elements'
-// import axios from 'axios'
-// import Move from '../animation/Move'
 import Block from './layouts/block/Block'
-// import OrderBy from './OrderBy'
-// import MovableView from 'react-native-movable-view'
+
+import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { Avatar } from 'react-native-elements'
+import userDefault from './statics/images/user.png'
+
 const { width } = Dimensions.get('window')
 
-class Principals extends Component {
-    constructor (props) {
-        super(props)
-        this.state = {
-            data: [],
-            searchValue: '',
-            active: new Date().getDay(),
-            page: 0,
-            now: new Date().getDay(),
-            fontSize: [12, 12, 12, 12, 12, 12, 12],
-            date: '00:00:00',
-            stockInterval: null,
-            lengthTaskFinish: 0
+function Principals (props) {
+    const dispatch = useDispatch()
+    const { color, tasks, utilisateur } = useSelector(state => {
+        return { color: state.Color, utilisateur: state.Utilisateur.connecterUtilisateur, tasks: state.Tasks }
+    })
+
+    const [state, setStateTrue] = useState({
+        data: [],
+        searchValue: '',
+        active: new Date().getDay(),
+        page: 0,
+        now: new Date().getDay(),
+        fontSize: [12, 12, 12, 12, 12, 12, 12],
+        stockInterval: null,
+        lengthTaskFinish: 0
+    })
+
+    const [datenow, setDateNow] = useState('00:00:00')
+
+    let listView
+
+    const height = 40
+    const jours = [
+        'Alahady',
+        'Alatsinainy',
+        'Talata',
+        'Alarobia',
+        'Alakamisy',
+        'Zoma',
+        'Sabotsy'
+    ]
+
+    const setState = useCallback((data) => {
+        setStateTrue(Object.assign({}, state, data))
+    }, []) // eslint-disable-line
+
+    const dateNowToString = useCallback(() => {
+        const date = new Date()
+        return setDouble(date.getHours()) + ':' + setDouble(date.getMinutes()) + ':' + setDouble(date.getSeconds())
+    }, [])
+
+    const chonoHorloge = useCallback(() => {
+        const stock = setInterval(() => {
+            setDateNow(dateNowToString())
+        }, 1000)
+        setState({ stockInterval: stock })
+    }, [dateNowToString, setState])
+
+    const lengthTaskFinish = useCallback(() => {
+        if (tasks.dataFilter.length > 0) {
+            const stock = tasks.dataFilter.filter(e => {
+                if (e) {
+                    if (state.active < state.now) {
+                        return true
+                    } else {
+                        return e.idTasks < tasks.idTaskActive
+                    }
+                } else {
+                    return false
+                }
+            })
+            setState({ lengthTaskFinish: stock.length })
         }
+    }, [tasks.dataFilter]) // eslint-disable-line
 
-        this.height = 40
-        this.jours = [
-            'Alahady',
-            'Alatsinainy',
-            'Talata',
-            'Alarobia',
-            'Alakamisy',
-            'Zoma',
-            'Sabotsy'
-        ]
-    }
+    useEffect(() => {
+        console.log('init data', new Date())
+        dispatch({
+            type: 'DATA_FILTER',
+            active: state.active
+        })
+        dispatch({ type: 'INIT_DATA_TASKS' })
+        dispatch({ type: 'DATA_ACTIVE' })
 
-    componentDidMount () {
-        this.props.dataFilter(this.state.active)
-        this.props.initDataTasks()
-        this.props.dataActive()
-        setTimeout(() => this.listView.scrollTo({
-            x: 0,
-            y: (new Date().getDay() * this.height),
-            animated: true
-        }), 1)
-        this.chonoHorloge()
-        setTimeout(() =>
-            this.lengthTaskFinish(),
-        1)
-    }
+        lengthTaskFinish()
+    }, [ props.dataTasks]) // eslint-disable-line
 
-    componentWillUnmount () {
-        clearInterval(this.state.stockInterval)
-    }
+    useEffect(() => {
+        chonoHorloge()
+        return () => clearInterval(state.stockInterval)
+    }, []) // eslint-disable-line
 
-    OnScroll (e) {
-        // console.log('===========================================================\n')
-        // console.log(e.nativeEvent.velocity.y > 0)
-        // console.log(Math.round(e.nativeEvent.contentOffset.y+60 / 60))
-        // console.log('===========================================================\n')
-        if (this.state.value !== Math.round(e.nativeEvent.contentOffset.y / this.height)) {
-            this.fontSizeAnimation(e)
-            this.setState({ active: Math.round(e.nativeEvent.contentOffset.y / this.height) })
+    useEffect(() => {
+        if (listView.scrollTo()) {
+            setTimeout(() => listView.scrollTo({
+                x: 0,
+                y: (new Date().getDay() * height),
+                animated: true
+            }), 1)
+        }
+    }, [listView])
+
+    const OnScroll = (e) => {
+        if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
+            fontSizeAnimation(e)
+            setState({ active: Math.round(e.nativeEvent.contentOffset.y / height) })
         }
     }
 
-    fontSizeAnimation (event) {
+    const fontSizeAnimation = (event) => {
         const scrollValue = (Math.abs(
-            (Math.round(event.nativeEvent.contentOffset.y / this.height) * this.height) -
+            (Math.round(event.nativeEvent.contentOffset.y / height) * height) -
                 event.nativeEvent.contentOffset.y) % 14
         )
 
-        if (this.state.value !== Math.round(event.nativeEvent.contentOffset.y / this.height)) {
-            const stocks = this.state.fontSize.map((e, i) => {
+        if (state.value !== Math.round(event.nativeEvent.contentOffset.y / height)) {
+            const stocks = state.fontSize.map((e, i) => {
                 let sign = -1
                 if (event.nativeEvent.velocity.y > 0) {
                     sign = 1
@@ -88,13 +133,13 @@ class Principals extends Component {
                 const defaultFontSize = 14
                 let stock = defaultFontSize
 
-                if (i === (this.state.active - 1 + sign)) {
+                if (i === (state.active - 1 + sign)) {
                     stock = Math.abs(e + (sign * scrollValue))
                 }
-                if (i === (this.state.active + sign)) {
+                if (i === (state.active + sign)) {
                     stock = Math.abs(e - (Math.abs(sign) * scrollValue))
                 }
-                if (i === (this.state.active + 1 + sign)) {
+                if (i === (state.active + 1 + sign)) {
                     stock = Math.abs(e + (-1 * sign * scrollValue))
                 }
 
@@ -107,47 +152,51 @@ class Principals extends Component {
                 }
                 return stock
             })
-            // console.log(stocks)
-            this.setState({ fontSize: stocks })
+            setState({ fontSize: stocks })
         }
     }
 
-    OnEndScroll (e) {
-        if (this.state.value !== Math.round(e.nativeEvent.contentOffset.y / this.height)) {
-            this.listView.scrollTo({
+    const OnEndScroll = (e) => {
+        if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
+            const lengthStock = Math.round(e.nativeEvent.contentOffset.y / height)
+            listView.scrollTo({
                 x: 0,
-                y: (Math.round(e.nativeEvent.contentOffset.y / this.height) * this.height),
+                y: lengthStock * height,
                 animated: true
             })
-            this.setState({
-                active: Math.round(e.nativeEvent.contentOffset.y / this.height)
+            setState({
+                active: lengthStock
             })
-            this.fontSizeAnimation(e)
+            fontSizeAnimation(e)
+            dispatch({
+                type: 'DATA_FILTER',
+                active: lengthStock
+            })
+            // setTimeout(() =>
+            //     lengthTaskFinish(),
+            // 1)
+            dispatch({ type: 'DATA_ACTIVE' })
+            console.log('OnEndScroll: ', lengthStock)
         }
-        this.props.dataFilter(Math.round(e.nativeEvent.contentOffset.y / this.height))
-        setTimeout(() =>
-            this.lengthTaskFinish(),
-        1)
-        this.props.dataActive()
     }
 
-    nextData (i, datas) {
+    const nextData = (i, datas) => {
         let dayPrev = null
         // let mocks = null
-        if (this.state.active === 0) {
-            dayPrev = this.jours[this.jours.length - 1]
+        if (state.active === 0) {
+            dayPrev = jours[jours.length - 1]
         } else {
-            dayPrev = this.jours[this.state.active - 1]
+            dayPrev = jours[state.active - 1]
         }
-        const dataLastPrev = this.props.task.dataTasks[dayPrev]
-        const stock = [dataLastPrev[dataLastPrev.length - 1], ...this.props.task.dataTasks[this.jours[this.state.active]]]
+        const dataLastPrev = tasks.dataTasks[dayPrev]
+        const stock = [dataLastPrev[dataLastPrev.length - 1], ...tasks.dataTasks[jours[state.active]]]
         let mocks = stock[i + 1]
         if (stock.length === i + 1) {
-            let active = this.state.active + 1
-            if (this.state.active === 6) {
+            let active = state.active + 1
+            if (state.active === 6) {
                 active = 0
             }
-            const datatomorow = datas[this.jours[active]]
+            const datatomorow = datas[jours[active]]
             mocks = datatomorow[0]
         }
         if (mocks) {
@@ -157,7 +206,7 @@ class Principals extends Component {
         }
     }
 
-    setDouble (e) {
+    const setDouble = (e) => {
         if (e < 10) {
             return '0' + e
         } else {
@@ -165,220 +214,187 @@ class Principals extends Component {
         }
     }
 
-    dateNowToString () {
-        const date = new Date()
-        return this.setDouble(date.getHours()) + ':' + this.setDouble(date.getMinutes()) + ':' + this.setDouble(date.getSeconds())
-    }
+    const textColor = color.activeColor.primary.dark
 
-    chonoHorloge () {
-        const stock = setInterval(() => {
-            this.setState((state) => {
-                return { date: this.dateNowToString() }
-            })
-        }, 1000)
-        this.setState({ stockInterval: stock })
-    }
-
-    lengthTaskFinish () {
-        if (this.props.task.dataFilter.length > 0) {
-            const stock = this.props.task.dataFilter.filter(e => {
-                if (this.state.active < this.state.now) {
-                    return true
-                } else {
-                    return e.idTasks < this.props.task.idTaskActive
-                }
-            })
-            this.setState({ lengthTaskFinish: stock.length })
-        }
-    }
-
-    render () {
-        const { color, task } = this.props
-        return (
+    return (
+        <View
+            style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center'
+                // backgroundColor: color.activeColor.primary.light
+            }}>
             <View
                 style={{
-                    flex: 1,
+                    backgroundColor: color.activeColor.primary.light,
+                    height: 40,
+                    width: width,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: color.primary.default
+                    paddingLeft: 10,
+                    paddingRight: 10,
+
+                    shadowColor: '#000',
+                    shadowOffset: {
+                        width: 0,
+                        height: 1
+                    },
+                    shadowOpacity: 0.22,
+                    shadowRadius: 2.22,
+                    elevation: 3
+
                 }}>
-                <View
+
+                <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+                    <FontAwesomeIcon
+                        icon={faBars}
+                        color={'black'}
+                        size={30}
+                    />
+                </TouchableOpacity>
+                <Avatar
+                    rounded
+                    title={utilisateur.pseudoUtilisateur[0].toUpperCase()}
+                    source={utilisateur.imageUtilisateur ? utilisateur.imageUtilisateur : userDefault}
+                />
+            </View>
+            <View
+                style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingRight: 10
+                }}>
+                <ScrollView
                     style={{
-                        backgroundColor: color.primary.default,
-                        height: 40,
-                        width: width,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        paddingLeft: 5,
-                        paddingRight: 5
-                    }}>
-                    <Text style={{ color: 'white' }}>navigation</Text>
-                    <Text style={{ color: 'white' }}>recheche</Text>
-                </View>
-                <View
-                    style={{
-                        width: '100%',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingRight: 10
-                    }}>
-                    <ScrollView
-                        style={{
-                            ...styles.myscroll,
-                            height: this.height * 3
-                        }}
-                        showsVerticalScrollIndicator={false}
-                        onScroll={this.OnScroll.bind(this)}
-                        // onScrollEndDrag={ this.OnEndScroll.bind(this) }
-                        onMomentumScrollEnd={this.OnEndScroll.bind(this)}
-                        centerContent={false}
-                        ref={e => {
-                            this.listView = e
-                            return null
-                        }}
-                    >
-                        {/* <View style={styles.myscroll}> */}
-                        <View
-                            style={{
-                                height: this.height * (this.jours.length + 2),
-                                width: 210
-                            }}>
-                            <View
-                                style={{
-                                    height: this.height,
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                <Text
-                                    style={{
-                                        color: 'white',
-                                        fontSize: 12
-                                    }}> </Text>
-                            </View>
-
-                            {
-                                this.jours.map((e, index) => {
-                                    return (
-                                        <View
-                                            key={index}
-                                            style={{
-                                                height: this.height,
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                padding: 0
-                                                // width: width
-                                            }}>
-                                            <Text
-                                                style={{
-                                                    color: 'white',
-                                                    // fontSize: this.state.fontSize[index],
-                                                    fontSize: this.state.active === index ? (width / 10) : 14,
-                                                    opacity: this.state.now === index ? 1 : (this.state.now === index ? 0.9 : 0.5)
-                                                }}> {e} </Text>
-                                        </View>)
-                                })
-                            }
-
-                            <View
-                                style={{
-                                    height: this.height,
-                                    // borderWidth: 1,
-                                    // borderColor: 'red',
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                <Text
-                                    style={{
-                                        color: 'white',
-                                        fontSize: 12
-                                    }}> </Text>
-                            </View>
-
-                        </View>
-                        {/* </View> */}
-                    </ScrollView>
+                        ...styles.myscroll,
+                        height: height * 3
+                    }}
+                    showsVerticalScrollIndicator={false}
+                    onScroll={(e) => OnScroll(e)}
+                    // onScrollEndDrag={ OnEndScroll() }
+                    onMomentumScrollEnd={(e) => OnEndScroll(e)}
+                    centerContent={false}
+                    ref={e => {
+                        listView = e
+                        return null
+                    }}
+                >
+                    {/* <View style={styles.myscroll}> */}
                     <View
                         style={{
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}
-                    >
-                        <Text style={{ color: 'white' }}>
-                            Vita {this.setDouble(this.state.lengthTaskFinish)}/{this.setDouble(task.dataFilter.length)}
-                        </Text>
-                        <Text style={{ color: 'white' }}>{this.state.date}</Text>
+                            height: height * (jours.length + 2),
+                            width: 210
+                        }}>
+                        <View
+                            style={{
+                                height: height,
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}>
+                            <Text
+                                style={{
+                                    color: textColor,
+                                    fontSize: 12
+                                }}> </Text>
+                        </View>
+                        {
+                            // console.log(jours)
+                        }
+
+                        {
+                            jours.map((e, index) => {
+                                return (
+                                    <View
+                                        key={index}
+                                        style={{
+                                            height: height,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            padding: 0
+                                        }}
+                                    >
+                                        <Text
+                                            style={{
+                                                color: textColor,
+                                                fontSize: state.active === index ? (width / 10) : 14,
+                                                opacity: state.now === index ? 1 : (state.now === index ? 0.9 : 0.5)
+                                            }}
+                                        > {e} </Text>
+                                    </View>)
+                            })
+                        }
+
+                        <View
+                            style={{
+                                height: height,
+                                // borderWidth: 1,
+                                // borderColor: 'red',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}>
+                            <Text
+                                style={{
+                                    color: 'white',
+                                    fontSize: 12
+                                }}> </Text>
+                        </View>
+
                     </View>
+                    {/* </View> */}
+                </ScrollView>
+                <View
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    <Text style={{ color: textColor }}>
+                            Vita {setDouble(state.lengthTaskFinish)}/{setDouble(tasks.dataFilter.length)}
+                    </Text>
+                    <Text style={{ color: textColor }}>{datenow}</Text>
                 </View>
+            </View>
 
-                {/* body of application */}
+            {/* body of application */}
 
-                <ScrollView style={{ width: width, ...styles.root }}>
-                    {
-                        task.dataFilter.length > 0
-                            ? task.dataFilter.map((e, i) => {
-                                const stock = this.state.active === this.state.now
+            <ScrollView style={{ width: width, ...styles.root }}>
+                {
+                    tasks.dataFilter && tasks.dataFilter.length > 0
+                        ? tasks.dataFilter.map((e, i) => {
+                            if (e) {
+                                const stock = state.active === state.now
                                 return (
                                     <Block
                                         key={i}
                                         i={i}
                                         finish={
-                                            (this.state.active < this.state.now) ? false
-                                                : (e.idTasks < this.props.task.idTaskActive)
+                                            (state.active < state.now) ? false
+                                                : (e.idTasks < props.task.idTaskActive)
                                         }
                                         datas={e}
-                                        start={(this.props.task.idTaskActive === e.idTasks) && stock}
+                                        start={(props.task.idTaskActive === e.idTasks) && stock}
                                         now={stock}
                                         debut={
-                                            ((this.state.active === this.state.now) &&
+                                            ((state.active === state.now) &&
                                             // ? true :
-                                              e.idTasks < this.props.task.idTaskActive
+                                                  e.idTasks < props.task.idTaskActive
                                             )
-                                                ? this.nextData(i, this.props.task.dataTasks)
+                                                ? nextData(i, props.task.dataTasks)
                                                 : e.heureDebut
                                         }
-                                        navigation={this.props.navigation}
-                                        fin={this.nextData(i, this.props.task.dataTasks)}/>
+                                        navigation={props.navigation}
+                                        fin={nextData(i, props.task.dataTasks)}/>
 
                                 )
-                            }) : null
-                    }
-                </ScrollView>
-            </View>
-        )
-    }
+                            }
+                        }) : null
+                }
+            </ScrollView>
+        </View>
+    )
 }
 
-const mapStateToProps = state => {
-    return {
-        other: state.Other,
-        task: state.Tasks,
-        color: state.Color
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        changeShowEdit: (data) => {
-            dispatch({
-                type: 'CHANGE_SHOW_EDIT',
-                data
-            })
-        },
-        initDataTasks: () => {
-            dispatch({ type: 'INIT_DATA_TASKS' })
-        },
-        dataFilter: (active) => {
-            dispatch({
-                type: 'DATA_FILTER',
-                active
-            })
-        },
-        dataActive: () => {
-            dispatch({ type: 'DATA_ACTIVE' })
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Principals)
+export default Principals

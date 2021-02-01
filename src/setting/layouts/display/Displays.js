@@ -89,10 +89,10 @@ class Displays extends Component {
                         edit ? <View>
                             <TextInput
                                 style={{
-                                    backgroundColor: color.primary.light + '33',
+                                    backgroundColor: color.activeColor.primary.light + '33',
                                     padding: 2,
                                     margin: 2,
-                                    color: color.fontColor.light
+                                    color: color.activeColor.fontColor.light
                                 }}
                                 placeholder='lohanteny'
                                 onChangeText={this.OnChangeLohanteny.bind(this)}
@@ -100,10 +100,10 @@ class Displays extends Component {
                             />
                             <TextInput
                                 style={{
-                                    backgroundColor: color.primary.light + '33',
+                                    backgroundColor: color.activeColor.primary.light + '33',
                                     padding: 2,
                                     margin: 2,
-                                    color: color.fontColor.light
+                                    color: color.activeColor.fontColor.light
                                 }}
                                 multiline={true}
                                 numberOfLines={2}
@@ -116,11 +116,11 @@ class Displays extends Component {
                             : <View>
                                 <Text style={{
                                     ...styles.title,
-                                    color: color.fontColor.light + 'aa',
+                                    color: color.activeColor.fontColor.light + 'aa',
                                     fontSize: 17
                                 }}>{titleTasks}</Text>
                                 <Text style={{
-                                    color: color.fontColor.light + '55',
+                                    color: color.activeColor.fontColor.light + '55',
                                     fontSize: 13
                                 }}
                                 >{this.limiterWord(contentTasks, 2)}</Text>
@@ -138,9 +138,9 @@ class Displays extends Component {
                             >
                                 <Text style={{
                                     ...styles.heures,
-                                    backgroundColor: color.primary.light + '33',
+                                    backgroundColor: color.activeColor.primary.light + '33',
                                     padding: 2,
-                                    color: color.fontColor.light,
+                                    color: color.activeColor.fontColor.light,
                                     textAlign: 'center'
                                 }}
 
@@ -148,7 +148,7 @@ class Displays extends Component {
                             </TouchableWithoutFeedback>
                             : <Text style={{
                                 ...styles.heures,
-                                color: color.fontColor.light + 'aa'
+                                color: color.activeColor.fontColor.light + 'aa'
                             }}>{heureDebut}</Text>
                     }
 
@@ -168,7 +168,7 @@ class Displays extends Component {
                                     })
                                 }}
                                 title='tazomina'
-                                color={color.primary.default}
+                                color={color.activeColor.primary.default}
                             />
                             <Button
                                 onPress={() => {
@@ -195,10 +195,10 @@ class Displays extends Component {
                                     />
                                 }
                                 buttonStyle={{
-                                    backgroundColor: color.primary.dark + '44'
+                                    backgroundColor: color.activeColor.primary.dark + '44'
                                 }}
                                 // title='ovaina'
-                                color={color.primary.dark + '77'}
+                                color={color.activeColor.primary.dark + '77'}
                                 type='outline'
                             />
                             <Button
@@ -214,10 +214,10 @@ class Displays extends Component {
                                     />
                                 }
                                 buttonStyle={{
-                                    backgroundColor: color.secondary.dark + 'aa'
+                                    backgroundColor: color.activeColor.secondary.dark + 'aa'
                                 }}
                                 // title='fafana'
-                                color={color.primary.dark + '77'}
+                                color={color.activeColor.primary.dark + '77'}
                                 type='outline'
                             />
                         </View>
