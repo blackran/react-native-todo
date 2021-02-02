@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 // import PropTypes from 'prop-types'
-import { Dimensions, ScrollView, Text, View, StyleSheet, Keyboard, Alert } from 'react-native'
-import { Button, Icon, ThemeProvider } from 'react-native-elements'
+import { Dimensions, ScrollView, Text, View, StyleSheet, Keyboard, Alert, TouchableOpacity } from 'react-native'
+import { Button, Icon, ThemeProvider, Card } from 'react-native-elements'
 import ScrollDatePicker from '../scrollDatePicker/ScrollDatePicker'
 import Displays from '../display/Displays'
 import { connect } from 'react-redux'
@@ -55,6 +55,7 @@ class Tasks extends Component {
     }
 
     onClickSaveAll () {
+        console.log('onClickSaveAll ', this.state.data)
         Alert.alert(
             'Fanotaniana',
             'Tena ho hotahirizina ve?',
@@ -80,6 +81,7 @@ class Tasks extends Component {
     OnPressSave = (days, datas, lastIdTasks) => {
         Keyboard.dismiss()
         const { data } = this.state
+        console.log({ datas })
         if (datas.title !== '' && datas.heureDebut !== '00:00:00') {
             if (days === 'unknown' && data.finish !== undefined) {
                 let exist = true
@@ -98,7 +100,6 @@ class Tasks extends Component {
                     const stock = JSON.parse(JSON.stringify(data))
                     stock.finish.splice(rep, 1)
                     const mocks = [...stock.finish, datas]
-                    console.log(mocks)
                     this.setState({ data: Object.assign({}, stock, { finish: order(mocks, 'idTasks') }) })
                 }
             } else {
@@ -117,7 +118,6 @@ class Tasks extends Component {
                             return null
                         })
                         if (exist) {
-                            console.log('ca fonction')
                             const stock = JSON.parse(JSON.stringify(data))
                             const mocks = [...data.rest[key], datas]
                             stock.rest[key] = order(mocks, 'idTasks')
@@ -217,7 +217,16 @@ class Tasks extends Component {
                         style={{
                             backgroundColor: color.activeColor.primary.default,
                             flexDirection: 'row',
-                            justifyContent: 'space-between'
+                            justifyContent: 'space-between',
+
+                            shadowColor: '#000',
+                            shadowOffset: {
+                                width: 0,
+                                height: 1
+                            },
+                            shadowOpacity: 0.22,
+                            shadowRadius: 2.22,
+                            elevation: 3
                         }}
                     >
                         <Button
@@ -270,11 +279,7 @@ class Tasks extends Component {
                             ...styles.title,
                             color: color.activeColor.fontColor.dark
                         }}>MIVERIMBERINA</Text>
-                        <View style={{
-                            ...styles.block,
-                            backgroundColor: color.activeColor.primary.dark + '22'
-                        }}>
-
+                        <Card titleStyle={{ textAlign: 'left' }} title="REHETRA" >
                             {
                                 this.state.data.finish.map(e => {
                                     return <Displays
@@ -306,32 +311,20 @@ class Tasks extends Component {
                                         onClickBtnDelete={this.onClickBtnDelete}
                                         manindryAjanona={this.manindryAjanona}
                                         OnFocusHeureDebut={this.OnFocusHeureDebut}
-                                    /> : <Button
+                                    />
+                                    : <TouchableOpacity
                                         onPress={() => this.setState({ showEdit: 'unknown' })}
-
-                                        icon={
-                                            <Icon
-                                                name='add'
-                                                size={25}
-                                                type='MaterialIcons'
-                                                color={color.activeColor.fontColor.dark}
-                                            />
-                                        }
-                                        // buttonStyle={{
-                                        //     backgroundColor: color.primary.dark + '44'
-                                        // }}
-                                        containerStyle={{
-                                            marginTop: 10
-                                        }}
-                                        titleStyle={{
-                                            color: color.activeColor.fontColor.dark
-                                        }}
-                                        color={color.activeColor.fontColor.dark}
-                                        type='clear'
-                                        title='AMPIANA'/>
+                                        style={{ position: 'absolute', right: 10, top: -5 }}
+                                    >
+                                        <Icon
+                                            name='add'
+                                            size={30}
+                                            type='MaterialIcons'
+                                            color={color.activeColor.fontColor.dark}
+                                        />
+                                    </TouchableOpacity>
                             }
-
-                        </View>
+                        </Card>
                         <View style={styles.block}>
                             <Text style={{
                                 ...styles.title,
@@ -339,81 +332,52 @@ class Tasks extends Component {
                             }}>TSY MIVERIMBERINA</Text>
                             {
                                 Object.entries(this.state.data.rest).map(([key, subject]) => {
-                                    return <View key={key} style={{ marginBottom: 30 }}>
-                                        <View
-                                            style={{
-                                                flexDirection: 'row',
-                                                justifyContent: 'space-between',
-                                                margin: 5
-                                            }}
-                                        >
-                                            <Text
-                                                style={{
-                                                    color: color.activeColor.fontColor.dark + 'ee',
-                                                    fontWeight: 'bold',
-                                                    fontSize: 18
-                                                }}
-                                            > {key} </Text>
-                                        </View>
-                                        <View style={{
-                                            ...styles.block,
-                                            // backgroundColor: color.activeColor.primary.dark + '22'
-                                        }}>
-                                            {
-                                                subject.map(e => {
-                                                    return <Displays
-                                                        key={e.idTasks}
-                                                        days={key}
-                                                        datas={e}
-                                                        onClickBtnDelete={this.onClickBtnDelete}
-                                                        manindryAjanona={this.manindryAjanona}
-                                                        OnPressSave={this.OnPressSave}
-                                                        OnFocusHeureDebut={this.OnFocusHeureDebut}
-                                                    />
-                                                })
-                                            }
-                                            {
-                                                this.state.showEdit === key
-                                                    ? <Displays
-                                                        key={this.state.data.finish.length + 1}
-                                                        datas={{
-                                                            idTasks: 0,
-                                                            titleTasks: '',
-                                                            contentTasks: '',
-                                                            heureDebut: '00:00:00',
-                                                            pseudoUtilisateur: 'blackran'
-                                                        }}
-                                                        days={key}
-                                                        onClickBtnDelete={this.onClickBtnDelete}
-                                                        manindryAjanona={this.manindryAjanona}
-                                                        OnPressSave={this.OnPressSave}
-                                                        edit={true}
-                                                        OnFocusHeureDebut={this.OnFocusHeureDebut}
-                                                    />
-                                                    : <Button
-                                                        onPress={() => this.setState({ showEdit: key })}
-                                                        icon={
-                                                            <Icon
-                                                                name='add'
-                                                                size={25}
-                                                                type='MaterialIcons'
-                                                                color={color.activeColor.fontColor.dark}
-                                                            />
-                                                        }
-                                                        // buttonStyle={{
-                                                        //     backgroundColor: color.primary.dark + '44'
-                                                        // }}
-                                                        titleStyle={{
-                                                            color: color.activeColor.fontColor.dark
-                                                        }}
-                                                        color={color.activeColor.fontColor.dark}
-                                                        title='AMPIANA'
-                                                        type='clear'
-                                                    />
-                                            }
-                                        </View>
+                                    return <Card titleStyle={{ textAlign: 'left' }} title={key.toUpperCase()} >
+                                        {
+                                            subject.map(e => {
+                                                return <Displays
+                                                    key={e.idTasks}
+                                                    days={key}
+                                                    datas={e}
+                                                    onClickBtnDelete={this.onClickBtnDelete}
+                                                    manindryAjanona={this.manindryAjanona}
+                                                    OnPressSave={this.OnPressSave}
+                                                    OnFocusHeureDebut={this.OnFocusHeureDebut}
+                                                />
+                                            })
+                                        }
+                                        {
+                                            this.state.showEdit === key
+                                                ? <Displays
+                                                    key={this.state.data.finish.length + 1}
+                                                    datas={{
+                                                        idTasks: 0,
+                                                        titleTasks: '',
+                                                        contentTasks: '',
+                                                        heureDebut: '00:00:00',
+                                                        pseudoUtilisateur: 'blackran'
+                                                    }}
+                                                    days={key}
+                                                    onClickBtnDelete={this.onClickBtnDelete}
+                                                    manindryAjanona={this.manindryAjanona}
+                                                    OnPressSave={this.OnPressSave}
+                                                    edit={true}
+                                                    OnFocusHeureDebut={this.OnFocusHeureDebut}
+                                                />
+                                                : <TouchableOpacity
+                                                    onPress={() => this.setState({ showEdit: key })}
+                                                    style={{ position: 'absolute', right: 10, top: -5 }}
 
-                                    </View>
+                                                >
+                                                    <Icon
+                                                        name='add'
+                                                        size={30}
+                                                        type='MaterialIcons'
+                                                        color={color.activeColor.fontColor.dark}
+                                                    />
+                                                </TouchableOpacity>
+                                        }
+                                    </Card>
                                 })
                             }
                         </View>
@@ -445,7 +409,7 @@ class Tasks extends Component {
 
 const styles = StyleSheet.create({
     block: {
-        marginBottom: 30
+        marginBottom: 0
     },
     title: {
         fontWeight: 'bold',

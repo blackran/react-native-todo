@@ -82,8 +82,8 @@ class Block extends Component {
                         marginRight: 10,
                         marginBottom: 5,
                         backgroundColor: finish
-                            ? color.primary.light + '99'
-                            : (start ? color.primary.dark + '55' : color.primary.dark + '33'),
+                            ? color.activeColor.primary.light + '99'
+                            : (start ? color.activeColor.primary.dark + '55' : color.activeColor.primary.dark + '33'),
                         opacity: finish ? 0.5 : 1,
                         padding: 10,
                         borderRadius: 5,
@@ -94,7 +94,11 @@ class Block extends Component {
                             <Text style={{
                                 fontSize: 24,
                                 textDecorationLine: finish ? 'line-through' : 'none',
-                                color: finish ? color.fontColor.light : (start ? color.fontColor.light : color.fontColor.dark)
+                                color: finish
+                                    ? color.activeColor.fontColor.light
+                                    : (start
+                                        ? color.activeColor.fontColor.light
+                                        : color.activeColor.fontColor.dark)
                             }}>{ datas.titleTasks }</Text>
                         </View>
                         <View style={{
@@ -110,7 +114,11 @@ class Block extends Component {
                                         style={{
                                             fontSize: 24,
                                             textDecorationLine: finish ? 'line-through' : 'none',
-                                            color: finish ? color.fontColor.light : (start ? color.fontColor.light : color.fontColor.dark)
+                                            color: finish
+                                                ? color.activeColor.fontColor.light
+                                                : (start
+                                                    ? color.activeColor.fontColor.light
+                                                    : color.activeColor.fontColor.dark)
                                         }}
                                         navigation={this.props.navigation}
                                         content={datas.contentTasks}
@@ -134,8 +142,8 @@ class Block extends Component {
                         <Text
                             style={{
                                 color: finish
-                                    ? color.fontColor.light
-                                    : (start ? color.fontColor.light + 'aa' : color.fontColor.dark),
+                                    ? color.activeColor.fontColor.light
+                                    : (start ? color.activeColor.fontColor.light + 'aa' : color.activeColor.fontColor.dark),
                                 opacity: 0.8
                             }}
                         >{ start ? datas.contentTasks : this.limiterWord(datas.contentTasks, 3) }</Text>

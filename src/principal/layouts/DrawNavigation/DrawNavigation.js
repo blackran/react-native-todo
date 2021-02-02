@@ -43,22 +43,27 @@ const AppStack1 = createDrawerNavigator({
         return <View
             style={{
                 flex: 1,
-                // backgroundColor: props.navigation.state.params.color.primary.default
-                backgroundColor: color ? color.activeColor.primary.default : 'white'
+                // backgroundColor: color ? color.activeColor.primary.default : 'white'
+                backgroundColor: '#0c0c0c'
             }}
         >
             <View style={{
                 height: 200,
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderBottomWidth: 1,
                 borderColor: color ? color.activeColor.primary.dark : 'white',
                 marginBottom: 20
             }}>
                 <Image source={me} style={{
                     height: 100,
                     width: 100,
-                    borderRadius: 100
+                    borderRadius: 100,
+                    shadowColor: 'white',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowRadius: 6,
+                    shadowOpacity: 0.2,
+                    elevation: 1
+
                 }}></Image>
                 <Move delais={100} xD={-100} yD={0}>
                     <Text style={{

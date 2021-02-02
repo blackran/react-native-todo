@@ -80,7 +80,6 @@ const TasksReducers = (state = initState, action) => {
             }
             return e
         })
-        console.log(stock)
         return Object.assign({}, state, { dataTasks: stock })
 
     default:

@@ -63,6 +63,7 @@ function Login (props) {
     }
 
     React.useEffect(() => {
+        console.log({ color })
         dispatch({
             type: 'CHANGE_COLOR',
             data: 'gray'
@@ -313,7 +314,7 @@ function Login (props) {
                             title={state.isLogin ? ' HIDITRA' : 'TAHIRIZO'}
                         />
                     </Move>
-                    <Move delais={3000} xD={0} yD={height / 2} change={state.isLogin}>
+                    <Move delais={2000} xD={0} yD={height / 2} change={state.isLogin}>
                         <TouchableWithoutFeedback
                             onPress={() => OnClickSign()}
                         >

@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
 import { connect } from 'react-redux'
-import DatePicker from 'react-native-datepicker'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 class Displays extends Component {
     constructor (props) {
@@ -17,7 +17,7 @@ class Displays extends Component {
             idTasks: 0,
             titleTasks: '',
             contentTasks: '',
-            heureDebut: '00:00:00',
+            heureDebut: new Date(),
             pseudoUtilisateur: 'blackran',
             edit: false
         }
@@ -35,7 +35,7 @@ class Displays extends Component {
             idTasks,
             titleTasks,
             contentTasks,
-            heureDebut,
+            heureDebut: new Date(heureDebut),
             pseudoUtilisateur,
             edit: this.props.edit,
             isDatePickerVisible: false
@@ -80,20 +80,10 @@ class Displays extends Component {
         return listJours.indexOf(this.props.days)
     }
 
-    //         <TouchableWithoutFeedback
-    //     onPress={() => this.props.OnFocusHeureDebut(heureDebut)}
-    // >
-    //     <Text style={{
-    //         ...styles.heures,
-    //         backgroundColor: color.activeColor.primary.light + '33',
-    //         padding: 2,
-    //         color: color.activeColor.fontColor.light,
-    //         textAlign: 'center'
-    //     }}
-    //
-    //     >{this.props.task.heureDebut}</Text>
-    // </TouchableWithoutFeedback>
-    //
+    onChangeDate (event, selectedDate) {
+        const currentDate = selectedDate || this.state.heureDebut
+        this.setState({ heureDebut: currentDate })
+    };
 
     render () {
         const { color, days } = this.props
@@ -158,23 +148,14 @@ class Displays extends Component {
                 }}>
                     {
                         edit
-                            ? <DatePicker
+                            ? <DateTimePicker
+                                testID="dateTimePicker"
                                 style={{ width: 100 }}
-                                date={this.state.heureDebut}
+                                value={this.state.heureDebut}
                                 is24Hour={true}
                                 mode="time"
-                                placeholder="select date"
-                                format="hh:mm"
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
                                 showIcon={false}
                                 customStyles={{
-                                    // dateIcon: {
-                                    //     position: 'absolute',
-                                    //     left: 0,
-                                    //     top: 4,
-                                    //     marginLeft: 0
-                                    // },
                                     dateInput: {
                                         marginRight: 10,
                                         backgroundColor: color.activeColor.primary.dark + '33',
@@ -183,15 +164,18 @@ class Displays extends Component {
                                         color: color.activeColor.fontColor.dark,
                                         borderWidth: 0,
                                         height: 33
-                                        // marginLeft: 36
                                     }
                                 }}
-                                onDateChange={(date) => { this.setState({ heureDebut: date }) }}
+                                onChange={this.onChangeDate.bind(this)}
                             />
                             : <Text style={{
                                 ...styles.heures,
                                 color: color.activeColor.fontColor.dark + 'aa'
-                            }}>{heureDebut}</Text>
+                            }}>
+                                test
+                                {
+                                // heureDebut.getTime()
+                                }</Text>
                     }
 
                     {
@@ -202,7 +186,7 @@ class Displays extends Component {
                                         idTasks: (this.oneDay * this.day()) + this.convertStringNumber(this.props.task.heureDebut),
                                         titleTasks,
                                         contentTasks,
-                                        heureDebut: JSON.parse(JSON.stringify(this.props.task.heureDebut)),
+                                        heureDebut,
                                         pseudoUtilisateur
                                     }, this.state.idTasks)
                                     this.setState({
@@ -237,9 +221,8 @@ class Displays extends Component {
                                     />
                                 }
                                 buttonStyle={{
-                                    backgroundColor: color.activeColor.primary.dark + '44'
+                                    backgroundColor: color.activeColor.primary.dark
                                 }}
-                                // title='ovaina'
                                 color={color.activeColor.primary.dark + '77'}
                                 type='outline'
                             />
@@ -252,14 +235,14 @@ class Displays extends Component {
                                         name='delete'
                                         size={25}
                                         type='MaterialIcons'
-                                        color='white'
+                                        color={color.activeColor.primary.dark}
                                     />
                                 }
                                 buttonStyle={{
-                                    backgroundColor: color.activeColor.secondary.dark + 'aa'
+                                    backgroundColor: color.activeColor.secondary.dark,
+                                    marginLeft: 5
                                 }}
-                                // title='fafana'
-                                color={color.activeColor.primary.dark + '77'}
+                                color={color.activeColor.primary.dark}
                                 type='outline'
                             />
                         </View>
@@ -276,9 +259,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        // margin: 5,
-        padding: 10,
-        borderBottomWidth: 1
+        padding: 10
     },
     title: {
         fontWeight: 'bold'

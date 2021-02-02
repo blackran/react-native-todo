@@ -15,12 +15,12 @@ class AppWithStore extends React.Component {
     render () {
         return (
             <Provider store={store()}>
-                {/* <PersistGate loading={null} persistor={persiste()}> */}
+                <PersistGate loading={null} persistor={persiste()}>
                     <View style={{ flex: 1 }}>
                         {/* <StatusBar hidden={true}/> */}
                         <App />
                     </View>
-                {/* </PersistGate> */}
+                </PersistGate>
             </Provider>
         )
     }
