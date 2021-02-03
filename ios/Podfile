@@ -42,6 +42,8 @@ target 'asako' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
   target 'asakoTests' do
     inherit! :search_paths
     # Pods for testing

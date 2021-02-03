@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
     View,
     StyleSheet,
@@ -7,66 +7,59 @@ import {
     // TouchableWithoutFeedback
 } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import DateTimePicker from '@react-native-community/datetimepicker'
 
-class Displays extends Component {
-    constructor (props) {
-        super(props)
-        this.state = {
-            idTasks: 0,
-            titleTasks: '',
-            contentTasks: '',
-            heureDebut: new Date(),
-            pseudoUtilisateur: 'blackran',
-            edit: false
-        }
-        this.oneDay = 24 * 60 * 60 * 1000
-    }
+function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBtnDelete }) {
+    const dispatch = useDispatch()
+    const [state, setStateTrue] = useState({
+        idTasks: 0,
+        titleTasks: '',
+        contentTasks: '',
+        heureDebut: new Date(),
+        pseudoUtilisateur: 'blackran',
+        edit: false
+    })
+    const oneDay = 24 * 60 * 60 * 1000
 
-    convertStringNumber (date) {
+    const setState = useCallback((data) => {
+        console.log('==============================================================')
+        console.log('state', state)
+        console.log('state', Object.assign({}, state, data))
+        setStateTrue(Object.assign({}, state, data))
+        console.log('state', state)
+    }, []) // eslint-disable-line
+
+    const convertStringNumber = (date) => {
         const [heure, minute, second] = date.split(':')
         return ((parseInt(heure, 10) * 60 * 60 * 1000) + (parseInt(minute, 10) * 60 * 1000) + (parseInt(second, 10) * 1000))
     }
 
-    componentDidMount () {
-        const { idTasks, titleTasks, contentTasks, heureDebut, pseudoUtilisateur } = this.props.datas
-        this.setState({
+    useEffect(() => {
+        const { idTasks, titleTasks, contentTasks, heureDebut, pseudoUtilisateur } = datas
+        setState({
             idTasks,
             titleTasks,
             contentTasks,
-            heureDebut: new Date(heureDebut),
+            heureDebut: heureDebut,
             pseudoUtilisateur,
-            edit: this.props.edit,
-            isDatePickerVisible: false
+            edit: editP
         })
-    }
+    }, [datas, editP, setState])
 
-    componentDidUpdate () {
-        if (JSON.stringify(this.state.datas) !== JSON.stringify(this.props.datas)) {
-            this.setState({
-                datas: this.props.datas
-            })
-        }
-    }
-
-    limiterWord (phrase, len) {
+    const limiterWord = (phrase, len) => {
         return phrase ? phrase.split(' ').slice(0, len).join(' ') + ' ...' : phrase
     }
 
-    OnChangeLohanteny (e) {
-        this.setState({
-            titleTasks: e
-        })
+    const OnChangeLohanteny = (e) => {
+        setState({ titleTasks: e })
     }
 
-    OnChangeFanazavana (e) {
-        this.setState({
-            contentTasks: e
-        })
+    const OnChangeFanazavana = (e) => {
+        setState({ contentTasks: e })
     }
 
-    day () {
+    const day = () => {
         const listJours = [
             'Alahady',
             'Alatsinainy',
@@ -77,180 +70,184 @@ class Displays extends Component {
             'Sabotsy',
             'unknown'
         ]
-        return listJours.indexOf(this.props.days)
+        return listJours.indexOf(days)
     }
 
-    onChangeDate (event, selectedDate) {
-        const currentDate = selectedDate || this.state.heureDebut
-        this.setState({ heureDebut: currentDate })
-    };
+    const onChangeDate = (event, selectedDate) => {
+        const currentDate = selectedDate || state.heureDebut
+        setState({ heureDebut: currentDate })
+    }
 
-    render () {
-        const { color, days } = this.props
-        const { idTasks, titleTasks, contentTasks, heureDebut, edit, pseudoUtilisateur } = this.state
-        return (
+    const onSave = () => {
+        // console.log('OnPressSave')
+        OnPressSave(days, {
+            idTasks: (oneDay * day()) + convertStringNumber(taskReducer.heureDebut),
+            titleTasks,
+            contentTasks,
+            heureDebut,
+            pseudoUtilisateur
+        }, state.idTasks)
+        setState({
+            edit: false
+        })
+    }
+
+    const onPressAjanona = () => {
+        console.log('ajanona')
+        setState({ edit: false })
+        manindryAjanona()
+    }
+
+    const { color, taskReducer } = useSelector(state => ({ color: state.Color, taskReducer: state.Tasks }))
+    const { idTasks, titleTasks, contentTasks, heureDebut, edit, pseudoUtilisateur } = state
+    return (
+        <View style={{
+            ...styles.body,
+            // backgroundColor: color.primary.dark + '44',
+            height: edit ? null : 50
+        }}>
             <View style={{
-                ...styles.body,
-                // backgroundColor: color.primary.dark + '44',
-                height: edit ? null : 50
+                flex: 1,
+                marginRight: 10
             }}>
-                <View style={{
-                    flex: 1,
-                    marginRight: 10
-                }}>
-                    {
-                        edit ? <View>
-                            <TextInput
-                                style={{
-                                    backgroundColor: color.activeColor.primary.dark + '33',
-                                    padding: 2,
-                                    margin: 2,
-                                    color: color.activeColor.fontColor.dark
-                                }}
-                                selectionColor={color.activeColor.fontColor.dark}
-                                placeholder='lohanteny'
-                                onChangeText={this.OnChangeLohanteny.bind(this)}
-                                value={titleTasks}
-                            />
-                            <TextInput
-                                style={{
-                                    backgroundColor: color.activeColor.primary.dark + '33',
-                                    padding: 2,
-                                    margin: 2,
-                                    color: color.activeColor.fontColor.dark
-                                }}
-                                selectionColor={color.activeColor.fontColor.dark}
-                                multiline={true}
-                                numberOfLines={2}
-                                row={3}
-                                placeholder='fanazavana'
-                                onChangeText={this.OnChangeFanazavana.bind(this)}
-                                value={contentTasks}
-                            />
+                {
+                    edit ? <View>
+                        <TextInput
+                            style={{
+                                backgroundColor: color.activeColor.primary.dark + '33',
+                                padding: 2,
+                                margin: 2,
+                                color: color.activeColor.fontColor.dark
+                            }}
+                            selectionColor={color.activeColor.fontColor.dark}
+                            placeholder='lohanteny'
+                            onChangeText={(e) => OnChangeLohanteny(e)}
+                            value={titleTasks}
+                        />
+                        <TextInput
+                            style={{
+                                backgroundColor: color.activeColor.primary.dark + '33',
+                                padding: 2,
+                                margin: 2,
+                                color: color.activeColor.fontColor.dark
+                            }}
+                            selectionColor={color.activeColor.fontColor.dark}
+                            multiline={true}
+                            numberOfLines={2}
+                            row={3}
+                            placeholder='fanazavana'
+                            onChangeText={(e) => OnChangeFanazavana(e)}
+                            value={contentTasks}
+                        />
+                    </View>
+                        : <View>
+                            <Text style={{
+                                ...styles.title,
+                                color: color.activeColor.fontColor.dark + 'aa',
+                                fontSize: 17
+                            }}>{titleTasks}</Text>
+                            <Text style={{
+                                color: color.activeColor.fontColor.dark + '55',
+                                fontSize: 13
+                            }}
+                            >{limiterWord(contentTasks, 2)}</Text>
                         </View>
-                            : <View>
-                                <Text style={{
-                                    ...styles.title,
-                                    color: color.activeColor.fontColor.dark + 'aa',
-                                    fontSize: 17
-                                }}>{titleTasks}</Text>
-                                <Text style={{
-                                    color: color.activeColor.fontColor.dark + '55',
-                                    fontSize: 13
-                                }}
-                                >{this.limiterWord(contentTasks, 2)}</Text>
-                            </View>
-                    }
-                </View>
-                <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'flex-start'
-                }}>
-                    {
-                        edit
-                            ? <DateTimePicker
-                                testID="dateTimePicker"
-                                style={{ width: 100 }}
-                                value={this.state.heureDebut}
-                                is24Hour={true}
-                                mode="time"
-                                showIcon={false}
-                                customStyles={{
-                                    dateInput: {
-                                        marginRight: 10,
-                                        backgroundColor: color.activeColor.primary.dark + '33',
-                                        padding: 2,
-                                        margin: 2,
-                                        color: color.activeColor.fontColor.dark,
-                                        borderWidth: 0,
-                                        height: 33
-                                    }
-                                }}
-                                onChange={this.onChangeDate.bind(this)}
-                            />
-                            : <Text style={{
-                                ...styles.heures,
-                                color: color.activeColor.fontColor.dark + 'aa'
-                            }}>
-                                test
-                                {
-                                // heureDebut.getTime()
-                                }</Text>
-                    }
-
-                    {
-                        edit ? <View>
-                            <Button
-                                onPress={() => {
-                                    this.props.OnPressSave(days, {
-                                        idTasks: (this.oneDay * this.day()) + this.convertStringNumber(this.props.task.heureDebut),
-                                        titleTasks,
-                                        contentTasks,
-                                        heureDebut,
-                                        pseudoUtilisateur
-                                    }, this.state.idTasks)
-                                    this.setState({
-                                        edit: false
-                                    })
-                                }}
-                                title='tazomina'
-                                color={color.activeColor.primary.default}
-                            />
-                            <Button
-                                onPress={() => {
-                                    this.setState({ edit: false })
-                                    this.props.manindryAjanona()
-                                }
-                                }
-                                title='ajanona'
-                                type='clear'
-                            />
-
-                        </View> : <View style={{ flexDirection: 'row' }}>
-                            <Button
-                                onPress={() => {
-                                    this.setState({ edit: true })
-                                    this.props.onChangeDatePicker(heureDebut)
-                                }}
-                                icon={
-                                    <Icon
-                                        name='edit'
-                                        size={25}
-                                        type='MaterialIcons'
-                                        color='white'
-                                    />
-                                }
-                                buttonStyle={{
-                                    backgroundColor: color.activeColor.primary.dark
-                                }}
-                                color={color.activeColor.primary.dark + '77'}
-                                type='outline'
-                            />
-                            <Button
-                                onPress={() => {
-                                    this.props.onClickBtnDelete(days, idTasks)
-                                }}
-                                icon={
-                                    <Icon
-                                        name='delete'
-                                        size={25}
-                                        type='MaterialIcons'
-                                        color={color.activeColor.primary.dark}
-                                    />
-                                }
-                                buttonStyle={{
-                                    backgroundColor: color.activeColor.secondary.dark,
-                                    marginLeft: 5
-                                }}
-                                color={color.activeColor.primary.dark}
-                                type='outline'
-                            />
-                        </View>
-                    }
-                </View>
+                }
             </View>
-        )
-    }
+            <View style={{
+                flexDirection: 'row',
+                alignItems: 'flex-start'
+            }}>
+                {
+                    edit 
+                        ? <DateTimePicker
+                            testID="dateTimePicker"
+                            style={{ width: 100 }}
+                            value={new Date()}
+                            is24Hour={true}
+                            mode="time"
+                            showIcon={false}
+                            customStyles={{
+                                dateInput: {
+                                    marginRight: 10,
+                                    backgroundColor: color.activeColor.primary.dark + '33',
+                                    padding: 2,
+                                    margin: 2,
+                                    color: color.activeColor.fontColor.dark,
+                                    borderWidth: 0,
+                                    height: 33
+                                }
+                            }}
+                            open={true}
+                            onChange={() => onChangeDate()}
+                        />
+                        :<Text style={{
+                            ...styles.heures,
+                            color: color.activeColor.fontColor.dark + 'aa'
+                        }}>
+                                test
+                            {
+                                // heureDebut.getTime()
+                            }</Text>
+                }
+
+                {
+                    edit ? <View>
+                        <Button
+                            onPress={() => onSave()}
+                            title='tazomina'
+                            color={color.activeColor.primary.default}
+                        />
+                        <Button
+                            onPress={() => onPressAjanona()}
+                            title='ajanona'
+                            type='clear'
+                        />
+
+                    </View> : <View style={{ flexDirection: 'row' }}>
+                        <Button
+                            onPress={() => () => {
+                                setState({ edit: true })
+                                dispatch({ type: 'ON_CHANGE_DATE_PICKER', data: heureDebut })
+                            }}
+                            icon={
+                                <Icon
+                                    name='edit'
+                                    size={25}
+                                    type='MaterialIcons'
+                                    color='white'
+                                />
+                            }
+                            buttonStyle={{
+                                backgroundColor: color.activeColor.primary.dark
+                            }}
+                            color={color.activeColor.primary.dark + '77'}
+                            type='outline'
+                        />
+                        <Button
+                            onPress={() => () => {
+                                onClickBtnDelete(days, idTasks)
+                            }}
+                            icon={
+                                <Icon
+                                    name='delete'
+                                    size={25}
+                                    type='MaterialIcons'
+                                    color={color.activeColor.primary.dark}
+                                />
+                            }
+                            buttonStyle={{
+                                backgroundColor: color.activeColor.secondary.dark,
+                                marginLeft: 5
+                            }}
+                            color={color.activeColor.primary.dark}
+                            type='outline'
+                        />
+                    </View>
+                }
+            </View>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -272,30 +269,4 @@ const styles = StyleSheet.create({
     }
 })
 
-const mapStateToProps = state => {
-    return {
-        other: state.Other,
-        task: state.Tasks,
-        color: state.Color
-    }
-}
-const mapDispatchToProps = dispatch => {
-    return {
-        changeShowEdit: (data) => {
-            dispatch({
-                type: 'CHANGE_SHOW_EDIT',
-                data
-            })
-        },
-        initDataTasks: () => {
-            dispatch({ type: 'INIT_DATA_TASKS' })
-        },
-        onChangeDatePicker: (data) => {
-            dispatch({
-                type: 'ON_CHANGE_DATE_PICKER',
-                data
-            })
-        }
-    }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(Displays)
+export default Displays

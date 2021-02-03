@@ -57,13 +57,7 @@ const AppStack1 = createDrawerNavigator({
                 <Image source={me} style={{
                     height: 100,
                     width: 100,
-                    borderRadius: 100,
-                    shadowColor: 'white',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowRadius: 6,
-                    shadowOpacity: 0.2,
-                    elevation: 1
-
+                    borderRadius: 100
                 }}></Image>
                 <Move delais={100} xD={-100} yD={0}>
                     <Text style={{

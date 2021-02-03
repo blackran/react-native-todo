@@ -280,50 +280,52 @@ class Tasks extends Component {
                             color: color.activeColor.fontColor.dark
                         }}>MIVERIMBERINA</Text>
                         <Card titleStyle={{ textAlign: 'left' }} title="REHETRA" >
-                            {
-                                this.state.data.finish.map(e => {
-                                    return <Displays
-                                        key={e.idTasks}
-                                        datas={e}
-                                        days='unknown'
-                                        manindryAjanona={this.manindryAjanona}
-                                        OnPressSave={this.OnPressSave}
-                                        edit={false}
-                                        onClickBtnDelete={this.onClickBtnDelete}
-                                        OnFocusHeureDebut={this.OnFocusHeureDebut}
-                                    />
-                                })
-                            }
-                            {
-                                this.state.showEdit === 'unknown'
-                                    ? <Displays
-                                        key={this.state.data.finish.length + 1}
-                                        datas={{
-                                            idTasks: 0,
-                                            titleTasks: '',
-                                            contentTasks: '',
-                                            heureDebut: '00:00:00',
-                                            pseudoUtilisateur: 'blackran'
-                                        }}
-                                        days='unknown'
-                                        OnPressSave={this.OnPressSave}
-                                        edit={true}
-                                        onClickBtnDelete={this.onClickBtnDelete}
-                                        manindryAjanona={this.manindryAjanona}
-                                        OnFocusHeureDebut={this.OnFocusHeureDebut}
-                                    />
-                                    : <TouchableOpacity
-                                        onPress={() => this.setState({ showEdit: 'unknown' })}
-                                        style={{ position: 'absolute', right: 10, top: -5 }}
-                                    >
-                                        <Icon
-                                            name='add'
-                                            size={30}
-                                            type='MaterialIcons'
-                                            color={color.activeColor.fontColor.dark}
+                            <View>
+                                {
+                                    this.state.data.finish.map(e => {
+                                        return <Displays
+                                            key={e.idTasks}
+                                            datas={e}
+                                            days='unknown'
+                                            manindryAjanona={this.manindryAjanona}
+                                            OnPressSave={this.OnPressSave}
+                                            editP={false}
+                                            onClickBtnDelete={this.onClickBtnDelete}
+                                            OnFocusHeureDebut={this.OnFocusHeureDebut}
                                         />
-                                    </TouchableOpacity>
-                            }
+                                    })
+                                }
+                                {
+                                    this.state.showEdit === 'unknown'
+                                        ? <Displays
+                                            key={this.state.data.finish.length + 1}
+                                            datas={{
+                                                idTasks: 0,
+                                                titleTasks: '',
+                                                contentTasks: '',
+                                                heureDebut: '00:00:00',
+                                                pseudoUtilisateur: 'blackran'
+                                            }}
+                                            days='unknown'
+                                            OnPressSave={this.OnPressSave}
+                                            editP={true}
+                                            onClickBtnDelete={this.onClickBtnDelete}
+                                            manindryAjanona={this.manindryAjanona}
+                                            OnFocusHeureDebut={this.OnFocusHeureDebut}
+                                        />
+                                        : <TouchableOpacity
+                                            onPress={() => this.setState({ showEdit: 'unknown' })}
+                                            style={{ position: 'absolute', right: 10, top: -55 }}
+                                        >
+                                            <Icon
+                                                name='add'
+                                                size={30}
+                                                type='MaterialIcons'
+                                                color={color.activeColor.fontColor.dark}
+                                            />
+                                        </TouchableOpacity>
+                                }
+                            </View>
                         </Card>
                         <View style={styles.block}>
                             <Text style={{
@@ -332,51 +334,56 @@ class Tasks extends Component {
                             }}>TSY MIVERIMBERINA</Text>
                             {
                                 Object.entries(this.state.data.rest).map(([key, subject]) => {
-                                    return <Card titleStyle={{ textAlign: 'left' }} title={key.toUpperCase()} >
-                                        {
-                                            subject.map(e => {
-                                                return <Displays
-                                                    key={e.idTasks}
-                                                    days={key}
-                                                    datas={e}
-                                                    onClickBtnDelete={this.onClickBtnDelete}
-                                                    manindryAjanona={this.manindryAjanona}
-                                                    OnPressSave={this.OnPressSave}
-                                                    OnFocusHeureDebut={this.OnFocusHeureDebut}
-                                                />
-                                            })
-                                        }
-                                        {
-                                            this.state.showEdit === key
-                                                ? <Displays
-                                                    key={this.state.data.finish.length + 1}
-                                                    datas={{
-                                                        idTasks: 0,
-                                                        titleTasks: '',
-                                                        contentTasks: '',
-                                                        heureDebut: '00:00:00',
-                                                        pseudoUtilisateur: 'blackran'
-                                                    }}
-                                                    days={key}
-                                                    onClickBtnDelete={this.onClickBtnDelete}
-                                                    manindryAjanona={this.manindryAjanona}
-                                                    OnPressSave={this.OnPressSave}
-                                                    edit={true}
-                                                    OnFocusHeureDebut={this.OnFocusHeureDebut}
-                                                />
-                                                : <TouchableOpacity
-                                                    onPress={() => this.setState({ showEdit: key })}
-                                                    style={{ position: 'absolute', right: 10, top: -5 }}
-
-                                                >
-                                                    <Icon
-                                                        name='add'
-                                                        size={30}
-                                                        type='MaterialIcons'
-                                                        color={color.activeColor.fontColor.dark}
+                                    return <Card
+                                        key={key}
+                                        titleStyle={{ textAlign: 'left' }}
+                                        title={key.toUpperCase()} >
+                                        <View>
+                                            {
+                                                subject.map(e => {
+                                                    return <Displays
+                                                        key={e.idTasks}
+                                                        days={key}
+                                                        datas={e}
+                                                        editP={false}
+                                                        onClickBtnDelete={this.onClickBtnDelete}
+                                                        manindryAjanona={this.manindryAjanona}
+                                                        OnPressSave={this.OnPressSave}
+                                                        OnFocusHeureDebut={this.OnFocusHeureDebut}
                                                     />
-                                                </TouchableOpacity>
-                                        }
+                                                })
+                                            }
+                                            {
+                                                this.state.showEdit === key
+                                                    ? <Displays
+                                                        key={this.state.data.finish.length + 1}
+                                                        datas={{
+                                                            idTasks: 0,
+                                                            titleTasks: '',
+                                                            contentTasks: '',
+                                                            heureDebut: '00:00:00',
+                                                            pseudoUtilisateur: 'blackran'
+                                                        }}
+                                                        days={key}
+                                                        onClickBtnDelete={this.onClickBtnDelete}
+                                                        manindryAjanona={this.manindryAjanona}
+                                                        OnPressSave={this.OnPressSave}
+                                                        editP={true}
+                                                        OnFocusHeureDebut={this.OnFocusHeureDebut}
+                                                    />
+                                                    : <TouchableOpacity
+                                                        onPress={() => this.setState({ showEdit: key })}
+                                                        style={{ position: 'absolute', right: 10, top: -55 }}
+                                                    >
+                                                        <Icon
+                                                            name='add'
+                                                            size={30}
+                                                            type='MaterialIcons'
+                                                            color={color.activeColor.fontColor.dark}
+                                                        />
+                                                    </TouchableOpacity>
+                                            }
+                                        </View>
                                     </Card>
                                 })
                             }
