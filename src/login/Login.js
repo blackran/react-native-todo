@@ -63,7 +63,6 @@ function Login (props) {
     }
 
     React.useEffect(() => {
-        console.log({ color })
         dispatch({
             type: 'CHANGE_COLOR',
             data: 'gray'

@@ -16,7 +16,7 @@ const UtilisateurReducers = (state = initState, action) => {
     case INIT_UTILISATEUR:
         return Object.assign({}, state, { connecterUtilisateur: action.data })
     case ADD_UTILISATEUR:
-        console.log(Object.assign({}, state, { dataUtilisateur: [...state.dataUtilisateur, action.data] }))
+        // console.log(Object.assign({}, state, { dataUtilisateur: [...state.dataUtilisateur, action.data] }))
         return Object.assign({}, state, { dataUtilisateur: [...state.dataUtilisateur, action.data] })
     default:
         return state

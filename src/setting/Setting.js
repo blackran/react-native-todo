@@ -44,8 +44,8 @@ const MainNavigator = createMaterialTopTabNavigator(
         tabBarOptions: {
             showIcon: true,
             showLabel: false,
-            activeTintColor: '#006c99',
-            inactiveTintColor: '#a3c4d2',
+            activeTintColor: '#0c0c0c',
+            inactiveTintColor: '#0c0c0c99',
             labelStyle: {
                 fontSize: 15
             },

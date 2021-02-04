@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import {
     // PanResponder, TouchableHighlight,
     ScrollView,
@@ -23,9 +23,12 @@ const { width } = Dimensions.get('window')
 
 function Principals (props) {
     const dispatch = useDispatch()
-    const { color, tasks, utilisateur } = useSelector(state => {
-        return { color: state.Color, utilisateur: state.Utilisateur.connecterUtilisateur, tasks: state.Tasks }
-    })
+    // const { color, tasks, utilisateur } = useSelector(state => {
+    //     return { color: state.Color, utilisateur: state.Utilisateur.connecterUtilisateur, tasks: state.Tasks }
+    // })
+    const color = useSelector(state => state.Color)
+    const utilisateur = useSelector(state => state.Utilisateur.connecterUtilisateur)
+    const tasks = useSelector(state => state.Tasks)
 
     const [state, setStateTrue] = useState({
         data: [],
@@ -33,13 +36,13 @@ function Principals (props) {
         active: new Date().getDay(),
         page: 0,
         now: new Date().getDay(),
-        fontSize: [12, 12, 12, 12, 12, 12, 12],
+        // fontSize: [12, 12, 12, 12, 12, 12, 12],
         lengthTaskFinish: 0
     })
 
     const [datenow, setDateNow] = useState('00:00:00')
 
-    let listView
+    const listView = useRef()
 
     const height = 40
     const jours = [
@@ -79,7 +82,6 @@ function Principals (props) {
     }, [tasks.dataFilter]) // eslint-disable-line
 
     useEffect(() => {
-        console.log(tasks.dataFilter)
         dispatch({
             type: 'DATA_FILTER',
             active: state.active
@@ -91,13 +93,6 @@ function Principals (props) {
     }, [tasks.dataTasks]) // eslint-disable-line
 
     useEffect(() => {
-        props.navigation.navigate('Principal',
-            {
-                user: utilisateur.connecterUtilisateur,
-                color: color
-            }
-        )
-
         const stock = setInterval(() => {
             setDateNow(dateNowToString())
         }, 1000)
@@ -105,64 +100,23 @@ function Principals (props) {
     }, []) // eslint-disable-line
 
     useEffect(() => {
-        if (listView.scrollTo()) {
-            setTimeout(() => listView.scrollTo({
-                x: 0,
-                y: (new Date().getDay() * height),
-                animated: true
-            }), 1)
-        }
+        setTimeout(() => listView.current.scrollTo({
+            x: 0,
+            y: (new Date().getDay() * height),
+            animated: true
+        }), 1)
     }, [listView])
 
     const OnScroll = (e) => {
         if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
-            fontSizeAnimation(e)
             setState({ active: Math.round(e.nativeEvent.contentOffset.y / height) })
-        }
-    }
-
-    const fontSizeAnimation = (event) => {
-        const scrollValue = (Math.abs(
-            (Math.round(event.nativeEvent.contentOffset.y / height) * height) -
-                event.nativeEvent.contentOffset.y) % 14
-        )
-
-        if (state.value !== Math.round(event.nativeEvent.contentOffset.y / height)) {
-            const stocks = state.fontSize.map((e, i) => {
-                let sign = -1
-                if (event.nativeEvent.velocity.y > 0) {
-                    sign = 1
-                }
-                const defaultFontSize = 14
-                let stock = defaultFontSize
-
-                if (i === (state.active - 1 + sign)) {
-                    stock = Math.abs(e + (sign * scrollValue))
-                }
-                if (i === (state.active + sign)) {
-                    stock = Math.abs(e - (Math.abs(sign) * scrollValue))
-                }
-                if (i === (state.active + 1 + sign)) {
-                    stock = Math.abs(e + (-1 * sign * scrollValue))
-                }
-
-                // limitation on range 14 and (width/10)
-                if (stock < defaultFontSize) {
-                    stock = defaultFontSize
-                }
-                if (stock > (width / 11)) {
-                    stock = (width / 11)
-                }
-                return stock
-            })
-            setState({ fontSize: stocks })
         }
     }
 
     const OnEndScroll = (e) => {
         if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
-            const lengthStock = Math.round(e.nativeEvent.contentOffset.y / height)
-            listView.scrollTo({
+            const lengthStock = Math.abs(Math.round(e.nativeEvent.contentOffset.y / height))
+            listView.current.scrollTo({
                 x: 0,
                 y: lengthStock * height,
                 animated: true
@@ -170,16 +124,11 @@ function Principals (props) {
             setState({
                 active: lengthStock
             })
-            fontSizeAnimation(e)
             dispatch({
                 type: 'DATA_FILTER',
                 active: lengthStock
             })
-            // setTimeout(() =>
-            //     lengthTaskFinish(),
-            // 1)
             dispatch({ type: 'DATA_ACTIVE' })
-            console.log('OnEndScroll: ', lengthStock)
         }
     }
 
@@ -200,7 +149,6 @@ function Principals (props) {
                 active = 0
             }
             const datatomorow = datas[jours[active]]
-            console.log(datatomorow, datas, jours[active])
             mocks = datatomorow[0]
         }
         if (mocks) {
@@ -253,7 +201,7 @@ function Principals (props) {
                 <View
                     style={{
                         backgroundColor: 'rgba(0,0,0,0.5)',
-                        height: 40,
+                        height: 50,
                         width: width,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
@@ -280,9 +228,10 @@ function Principals (props) {
                     style={{
                         width: '100%',
                         flexDirection: 'row',
-                        alignItems: 'center',
                         justifyContent: 'space-between',
-                        paddingRight: 10
+                        alignItems: 'center',
+                        paddingRight: 10,
+                        height: 170
                     }}>
                     <ScrollView
                         style={{
@@ -294,16 +243,13 @@ function Principals (props) {
                         // onScrollEndDrag={ OnEndScroll() }
                         onMomentumScrollEnd={(e) => OnEndScroll(e)}
                         centerContent={false}
-                        ref={e => {
-                            listView = e
-                            return null
-                        }}
+                        ref={listView}
                     >
                         {/* <View style={styles.myscroll}> */}
                         <View
                             style={{
                                 height: height * (jours.length + 2),
-                                width: 210
+                                width: 190
                             }}>
                             <View
                                 style={{

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     View,
     StyleSheet,
@@ -7,56 +7,91 @@ import {
     // TouchableWithoutFeedback
 } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
 function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBtnDelete }) {
-    const dispatch = useDispatch()
     const [state, setStateTrue] = useState({
         idTasks: 0,
         titleTasks: '',
         contentTasks: '',
-        heureDebut: new Date(),
+        heureDebut: '00:00:00',
         pseudoUtilisateur: 'blackran',
-        edit: false
+        edit: false,
+        showTime: false
     })
+    // const [showTime, setShowTime] = useState(false)
     const oneDay = 24 * 60 * 60 * 1000
 
-    const setState = useCallback((data) => {
-        console.log('==============================================================')
-        console.log('state', state)
-        console.log('state', Object.assign({}, state, data))
-        setStateTrue(Object.assign({}, state, data))
-        console.log('state', state)
-    }, []) // eslint-disable-line
+    const setState = (data) => {
+        // console.log('setState ++============================================================================')
+        // console.log(data)
+        setStateTrue(prev => {
+            const stock1 = prev
+            const stock2 = data
+            const reunion = Object.assign({}, stock1, stock2)
+            return reunion
+        })
+    } // eslint-disable-line
 
     const convertStringNumber = (date) => {
         const [heure, minute, second] = date.split(':')
         return ((parseInt(heure, 10) * 60 * 60 * 1000) + (parseInt(minute, 10) * 60 * 1000) + (parseInt(second, 10) * 1000))
     }
 
+    const convertDate = (e) => new Date('1996-07-22T' + e)
+
     useEffect(() => {
-        const { idTasks, titleTasks, contentTasks, heureDebut, pseudoUtilisateur } = datas
-        setState({
-            idTasks,
-            titleTasks,
-            contentTasks,
-            heureDebut: heureDebut,
-            pseudoUtilisateur,
-            edit: editP
-        })
-    }, [datas, editP, setState])
+        // console.log('useEffect');
+        (async () => {
+            try {
+                const { idTasks, titleTasks, contentTasks, heureDebut, pseudoUtilisateur } = datas
+                const s = {
+                    idTasks,
+                    titleTasks,
+                    contentTasks,
+                    heureDebut,
+                    pseudoUtilisateur,
+                    edit: editP
+                }
+                setState(s)
+            } catch {}
+        })(datas)
+    }, []) // eslint-disable-line
 
     const limiterWord = (phrase, len) => {
         return phrase ? phrase.split(' ').slice(0, len).join(' ') + ' ...' : phrase
     }
 
     const OnChangeLohanteny = (e) => {
+        // console.log('OnChangeLohanteny')
         setState({ titleTasks: e })
     }
 
     const OnChangeFanazavana = (e) => {
+        // console.log('OnChangeFanazavana')
         setState({ contentTasks: e })
+    }
+
+    const setDouble = (e) => {
+        let stock = e + ''
+        if (parseInt(e) < 10) {
+            stock = '0' + stock
+        }
+        return stock
+    }
+
+    const formatDate = (e) => {
+        const heure = setDouble(e.getHours())
+        const minute = setDouble(e.getMinutes())
+        const second = setDouble(e.getSeconds())
+        const stock = heure + ':' + minute + ':' + second
+        if (stock !== 'NaN:NaN:NaN') {
+            return stock
+        }
+        return '00:00:00'
     }
 
     const day = () => {
@@ -74,32 +109,42 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
     }
 
     const onChangeDate = (event, selectedDate) => {
+        // console.log('onChangeDate')
+        if (selectedDate === undefined) {
+            return setState({ showTime: false })
+        }
         const currentDate = selectedDate || state.heureDebut
-        setState({ heureDebut: currentDate })
+        if (formatDate(currentDate) !== '00:00:00') {
+            setState({ heureDebut: formatDate(currentDate), showTime: false })
+        }
     }
 
     const onSave = () => {
-        // console.log('OnPressSave')
+        // console.log('onSave')
+        setState({ edit: false })
+        const { idTasks, titleTasks, contentTasks, heureDebut, pseudoUtilisateur } = state
         OnPressSave(days, {
-            idTasks: (oneDay * day()) + convertStringNumber(taskReducer.heureDebut),
+            idTasks: (oneDay * day()) + convertStringNumber(heureDebut),
             titleTasks,
             contentTasks,
             heureDebut,
             pseudoUtilisateur
-        }, state.idTasks)
-        setState({
-            edit: false
-        })
+        }, idTasks)
     }
 
     const onPressAjanona = () => {
-        console.log('ajanona')
+        // console.log('onPressAjanona')
         setState({ edit: false })
         manindryAjanona()
     }
 
-    const { color, taskReducer } = useSelector(state => ({ color: state.Color, taskReducer: state.Tasks }))
-    const { idTasks, titleTasks, contentTasks, heureDebut, edit, pseudoUtilisateur } = state
+    const setSHowTime = () => {
+        // console.log('setSHowTime')
+        setState({ showTime: true })
+    }
+
+    const { color } = useSelector(state => ({ color: state.Color, taskReducer: state.Tasks }))
+    const { idTasks, titleTasks, contentTasks, heureDebut, edit } = state
     return (
         <View style={{
             ...styles.body,
@@ -115,8 +160,9 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                         <TextInput
                             style={{
                                 backgroundColor: color.activeColor.primary.dark + '33',
+                                paddingLeft: 10,
                                 padding: 2,
-                                margin: 2,
+                                marginBottom: 2,
                                 color: color.activeColor.fontColor.dark
                             }}
                             selectionColor={color.activeColor.fontColor.dark}
@@ -127,8 +173,9 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                         <TextInput
                             style={{
                                 backgroundColor: color.activeColor.primary.dark + '33',
+                                paddingLeft: 10,
                                 padding: 2,
-                                margin: 2,
+                                marginTop: 2,
                                 color: color.activeColor.fontColor.dark
                             }}
                             selectionColor={color.activeColor.fontColor.dark}
@@ -159,56 +206,102 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                 alignItems: 'flex-start'
             }}>
                 {
-                    edit 
-                        ? <DateTimePicker
-                            testID="dateTimePicker"
-                            style={{ width: 100 }}
-                            value={new Date()}
-                            is24Hour={true}
-                            mode="time"
-                            showIcon={false}
-                            customStyles={{
-                                dateInput: {
-                                    marginRight: 10,
+                    edit
+                        ? <View>
+                            <Button
+                                buttonStyle={{
                                     backgroundColor: color.activeColor.primary.dark + '33',
-                                    padding: 2,
-                                    margin: 2,
-                                    color: color.activeColor.fontColor.dark,
-                                    borderWidth: 0,
-                                    height: 33
-                                }
-                            }}
-                            open={true}
-                            onChange={() => onChangeDate()}
-                        />
-                        :<Text style={{
+                                    marginRight: 3,
+                                    height: 34
+                                }}
+                                titleStyle={{
+                                    color: color.activeColor.fontColor.dark
+                                }}
+                                title={heureDebut}
+                                onPress={() => setSHowTime()}
+                            />
+                            {
+                                state.showTime &&
+                            <DateTimePicker
+                                testID="dateTimePicker"
+                                style={{ width: 100 }}
+                                value={convertDate(heureDebut)}
+                                is24Hour={true}
+                                mode="time"
+                                locale="fr-FR"
+                                showIcon={false}
+                                display="clock"
+                                customStyles={{
+                                    dateInput: {
+                                        marginRight: 10,
+                                        backgroundColor: color.activeColor.primary.dark + '33',
+                                        padding: 2,
+                                        margin: 2,
+                                        color: color.activeColor.fontColor.dark,
+                                        borderWidth: 0,
+                                        height: 33
+                                    }
+                                }}
+                                open={true}
+                                onChange={onChangeDate}
+                            />
+                            }
+                        </View>
+                        : <Text style={{
                             ...styles.heures,
                             color: color.activeColor.fontColor.dark + 'aa'
                         }}>
-                                test
                             {
-                                // heureDebut.getTime()
-                            }</Text>
+                                heureDebut
+                            }
+                        </Text>
                 }
 
                 {
                     edit ? <View>
+
                         <Button
                             onPress={() => onSave()}
-                            title='tazomina'
-                            color={color.activeColor.primary.default}
+                            icon={
+                                <FontAwesomeIcon
+                                    icon={faCheck}
+                                    color={color.activeColor.fontColor.light}
+                                    size={20}
+                                />
+                            }
+                            buttonStyle={{
+                                backgroundColor: color.activeColor.primary.dark,
+                                height: 40,
+                                width: 40,
+                                marginLeft: 5
+                            }}
+                            color={color.activeColor.primary.dark + '77'}
+                            type='outline'
                         />
                         <Button
                             onPress={() => onPressAjanona()}
-                            title='ajanona'
-                            type='clear'
+                            icon={
+                                <FontAwesomeIcon
+                                    icon={faTimes}
+                                    color={color.activeColor.primary.dark}
+                                    size={20}
+                                />
+                            }
+                            buttonStyle={{
+                                backgroundColor: color.activeColor.secondary.dark,
+                                marginTop: 5,
+                                height: 40,
+                                width: 40,
+                                marginLeft: 5
+                            }}
+                            color={color.activeColor.primary.dark}
+                            type='outline'
                         />
-
                     </View> : <View style={{ flexDirection: 'row' }}>
                         <Button
-                            onPress={() => () => {
+                            onPress={() => {
+                                // console.log('button edit')
                                 setState({ edit: true })
-                                dispatch({ type: 'ON_CHANGE_DATE_PICKER', data: heureDebut })
                             }}
                             icon={
                                 <Icon
@@ -225,9 +318,7 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                             type='outline'
                         />
                         <Button
-                            onPress={() => () => {
-                                onClickBtnDelete(days, idTasks)
-                            }}
+                            onPress={() => onClickBtnDelete(days, idTasks)}
                             icon={
                                 <Icon
                                     name='delete'
@@ -255,8 +346,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        padding: 10
+        alignItems: 'flex-start'
     },
     title: {
         fontWeight: 'bold'

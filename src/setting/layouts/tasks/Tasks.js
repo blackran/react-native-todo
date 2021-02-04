@@ -81,7 +81,6 @@ class Tasks extends Component {
     OnPressSave = (days, datas, lastIdTasks) => {
         Keyboard.dismiss()
         const { data } = this.state
-        console.log({ datas })
         if (datas.title !== '' && datas.heureDebut !== '00:00:00') {
             if (days === 'unknown' && data.finish !== undefined) {
                 let exist = true
@@ -132,7 +131,7 @@ class Tasks extends Component {
                 default: '00:00:00',
                 showEdit: 'other'
             })
-            this.props.onChangeDatePicker('00:00:00')
+            // this.props.onChangeDatePicker('00:00:00')
         }
     }
 
@@ -215,7 +214,7 @@ class Tasks extends Component {
                 }}>
                     <View
                         style={{
-                            backgroundColor: color.activeColor.primary.default,
+                            backgroundColor: '#0c0c0c',
                             flexDirection: 'row',
                             justifyContent: 'space-between',
 
@@ -233,15 +232,15 @@ class Tasks extends Component {
                             icon={
                                 <Icon
                                     name='chevron-left'
-                                    size={30}
+                                    size={40}
                                     type='MaterialIcons'
                                     color='white'
                                 />
                             }
-                            title='HIVERINA'
                             onPress={() => this.props.navigation.navigate('Principal', { color: color })}
-                            style={{
-                                width: 10
+                            buttonStyle={{
+                                width: 60,
+                                height: 60
                             }}
                             titleStyle={{
                                 color: color.activeColor.fontColor.light
@@ -252,15 +251,15 @@ class Tasks extends Component {
                             icon={
                                 <Icon
                                     name='save'
-                                    size={25}
+                                    size={30}
                                     type='MaterialIcons'
                                     color='white'
                                 />
                             }
-                            title='AMPIRIMINA'
                             onPress={this.onClickSaveAll.bind(this)}
-                            style={{
-                                width: 10
+                            buttonStyle={{
+                                width: 100,
+                                height: 60
                             }}
                             titleStyle={{
                                 color: color.activeColor.fontColor.light
@@ -270,6 +269,7 @@ class Tasks extends Component {
                     </View>
                     <ScrollView
                         style={{
+                            ...styles.block,
                             height: height,
                             // backgroundColor: color.activeColor.primary.default,
                             flexDirection: 'column'
@@ -416,7 +416,8 @@ class Tasks extends Component {
 
 const styles = StyleSheet.create({
     block: {
-        marginBottom: 0
+        marginBottom: 0,
+        marginTop: 20
     },
     title: {
         fontWeight: 'bold',
