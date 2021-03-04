@@ -2,11 +2,11 @@ import { ADD_UTILISATEUR, INIT_UTILISATEUR } from './actions/UtilisateurActions'
 
 const initState = {
     dataUtilisateur: [
-        {
-            pseudoUtilisateur: 'blackran',
-            imageUtilisateur: '',
-            passwordUtilisateur: 'password'
-        }
+        // {
+        //     pseudoUtilisateur: 'blackran',
+        //     imageUtilisateur: '',
+        //     passwordUtilisateur: 'password'
+        // }
     ],
     connecterUtilisateur: {}
 }

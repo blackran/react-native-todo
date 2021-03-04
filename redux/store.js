@@ -1,7 +1,7 @@
 import {
-    createStore
-    // applyMiddleware,
-    // compose
+  createStore
+  // applyMiddleware,
+  // compose
 } from 'redux'
 import rootReducer from '.'
 // import thunk from 'redux-thunk'
@@ -11,8 +11,8 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { persistStore, persistReducer } from 'redux-persist'
 
 const rootPersistConfig = {
-    key: 'asako',
-    storage: AsyncStorage
+  key: 'asako',
+  storage: AsyncStorage
 }
 
 // const middleware = [thunk]

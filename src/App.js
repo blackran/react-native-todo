@@ -6,18 +6,17 @@ import Notification from './principal/layouts/notification/Notification'
 import Setting from './setting/Setting'
 
 const RootStack = createStackNavigator({
-    Login: { screen: Login },
-    Principal: { screen: Principal },
-    Notification: { screen: Notification },
-    Setting: { screen: Setting }
+  Login: { screen: Login },
+  Principal: { screen: Principal },
+  Notification: { screen: Notification },
+  Setting: { screen: Setting }
 },
 {
-    initialRouteName: 'Login',
-    headerMode: 'none',
-    navigationOptions: {
-        headerVisible: false
-    }
-}
-)
+  initialRouteName: 'Login',
+  headerMode: 'none',
+  navigationOptions: {
+    headerVisible: false
+  }
+})
 
 export default createAppContainer(RootStack)
