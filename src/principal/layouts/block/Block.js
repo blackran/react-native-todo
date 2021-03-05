@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, Image, Animated, Dimensions } from 'react-native'
+import { View, Text, Image, Animated, Dimensions, StyleSheet } from 'react-native'
 import { useSelector } from 'react-redux'
 
 import check from './statics/images/check_cool.png'
@@ -33,7 +33,7 @@ function Block (props) {
     if (state.finish !== props.finish) {
       setState({ finish: props.finish })
     }
-    }, [props.finish]) // eslint-disable-line
+  }, [props.finish]) // eslint-disable-line
 
   const setDouble = (e) => {
     if (e < 10) {
@@ -73,27 +73,31 @@ function Block (props) {
 
   const { active, datas, fin, start, i, finish } = props
 
+  const style1 = {
+    flex: 1,
+    justifyContent: 'space-between',
+    margin: 2,
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 5,
+    backgroundColor: start
+      ? color.activeColor.primary.dark
+      : (finish ? color.activeColor.primary.light + '99' : color.activeColor.primary.dark + '33'),
+    opacity: finish ? 0.5 : 1,
+    padding: 10,
+    borderRadius: 5,
+    paddingBottom: 15
+  }
+
+  const style2 = Object.assign({}, style1, styles.shadow)
+
   return (
     <Animated.View>
       <Move
         delais={i * 10}
         xD={0}
         yD={(i + 1) * height}
-        styles={{
-          flex: 1,
-          justifyContent: 'space-between',
-          margin: 2,
-          marginLeft: 10,
-          marginRight: 10,
-          marginBottom: 5,
-          backgroundColor: start
-            ? color.activeColor.primary.dark + '55'
-            : (finish ? color.activeColor.primary.light + '99' : color.activeColor.primary.dark + '33'),
-          opacity: finish ? 0.5 : 1,
-          padding: 10,
-          borderRadius: 5,
-          paddingBottom: 15
-        }}
+        styles={start ? style2 : style1}
       >
         <View style={{ flexDirection: 'row', marginBottom: 5 }}>
           <View style={{ flexDirection: 'column' }}>
@@ -101,7 +105,7 @@ function Block (props) {
               fontSize: 24,
               textDecorationLine: finish ? 'line-through' : 'none',
               color: start
-                ? color.activeColor.fontColor.dark
+                ? color.activeColor.fontColor.light
                 : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.light)
             }}
             >{datas.titleTasks}
@@ -140,7 +144,7 @@ function Block (props) {
           <Text
             style={{
               color: start
-                ? color.activeColor.fontColor.dark
+                ? color.activeColor.fontColor.light
                 : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.light),
               opacity: 0.8
             }}
@@ -151,5 +155,11 @@ function Block (props) {
     </Animated.View>
   )
 }
+
+const styles = StyleSheet.create({
+  shadow: {
+    color: 'white'
+  }
+})
 
 export default Block

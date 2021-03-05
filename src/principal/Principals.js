@@ -149,7 +149,7 @@ function Principals (props) {
   }
 
   const newArrayDate = (data) => {
-    const stock = [jours[Math.floor(parseInt(data.idTasks) / 24 / 60 / 60 / 1000)], data.heureDebut]
+    const stock = [jours[Math.floor(parseInt(data.idTasks) / 24 / 60 / 60 / 1000)], data.heureDebut, data.idTasks]
     return stock
   }
 
@@ -194,15 +194,7 @@ function Principals (props) {
       <View
         style={{
           overflow: 'hidden',
-          height: 220,
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 0,
-            height: 1
-          },
-          shadowOpacity: 0.22,
-          shadowRadius: 2.22,
-          elevation: 3
+          height: 220
         }}
       >
         <Image
@@ -345,6 +337,7 @@ function Principals (props) {
       </View>
 
       {/* body of application */}
+
 
       <ScrollView style={{ width: width, ...styles.root }}>
         {

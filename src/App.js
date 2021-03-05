@@ -4,6 +4,7 @@ import Principal from './principal/layouts/DrawNavigation/DrawNavigation'
 import Login from './login/Login'
 import Notification from './principal/layouts/notification/Notification'
 import Setting from './setting/Setting'
+import './NotificationManager'
 
 const RootStack = createStackNavigator({
   Login: { screen: Login },

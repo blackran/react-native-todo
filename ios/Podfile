@@ -44,6 +44,8 @@ target 'asako' do
 
   pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
 
+  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+
   target 'asakoTests' do
     inherit! :search_paths
     # Pods for testing

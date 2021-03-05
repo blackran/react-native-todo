@@ -327,8 +327,8 @@ function Login (props) {
                   }}
                 >
                   {
-                                      state.isLogin ? 'Mbola tsy manana' : 'Efa manana'
-                                  }
+                    state.isLogin ? 'Mbola tsy manana' : 'Efa manana'
+                  }
                 </Text>
               </View>
             </TouchableWithoutFeedback>

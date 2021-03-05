@@ -36,6 +36,14 @@ const initState = {
   dataFilter: []
 }
 
+function thisorder (data, column) {
+  return data.map(value => {
+    return value
+  }).sort(function (a, b) {
+    return a[column] - b[column]
+  })
+}
+
 function FilterAffiche (datas) {
   const newdata = {
     Alahady: [],
@@ -48,7 +56,7 @@ function FilterAffiche (datas) {
   }
   datas && datas.map(e => {
     if (e.day) {
-      newdata[e.day] = [...newdata[e.day], e]
+      newdata[e.day] = thisorder([...newdata[e.day], e], 'idTasks')
     }
     return null
   })

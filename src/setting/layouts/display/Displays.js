@@ -146,92 +146,96 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
   const { color } = useSelector(state => ({ color: state.Color, taskReducer: state.Tasks }))
   const { idTasks, titleTasks, contentTasks, heureDebut, edit } = state
   return (
-    <KeyboardAwareScrollView>
-    <View style={{
-      ...styles.body,
-      // backgroundColor: color.primary.dark + '44',
-      height: edit ? null : 50
-    }}
+    <KeyboardAwareScrollView
+      onKeyboardWillShow={(frames) => {
+        console.log('Keyboard event', frames)
+      }}
     >
       <View style={{
-        flex: 1,
-        marginRight: 10
+        ...styles.body,
+        // backgroundColor: color.primary.dark + '44',
+        height: edit ? null : 50
       }}
       >
-        {
-          edit ? <View>
-            <TextInput
-              style={{
-                backgroundColor: color.activeColor.primary.dark + '33',
-                paddingLeft: 10,
-                padding: 2,
-                marginBottom: 2,
-                color: color.activeColor.fontColor.dark
-              }}
-              selectionColor={color.activeColor.fontColor.dark}
-              placeholder='lohanteny'
-              onChangeText={(e) => OnChangeLohanteny(e)}
-              value={titleTasks}
-            />
-            <TextInput
-              style={{
-                backgroundColor: color.activeColor.primary.dark + '33',
-                paddingLeft: 10,
-                padding: 2,
-                marginTop: 2,
-                color: color.activeColor.fontColor.dark
-              }}
-              selectionColor={color.activeColor.fontColor.dark}
-              multiline
-              numberOfLines={2}
-              row={3}
-              placeholder='fanazavana'
-              onChangeText={(e) => OnChangeFanazavana(e)}
-              value={contentTasks}
-            />
-          </View>
-            : <View>
-              <Text style={{
-                ...styles.title,
-                color: color.activeColor.fontColor.dark + 'aa',
-                fontSize: 17
-              }}
-              >{titleTasks}
-              </Text>
-              <Text style={{
-                color: color.activeColor.fontColor.dark + '55',
-                fontSize: 13
-              }}
-              >{limiterWord(contentTasks, 2)}
-              </Text>
-            </View>
-        }
-      </View>
-      <View style={{
-        flexDirection: 'row',
-        alignItems: 'flex-start'
-      }}
-      >
-        {
-          edit
-            ? <View>
-              <Button
-                buttonStyle={{
+        <View style={{
+          flex: 1,
+          marginRight: 10
+        }}
+        >
+          {
+            edit ? <View>
+              <TextInput
+                style={{
                   backgroundColor: color.activeColor.primary.dark + '33',
-                  marginRight: 3,
-                  height: 34
-                }}
-                titleStyle={{
+                  paddingLeft: 10,
+                  padding: 2,
+                  marginBottom: 2,
                   color: color.activeColor.fontColor.dark
                 }}
-                title={heureDebut}
-                onPress={() => setSHowTime()}
+                selectionColor={color.activeColor.fontColor.dark}
+                placeholder='lohanteny'
+                onChangeText={(e) => OnChangeLohanteny(e)}
+                value={titleTasks}
               />
-              {
+              <TextInput
+                style={{
+                  backgroundColor: color.activeColor.primary.dark + '33',
+                  paddingLeft: 10,
+                  padding: 2,
+                  marginTop: 2,
+                  color: color.activeColor.fontColor.dark
+                }}
+                selectionColor={color.activeColor.fontColor.dark}
+                multiline
+                numberOfLines={2}
+                row={3}
+                placeholder='fanazavana'
+                onChangeText={(e) => OnChangeFanazavana(e)}
+                value={contentTasks}
+              />
+            </View>
+              : <View>
+                <Text style={{
+                  ...styles.title,
+                  color: color.activeColor.fontColor.dark + 'aa',
+                  fontSize: 17
+                }}
+                >{titleTasks}
+                </Text>
+                <Text style={{
+                  color: color.activeColor.fontColor.dark + '55',
+                  fontSize: 13
+                }}
+                >{limiterWord(contentTasks, 2)}
+                </Text>
+              </View>
+          }
+        </View>
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'flex-start'
+        }}
+        >
+          {
+            edit
+              ? <View>
+                <Button
+                  buttonStyle={{
+                    backgroundColor: color.activeColor.primary.dark + '33',
+                    marginRight: 3,
+                    height: 34
+                  }}
+                  titleStyle={{
+                    color: color.activeColor.fontColor.dark
+                  }}
+                  title={heureDebut}
+                  onPress={() => setSHowTime()}
+                />
+                {
                 //  is24Hour
-              }
-              {
-                state.showTime &&
+                }
+                {
+                  state.showTime &&
                   <DateTimePicker
                     testID='dateTimePicker'
                     style={{ width: 100 }}
@@ -254,99 +258,99 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                     open
                     onChange={onChangeDate}
                   />
-              }
+                }
+              </View>
+              : <Text style={{
+                ...styles.heures,
+                color: color.activeColor.fontColor.dark + 'aa'
+              }}>
+                {
+                  heureDebut
+                }
+              </Text>
+          }
+
+          {
+            edit ? <View>
+
+              <Button
+                onPress={() => onSave()}
+                icon={
+                  <FontAwesomeIcon
+                    icon={faCheck}
+                    color={color.activeColor.fontColor.light}
+                    size={20}
+                  />
+                }
+                buttonStyle={{
+                  backgroundColor: color.activeColor.primary.dark,
+                  height: 40,
+                  width: 40,
+                  marginLeft: 5
+                }}
+                color={color.activeColor.primary.dark + '77'}
+                type='outline'
+              />
+              <Button
+                onPress={() => onPressAjanona()}
+                icon={
+                  <FontAwesomeIcon
+                    icon={faTimes}
+                    color={color.activeColor.primary.dark}
+                    size={20}
+                  />
+                }
+                buttonStyle={{
+                  backgroundColor: color.activeColor.secondary.dark,
+                  marginTop: 5,
+                  height: 40,
+                  width: 40,
+                  marginLeft: 5
+                }}
+                color={color.activeColor.primary.dark}
+                type='outline'
+              />
+            </View> : <View style={{ flexDirection: 'row' }}>
+              <Button
+                onPress={() => {
+                  // console.log('button edit')
+                  setState({ edit: true })
+                }}
+                icon={
+                  <Icon
+                    name='edit'
+                    size={25}
+                    type='MaterialIcons'
+                    color='white'
+                  />
+                }
+                buttonStyle={{
+                  backgroundColor: color.activeColor.primary.dark
+                }}
+                color={color.activeColor.primary.dark + '77'}
+                type='outline'
+              />
+              <Button
+                onPress={() => onClickBtnDelete(days, idTasks)}
+                icon={
+                  <Icon
+                    name='delete'
+                    size={25}
+                    type='MaterialIcons'
+                    color={color.activeColor.primary.dark}
+                  />
+                }
+                buttonStyle={{
+                  backgroundColor: color.activeColor.secondary.dark,
+                  marginLeft: 5
+                }}
+                color={color.activeColor.primary.dark}
+                type='outline'
+              />
             </View>
-            : <Text style={{
-              ...styles.heures,
-              color: color.activeColor.fontColor.dark + 'aa'
-            }}>
-              {
-                heureDebut
-              }
-            </Text>
-        }
-
-        {
-          edit ? <View>
-
-            <Button
-              onPress={() => onSave()}
-              icon={
-                <FontAwesomeIcon
-                  icon={faCheck}
-                  color={color.activeColor.fontColor.light}
-                  size={20}
-                />
-              }
-              buttonStyle={{
-                backgroundColor: color.activeColor.primary.dark,
-                height: 40,
-                width: 40,
-                marginLeft: 5
-              }}
-              color={color.activeColor.primary.dark + '77'}
-              type='outline'
-            />
-            <Button
-              onPress={() => onPressAjanona()}
-              icon={
-                <FontAwesomeIcon
-                  icon={faTimes}
-                  color={color.activeColor.primary.dark}
-                  size={20}
-                />
-              }
-              buttonStyle={{
-                backgroundColor: color.activeColor.secondary.dark,
-                marginTop: 5,
-                height: 40,
-                width: 40,
-                marginLeft: 5
-              }}
-              color={color.activeColor.primary.dark}
-              type='outline'
-            />
-          </View> : <View style={{ flexDirection: 'row' }}>
-            <Button
-              onPress={() => {
-                // console.log('button edit')
-                setState({ edit: true })
-              }}
-              icon={
-                <Icon
-                  name='edit'
-                  size={25}
-                  type='MaterialIcons'
-                  color='white'
-                />
-              }
-              buttonStyle={{
-                backgroundColor: color.activeColor.primary.dark
-              }}
-              color={color.activeColor.primary.dark + '77'}
-              type='outline'
-            />
-            <Button
-              onPress={() => onClickBtnDelete(days, idTasks)}
-              icon={
-                <Icon
-                  name='delete'
-                  size={25}
-                  type='MaterialIcons'
-                  color={color.activeColor.primary.dark}
-                />
-              }
-              buttonStyle={{
-                backgroundColor: color.activeColor.secondary.dark,
-                marginLeft: 5
-              }}
-              color={color.activeColor.primary.dark}
-              type='outline'
-            />
-          </View>
-        }
+          }
+        </View>
       </View>
-    </View>
     </KeyboardAwareScrollView>
   )
 }
