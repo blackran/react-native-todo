@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBtnDelete }) {
   const [state, setStateTrue] = useState({
@@ -145,6 +146,7 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
   const { color } = useSelector(state => ({ color: state.Color, taskReducer: state.Tasks }))
   const { idTasks, titleTasks, contentTasks, heureDebut, edit } = state
   return (
+    <KeyboardAwareScrollView>
     <View style={{
       ...styles.body,
       // backgroundColor: color.primary.dark + '44',
@@ -345,6 +347,7 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
         }
       </View>
     </View>
+    </KeyboardAwareScrollView>
   )
 }
 

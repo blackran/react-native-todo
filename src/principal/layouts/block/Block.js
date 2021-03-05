@@ -71,7 +71,7 @@ function Block (props) {
     return phrase && phrase.split(' ').slice(0, len).join(' ') + ' ...'
   }
 
-  const { datas, fin, start, i, finish } = props
+  const { active, datas, fin, start, i, finish } = props
 
   return (
     <Animated.View>
@@ -123,6 +123,7 @@ function Block (props) {
               debut={debut()}
               fin={fin}
               start={start}
+              active={active}
             />
             <Image
               source={start ? clock : (finish ? check : wait)}

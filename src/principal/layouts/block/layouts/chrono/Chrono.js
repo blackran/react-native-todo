@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Text, Vibration } from 'react-native'
+import { Text, Vibration, StyleSheet, View } from 'react-native'
 import { betweenTwoDate } from '../../../DatePicker/DatePicker'
+import Dialog from 'react-native-dialog'
+
+import { useDispatch } from 'react-redux'
 
 function Chrono (props) {
+  const [visible, setVisible] = useState(false)
   const [state, setStateTrue] = useState({
-    date: 1,
+    date: null,
     stockInterval: null,
     start: false,
     style: {}
@@ -16,47 +20,42 @@ function Chrono (props) {
 
   // chrono ==================================================================
 
-  const chrono = () => {
-    props.navigation.navigate('Notification', { lastTask: state.date })
+  const dispatch = useDispatch()
+  const dispatchOne = useCallback(() => {
+    setTimeout(() => {
+      console.log('false .... ')
+      Vibration.vibrate([500, 1000, 1000], true)
+      setTimeout(() => {
+        Vibration.cancel()
+      }, 10000)
 
-    // const stock = setInterval(() => {
-    //   if (state.date > 0) {
-    //     setState((state) => {
-    //       return { date: state.date - 1000 }
-    //     })
-    //   } else {
-    //     clearInterval(state.stockInterval)
-    //     Vibration.vibrate([500, 1000, 1000], true)
-    //     setTimeout(() => {
-    //       Vibration.cancel()
-    //       setState({ date: 0 })
-    //     }, 2000)
-    //     props.navigation.navigate('Notification', { lastTask: props.content })
-    //   }
-    // }, 1000)
-    //
-    // setState({ stockInterval: stock })
-  }
+      dispatch({
+        type: 'DATA_FILTER',
+        active: props.active
+      })
+      dispatch({ type: 'DATA_ACTIVE' })
+      setVisible(false)
+    },  2000)
+  })
 
   useEffect(() => {
-    // console.log(state.start, props.start, state.start !== props.start)
-    if (state.date > 1 && state.date < 5 * 60 * 100) {
-      console.log(state.date, ' chrono ', 5 * 60 * 100)
-      // chrono()
+    if (visible && state.date>1 && state.date < 2000) {
+      console.log('finish ...')
+      dispatchOne()
     }
-    // if (state.start !== props.start) {
-    //   setState({ start: props.start })
-    //   if (props.start) {
-    //     chrono()
-    //   } else {
-    //     clearInterval(state.stockInterval)
-    //   }
-    // }
-    // if (state.style !== props.style) {
-    //   setState({ style: props.style })
-    // }
-    // return () => clearInterval(state.stockInterval)
-  }, [state]) // eslint-disable-line
+  }, [dispatchOne, visible])
+
+  useEffect(() => {
+    const dureeVibreur = 10000
+    console.log(state.date)
+    if (state.date > 1 && state.date < 5 * 60 * 1000) {
+      Vibration.vibrate([500, 1000, 1000], true)
+      setTimeout(() => {
+        Vibration.cancel()
+      }, dureeVibreur)
+      setVisible(true)
+    }
+  }, [state.date]) // eslint-disable-line
 
   // chrono ==================================================================
 
@@ -96,18 +95,67 @@ function Chrono (props) {
   }
 
   return (
-    <Text
-      style={{
-        fontSize: 24,
-        textDecorationLine: props.finish ? 'line-through' : 'none',
-        color: props.finish
-          ? props.color.activeColor.fontColor.dark
-          : (props.start ? props.color.activeColor.fontColor.dark : props.color.activeColor.fontColor.light)
-      }}
-    >
-      {!props.finish ? secondToDate(state.date) : '00:00:00'}
-    </Text>
+    <View>
+      <Text
+        style={{
+          fontSize: 24,
+          textDecorationLine: props.finish ? 'line-through' : 'none',
+          color: props.finish
+            ? props.color.activeColor.fontColor.dark
+            : (props.start ? props.color.activeColor.fontColor.dark : props.color.activeColor.fontColor.light)
+        }}
+      >
+        {!props.finish ? secondToDate(state.date) : '00:00:00'}
+      </Text>
+      <View style={styles.container}>
+        <Dialog.Container visible={visible}>
+          <Dialog.Title style={{ textAlign: 'center' }}>Fotoana Fialana Sasatra</Dialog.Title>
+          <View
+            style={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingBottom: 20
+
+            }}
+          >
+            <View
+              style={{
+                borderWidth: 3,
+                borderColor: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'black',
+                width: 150,
+                height: 150,
+                borderRadius: 150,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 20
+              }}
+            >
+              <Text
+                style={{
+                  ...props.style,
+                  fontSize: 30,
+                  color: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'black'
+                }}
+              >
+                {secondToDate(state.date)}
+              </Text>
+            </View>
+          </View>
+          <Dialog.Button label='Actualise' onPress={dispatchOne} />
+        </Dialog.Container>
+      </View>
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+})
 
 export default Chrono

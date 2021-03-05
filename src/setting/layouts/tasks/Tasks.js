@@ -146,11 +146,18 @@ class Tasks extends Component {
           if (key === days) {
             let exist = true
             subjects.map((e, i) => {
+              console.log('idTasks: ', e.idTasks, ', lastIdTasks: ', lastIdTasks)
               if (e.idTasks === lastIdTasks) {
                 exist = false
                 const stock = JSON.parse(JSON.stringify(data))
                 stock.rest[key].splice(i, 1)
-                const mocks = [...data.rest[key], datas]
+                // const mocks = [...data.rest[key], datas]
+                const mocks = data.rest[key].map(dt => {
+                  if (dt.idTasks === lastIdTasks) {
+                    return datas
+                  }
+                  return dt
+                })
                 stock.rest[key] = order(mocks, 'idTasks')
                 this.setState({ data: Object.assign({}, stock) })
               }

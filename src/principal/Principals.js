@@ -370,6 +370,7 @@ function Principals (props) {
                   }
                   navigation={props.navigation}
                   fin={nextData(e, thisorder(tasks.dataTask, 'idTasks'))}
+                  active={state.active}
                 />
               )
             }
