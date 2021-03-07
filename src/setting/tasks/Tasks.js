@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Dimensions, ScrollView, Text, View, StyleSheet, Keyboard, Alert, TouchableOpacity } from 'react-native'
-import { Button, Icon, ThemeProvider, Card } from 'react-native-elements'
+import { Icon, ThemeProvider, Card } from 'react-native-elements'
 import Displays from '../display/Displays'
 import { connect } from 'react-redux'
 /* eslint-disable no-unused-vars */
@@ -82,29 +82,6 @@ class Tasks extends Component {
 
   _keyboardDidHide () {
     this.setState({ keyboardOpen: 0 })
-  }
-
-  onClickSaveAll () {
-    Alert.alert(
-      'Fanotaniana',
-      'Tena ho hotahirizina ve?',
-      [
-        {
-          text: 'Ajanona',
-          onPress: () => null
-        },
-        {
-          text: 'Manaiky',
-          onPress: () => {
-            this.props.putAllData(
-              InverseLoopObject(JSON.parse(JSON.stringify(this.state.data))),
-              this.props.utilisateur.connecterUtilisateur
-            )
-          }
-        }
-      ],
-      { cancelable: false }
-    )
   }
 
   OnPressSave (days, datas, lastIdTasks, setState) {
@@ -212,6 +189,14 @@ class Tasks extends Component {
         showEdit: 'other'
       })
       setState({ edit: false })
+
+      // save all modification
+      setTimeout(() => {
+      this.props.putAllData(
+        InverseLoopObject(JSON.parse(JSON.stringify(this.state.data))),
+        this.props.utilisateur.connecterUtilisateur
+      )
+      }, 100)
     }
   }
 
@@ -292,61 +277,6 @@ class Tasks extends Component {
           height: height,
           justifyContent: 'flex-end'
         }}>
-          <View
-            style={{
-              backgroundColor: '#0c0c0c',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 1
-              },
-              shadowOpacity: 0.22,
-              shadowRadius: 2.22,
-              elevation: 3
-            }}
-          >
-            <Button
-              icon={
-                <Icon
-                  name='chevron-left'
-                  size={40}
-                  type='MaterialIcons'
-                  color='white'
-                />
-              }
-              onPress={() => this.props.navigation.navigate('Principal', { color: color })}
-              buttonStyle={{
-                width: 60,
-                height: 60
-              }}
-              titleStyle={{
-                color: color.activeColor.fontColor.light
-              }}
-              type='clear'
-            />
-            <Button
-              icon={
-                <Icon
-                  name='save'
-                  size={30}
-                  type='MaterialIcons'
-                  color='white'
-                />
-              }
-              onPress={this.onClickSaveAll.bind(this)}
-              buttonStyle={{
-                width: 100,
-                height: 60
-              }}
-              titleStyle={{
-                color: color.activeColor.fontColor.light
-              }}
-              type='clear'
-            />
-          </View>
           <ScrollView >
             <View
               style={{

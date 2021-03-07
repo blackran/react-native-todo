@@ -1,9 +1,11 @@
 import {
   INIT_DATA_TASKS,
+  ADD_DATA_TASKS,
   DATA_FILTER,
   ON_CHANGE_DATE_PICKER,
   DATA_ACTIVE,
-  PUT_ALL_DATA
+  PUT_ALL_DATA,
+  SHOW_DETAILS
 } from './actions/TasksActions'
 import {
   listJours,
@@ -33,7 +35,9 @@ const initState = {
   idTaskActive: 0,
   dateDebutAndFin: [],
   heureDebut: '00:00:00',
-  dataFilter: []
+  dataFilter: [],
+  lenTaskFinish: 0,
+  showDetails: null
 }
 
 function thisorder (data, column) {
@@ -63,6 +67,30 @@ function FilterAffiche (datas) {
   return newdata
 }
 
+function otherorder (datas, active) {
+  if (active === 0) {
+    let newstock = JSON.parse(JSON.stringify(datas))
+    const lastAlahady = JSON.parse(JSON.stringify(newstock[newstock.length - 1]))
+    newstock.pop()
+    newstock = [lastAlahady, ...newstock]
+    return newstock
+  }
+  return datas
+}
+
+function taskFinish (dataFilter, idTaskActive) {
+  let resp = 0
+  if (dataFilter.length > 0) {
+    dataFilter.map((e, i) => {
+      if (e.idTasks === idTaskActive) {
+        resp = i
+      }
+      return null
+    })
+  }
+  return resp
+}
+
 const TasksReducers = (state = initState, action) => {
   const date = null
   let stock = null
@@ -79,15 +107,28 @@ const TasksReducers = (state = initState, action) => {
     }
     return response
 
+  case ADD_DATA_TASKS:
+    if (action.data) {
+      response = Object.assign({}, state, {
+        dataTask: [...state.dataTask, action.data]
+      })
+    }
+    return response
+
   case DATA_ACTIVE:
     if (state) {
       const [response, active] = dateDAF(state, state.idTaskActive)
       return Object.assign({}, state, {
         idTaskActive: active,
-        dateDebutAndFin: response
+        showDetails: active,
+        dateDebutAndFin: response,
+        lenTaskFinish: taskFinish(state.dataFilter, active)
       })
     }
     return date
+
+  case SHOW_DETAILS:
+    return Object.assign({}, state, { showDetails: action.idTasks })
 
   case DATA_FILTER:
     // console.log('============================================================')
@@ -103,12 +144,14 @@ const TasksReducers = (state = initState, action) => {
         stockDataFilter = [...st[listJours[action.active]]]
       }
     }
-    return Object.assign({}, state, { dataFilter: stockDataFilter })
+
+    return Object.assign({}, state, { dataFilter: otherorder(thisorder(stockDataFilter, 'idTasks'), action.active) })
 
   case ON_CHANGE_DATE_PICKER:
     return Object.assign({}, state, { heureDebut: action.data })
 
   case PUT_ALL_DATA:
+    console.log('PUT_ALL_DATA')
     stock = state.dataTasks.map((e) => {
       if (e.pseudoUtilisateur === action.user.pseudoUtilisateur) {
         return { data: action.data, pseudoUtilisateur: e.pseudoUtilisateur }

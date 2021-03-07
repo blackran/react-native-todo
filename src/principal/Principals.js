@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import {
-  // PanResponder, TouchableHighlight,
   ScrollView,
   View,
   Dimensions,
@@ -19,7 +18,6 @@ import { Avatar } from 'react-native-elements'
 import userDefault from './statics/images/user.png'
 import marcus from './statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
 
-import { order } from './layouts/array/Array'
 const { width } = Dimensions.get('window')
 
 function Principals (props) {
@@ -36,12 +34,10 @@ function Principals (props) {
     searchValue: '',
     active: new Date().getDay(),
     page: 0,
-    now: new Date().getDay(),
-    // fontSize: [12, 12, 12, 12, 12, 12, 12],
-    lengthTaskFinish: 0
+    now: new Date().getDay()
   })
 
-  const [datenow, setDateNow] = useState('00:00:00')
+  const [datenow, setDateNow] = useState(0)
 
   const listView = useRef()
 
@@ -56,10 +52,6 @@ function Principals (props) {
     'Sabotsy'
   ]
 
-  const setState = useCallback((data) => {
-    setStateTrue(Object.assign({}, state, data))
-  }, []) // eslint-disable-line
-
   const setDouble = (e) => {
     if (e < 10) {
       return '0' + e
@@ -73,47 +65,30 @@ function Principals (props) {
     return setDouble(date.getHours()) + ':' + setDouble(date.getMinutes()) + ':' + setDouble(date.getSeconds())
   }, [])
 
-  const lengthTaskFinish = useCallback(() => {
-    if (tasks.dataFilter.length > 0) {
-      const stock = tasks.dataFilter.filter(e => {
-        if (e) {
-          if (state.active < state.now) {
-            return true
-          } else {
-            return e.idTasks < tasks.idTaskActive
-          }
-        } else {
-          return false
-        }
-      })
-      setState({ lengthTaskFinish: stock.length })
-    }
-  }, [tasks.dataFilter]) // eslint-disable-line
-
-  useEffect(() => {
-    const dat = tasks.dataTasks.find(e => {
-      return e.pseudoUtilisateur === utilisateur.pseudoUtilisateur
-    })
-
-    if (dat) {
-      dispatch({ type: 'INIT_DATA_TASKS', data: dat.data })
-    }
-
-    dispatch({
-      type: 'DATA_FILTER',
-      active: state.active
-    })
-    dispatch({ type: 'DATA_ACTIVE' })
-
-    lengthTaskFinish()
-  }, [tasks.dataTasks]) // eslint-disable-line
-
   useEffect(() => {
     const stock = setInterval(() => {
       setDateNow(dateNowToString())
     }, 1000)
     return () => clearInterval(stock)
   }, []) // eslint-disable-line
+
+  const setState = useCallback((data) => {
+    setStateTrue(Object.assign({}, state, data))
+  }, []) // eslint-disable-line
+
+  useEffect(() => {
+    const dat = tasks.dataTasks.find(e => {
+      return e.pseudoUtilisateur === utilisateur.pseudoUtilisateur
+    })
+    if (dat) {
+      dispatch({ type: 'INIT_DATA_TASKS', data: dat.data })
+    }
+    dispatch({
+      type: 'DATA_FILTER',
+      active: state.active
+    })
+    dispatch({ type: 'DATA_ACTIVE' })
+  }, [tasks.dataTasks]) // eslint-disable-line
 
   useEffect(() => {
     setTimeout(() => listView.current.scrollTo({
@@ -205,7 +180,6 @@ function Principals (props) {
             position: 'absolute'
           }}
         />
-
         <View
           style={{
             backgroundColor: 'rgba(0,0,0,0.5)',
@@ -216,10 +190,8 @@ function Principals (props) {
             alignItems: 'center',
             paddingLeft: 10,
             paddingRight: 10
-
           }}
         >
-
           <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
             <FontAwesomeIcon
               icon={faBars}
@@ -227,131 +199,161 @@ function Principals (props) {
               size={30}
             />
           </TouchableOpacity>
-          <Avatar
-            rounded
-            title={utilisateur?.pseudoUtilisateur ? utilisateur?.pseudoUtilisateur[0].toUpperCase() : ''}
-            source={utilisateur?.imageUtilisateur ? utilisateur.imageUtilisateur : userDefault}
-          />
+
+          <Text style={{ color: textColor }}>{datenow}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.closeDrawer()
+              props.navigation.navigate('Users',
+                {
+                  color: color
+                }
+              )
+            }}
+          >
+            <Avatar
+              rounded
+              title={utilisateur?.pseudoUtilisateur ? utilisateur?.pseudoUtilisateur[0].toUpperCase() : ''}
+              source={utilisateur?.imageUtilisateur ? utilisateur.imageUtilisateur : userDefault}
+            />
+          </TouchableOpacity>
         </View>
         <View
           style={{
             width: '100%',
             flexDirection: 'row',
-            justifyContent: 'space-between',
+            // justifyContent: 'space-between',
             alignItems: 'center',
-            paddingRight: 10,
+            // paddingRight: 10,
             height: 170
           }}
         >
-          <ScrollView
+          <View
             style={{
-              ...styles.myscroll,
-              height: height * 3
+              height: height * 3,
+              width: 300,
+              marginLeft: 10
             }}
-            showsVerticalScrollIndicator={false}
-            onScroll={(e) => OnScroll(e)}
-            // onScrollEndDrag={ OnEndScroll() }
-            onMomentumScrollEnd={(e) => OnEndScroll(e)}
-            centerContent={false}
-            ref={listView}
           >
-            {/* <View style={styles.myscroll}> */}
-            <View
+            <ScrollView
               style={{
-                height: height * (jours.length + 2),
+                ...styles.myscroll,
+                height: height * 3,
                 width: 190
               }}
+              showsVerticalScrollIndicator={false}
+              onScroll={(e) => OnScroll(e)}
+              // onScrollEndDrag={ OnEndScroll() }
+              onMomentumScrollEnd={(e) => OnEndScroll(e)}
+              centerContent={false}
+              ref={listView}
             >
               <View
                 style={{
-                  height: height,
-                  justifyContent: 'center',
-                  alignItems: 'center'
+                  height: height * (jours.length + 2),
+                  width: 190
                 }}
               >
-                <Text
+                <View
                   style={{
-                    color: textColor,
-                    fontSize: 12
+                    height: height,
+                    justifyContent: 'center',
+                    alignItems: 'center'
                   }}
-                />
-              </View>
+                >
+                  <Text
+                    style={{
+                      color: textColor,
+                      fontSize: 12
+                    }}
+                  />
+                </View>
 
-              {
-                jours.map((e, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        height: height,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: 0
-                      }}
-                    >
-                      <Text
+                {
+                  jours.map((e, index) => {
+                    return (
+                      <View
+                        key={index}
                         style={{
-                          color: textColor,
-                          fontSize: state.active === index ? (width / 10) : 14,
-                          opacity: state.now === index ? 1 : (state.now === index ? 1 : 0.8)
+                          height: height,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          padding: 0
                         }}
-                      > {e}
-                      </Text>
-                    </View>
-                  )
-                })
-              }
+                      >
+                        <Text
+                          style={{
+                            color: textColor,
+                            fontSize: state.active === index ? (width / 10) : 14,
+                            opacity: state.now === index ? 1 : (state.now === index ? 1 : 0.8)
+                          }}
+                        > {e}
+                        </Text>
+                      </View>
+                    )
+                  })
+                }
 
-              <View
-                style={{
-                  height: height,
-                  // borderWidth: 1,
-                  // borderColor: 'red',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
+                <View
                   style={{
-                    color: 'white',
-                    fontSize: 12
+                    height: height,
+                    justifyContent: 'center',
+                    alignItems: 'center'
                   }}
-                />
+                >
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: 12
+                    }}
+                  />
+                </View>
               </View>
-
-            </View>
-            {/* </View> */}
-          </ScrollView>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <Text style={{ color: textColor }}>
-              Vita {setDouble(state.lengthTaskFinish)}/{setDouble(tasks.dataFilter.length)}
-            </Text>
-            <Text style={{ color: textColor }}>{datenow}</Text>
+            </ScrollView>
           </View>
         </View>
+      </View>
+      <View
+        style={{
+          backgroundColor: '#bcd0bc',
+          height: 5,
+          width: '100%'
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: '#00ff00',
+            height: 5,
+            borderBottomRightRadius: 5,
+            borderTopRightRadius: 5,
+            width: ((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) + '%'
+          }}
+        />
       </View>
 
       {/* body of application */}
 
-
       <ScrollView style={{ width: width, ...styles.root }}>
         {
-          order(tasks?.dataFilter, 'idTasks').map((e, i) => {
+          tasks?.dataFilter.map((e, i) => {
             if (e) {
               const stock = state.active === state.now
+              let resp = 0
+              tasks.dataFilter.map((e, i) => {
+                if (e.idTasks === tasks.idTaskActive) {
+                  resp = i
+                }
+                return null
+              })
               return (
                 <Block
-                  key={i}
+                  key={e.idTasks}
                   i={i}
+                  idTasks={e.idTasks}
                   finish={
                     (state.active < state.now)
                       ? false
-                      : (e.idTasks < tasks.idTaskActive)
+                      : (i < resp)
                   }
                   datas={e}
                   start={tasks.idTaskActive === e.idTasks}
@@ -370,6 +372,7 @@ function Principals (props) {
             return null
           })
         }
+        <View style={{ height: 20 }} />
       </ScrollView>
     </View>
   )

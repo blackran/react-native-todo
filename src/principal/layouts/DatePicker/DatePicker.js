@@ -18,7 +18,10 @@ export function convertArrayToString (date) {
 }
 
 export function isBetweenTwoNumber (debut, fin, numb) {
-  if (((debut <= numb && numb <= fin) || (debut >= numb && numb >= fin)) && debut && fin && numb) {
+  if ((debut <= numb && numb <= fin) && debut && fin && numb) {
+    return true
+  }
+  if ((debut > fin) && (debut < numb)) {
     return true
   }
   return false
@@ -76,21 +79,21 @@ export function betweenTwoDate (begin, end) {
   const [beginD, beginH] = begin
   const [endD, endH] = end
 
-  const stock = convertStringNumber(convertArrayToString(endH)) - convertStringNumber(convertArrayToString(beginH))
-  let day = '07'
-  if (stock < 0) {
-    day = '08'
-  }
-
   let betweenDay = (jours.indexOf(endD) - jours.indexOf(beginD))
 
   const start = new Date('1996-07-22T' + beginH)
-  const finish = new Date('1996-' + day + '-22T' + endH)
+  const finish = new Date('1996-07-22T' + endH)
   const between = finish - start
+
+  // if (between < 0) {
+  //   between += (12 * 60 * 60 * 1000)
+  // }
 
   if (betweenDay < 0) {
     betweenDay += 7
   }
+
+  // console.log({ beginH, endH, between, betweenDay: (betweenDay * (24 * 60 * 60 * 1000)) })
 
   return between + (betweenDay * (24 * 60 * 60 * 1000))
 }

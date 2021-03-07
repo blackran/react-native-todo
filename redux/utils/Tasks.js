@@ -40,7 +40,11 @@ export function dateDAF ({ dataTask, idTaskActive }, active) {
       }
       if (fin) {
         fin = newDataTask[i + 1].idTasks
+      } else {
+        fin = newDataTask[0].idTasks
       }
+        
+      // console.log('debut', debut, 'datenow', datenow, 'fin', fin, isBetweenTwoNumber(debut, fin, datenow))
       if (isBetweenTwoNumber(debut, fin, datenow)) {
         active = newDataTask[i].idTasks
         indexActive = i
@@ -57,5 +61,6 @@ export function dateDAF ({ dataTask, idTaskActive }, active) {
       response = [activeTask.heureDebut, nextActive.heureDebut]
     }
   }
+  // console.log({ dataTask, active })
   return [response, active]
 }

@@ -184,9 +184,6 @@ function Login (props) {
         })
       }
     }
-    // .catch(e => {
-    //     return Alert.alert(e.message)
-    // })
     return null
   }
 
