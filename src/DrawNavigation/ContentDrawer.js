@@ -2,7 +2,7 @@ import React from 'react'
 import backgroundImage from '../statics/images/IMG_80411.jpg'
 import me from '../statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
 import { View, Image, Text, TouchableOpacity, Alert } from 'react-native'
-import { faSignOutAlt, faCog, faTasks, faMusic } from '@fortawesome/free-solid-svg-icons'
+import { faSignOutAlt, faCogs, faTasks, faMusic } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
 export default function ContentDrawer (props) {
@@ -58,11 +58,7 @@ export default function ContentDrawer (props) {
           <TouchableOpacity
             onPress={() => {
               props.navigation.closeDrawer()
-              props.navigation.navigate('Principal',
-                {
-                  color: color
-                }
-              )
+              props.navigation.navigate('Principal', { color })
             }}
           >
             <View style={{
@@ -73,9 +69,7 @@ export default function ContentDrawer (props) {
             >
               <FontAwesomeIcon
                 icon={faTasks}
-                color={
-                  color ? color.activeColor.fontColor.light : '#ffb21d'
-                }
+                color={ color ? color.activeColor.fontColor.light : '#ffb21d' }
                 size={24}
               />
               <Text style={{
@@ -90,11 +84,7 @@ export default function ContentDrawer (props) {
           <TouchableOpacity
             onPress={() => {
               props.navigation.closeDrawer()
-              props.navigation.navigate('Tasks',
-                {
-                  color: color
-                }
-              )
+              props.navigation.navigate('Tasks', { color })
             }}
           >
             <View style={{
@@ -104,7 +94,7 @@ export default function ContentDrawer (props) {
             }}
             >
               <FontAwesomeIcon
-                icon={faCog}
+                icon={faCogs}
                 color={color ? color.activeColor.fontColor.light : '#ffb21d'}
                 size={24}
               />
@@ -120,11 +110,7 @@ export default function ContentDrawer (props) {
           <TouchableOpacity
             onPress={() => {
               props.navigation.closeDrawer()
-              props.navigation.navigate('Songs',
-                {
-                  color: color
-                }
-              )
+              props.navigation.navigate('Songs', { color })
             }}
           >
             <View style={{

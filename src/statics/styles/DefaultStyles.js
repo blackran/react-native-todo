@@ -5,7 +5,7 @@ const width = 280
 export default StyleSheet.create({
   textinput: {
     // backgroundColor: '#575656',
-    borderRadius: 25,
+    borderRadius: 10,
     paddingLeft: 50,
     paddingRight: 50,
     fontSize: 20,
@@ -50,7 +50,7 @@ export default StyleSheet.create({
     // backgroundColor: '#222222',
     width: width,
     height: height,
-    borderRadius: 25,
+    borderRadius: 10,
     marginTop: 20,
     shadowColor: '#000',
     shadowOffset: {

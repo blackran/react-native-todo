@@ -68,7 +68,7 @@ function FilterAffiche (datas) {
 }
 
 function otherorder (datas, active) {
-  if (active === 0) {
+  if (active === 0 && datas.length > 0) {
     let newstock = JSON.parse(JSON.stringify(datas))
     const lastAlahady = JSON.parse(JSON.stringify(newstock[newstock.length - 1]))
     newstock.pop()

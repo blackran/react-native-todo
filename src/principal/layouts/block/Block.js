@@ -85,7 +85,7 @@ function Block (props) {
     marginBottom: 5,
     backgroundColor: start
       ? color.activeColor.primary.dark
-      : (finish ? color.activeColor.primary.light + '99' : color.activeColor.primary.dark + 'aa'),
+      : (finish ? color.activeColor.primary.light + '99' : '#688898'),
     opacity: finish ? 0.5 : 1,
     padding: 10,
     borderRadius: 5,
@@ -109,7 +109,7 @@ function Block (props) {
             setDimC({ x, y, width, height })
           }}
           style={{
-            backgroundColor: 'red',
+            backgroundColor: '#88b1c5',
             width: width - 4,
             height: dimP.height - 60,
             position: 'absolute',
@@ -123,7 +123,7 @@ function Block (props) {
         >
           <View
             style={{
-              backgroundColor: 'green',
+              backgroundColor: '#688898',
               height: dimP.height - 30,
               borderRadius: 5,
               width: width - 11
@@ -144,6 +144,7 @@ function Block (props) {
             <Text style={{
               fontSize: 24,
               textDecorationLine: finish ? 'line-through' : 'none',
+              fontWeight: '700',
               color: start
                 ? color.activeColor.fontColor.light
                 : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.light)

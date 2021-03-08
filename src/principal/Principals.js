@@ -9,13 +9,12 @@ import {
 } from 'react-native'
 import styles from './statics/styles/Style'
 import { useDispatch, useSelector } from 'react-redux'
-// import { Icon } from 'react-native-elements'
 import Block from './layouts/block/Block'
 
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { Avatar } from 'react-native-elements'
-import userDefault from './statics/images/user.png'
+// import userDefault from './statics/images/user.png'
 import marcus from './statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
 
 const { width } = Dimensions.get('window')
@@ -37,7 +36,7 @@ function Principals (props) {
     now: new Date().getDay()
   })
 
-  const [datenow, setDateNow] = useState(0)
+  const [datenow, setDateNow] = useState([])
 
   const listView = useRef()
 
@@ -62,18 +61,19 @@ function Principals (props) {
 
   const dateNowToString = useCallback(() => {
     const date = new Date()
-    return setDouble(date.getHours()) + ':' + setDouble(date.getMinutes()) + ':' + setDouble(date.getSeconds())
-  }, [])
+    // return jours[date.getDay()].substring(0, 4) + ' ' + setDouble(date.getHours()) + ':' + setDouble(date.getMinutes()) + ':' + setDouble(date.getSeconds())
+    return [jours[date.getDay()].substring(0, 4) + ' ' + setDouble(date.getHours()) + ':' + setDouble(date.getMinutes()), setDouble(date.getSeconds())]
+  }, [jours])
 
   useEffect(() => {
     const stock = setInterval(() => {
-      setDateNow(dateNowToString())
+      setDateNow(() => dateNowToString())
     }, 1000)
     return () => clearInterval(stock)
   }, []) // eslint-disable-line
 
   const setState = useCallback((data) => {
-    setStateTrue(Object.assign({}, state, data))
+    setStateTrue((e) => Object.assign({}, e, data))
   }, []) // eslint-disable-line
 
   useEffect(() => {
@@ -200,7 +200,7 @@ function Principals (props) {
             />
           </TouchableOpacity>
 
-          <Text style={{ color: textColor }}>{datenow}</Text>
+          <Text style={{ color: textColor }}>{datenow[0]}</Text>
           <TouchableOpacity
             onPress={() => {
               props.navigation.closeDrawer()
@@ -211,11 +211,19 @@ function Principals (props) {
               )
             }}
           >
-            <Avatar
-              rounded
-              title={utilisateur?.pseudoUtilisateur ? utilisateur?.pseudoUtilisateur[0].toUpperCase() : ''}
-              source={utilisateur?.imageUtilisateur ? utilisateur.imageUtilisateur : userDefault}
-            />
+            <View
+              style={{
+                borderRadius: 10,
+                overflow: 'hidden',
+                borderWidth: 1,
+                borderColor: color.activeColor.primary.dark
+              }}
+            >
+              <Avatar
+                title={utilisateur?.pseudoUtilisateur ? utilisateur?.pseudoUtilisateur[0].toUpperCase() : ''}
+                source={utilisateur?.imageUtilisateur ? utilisateur.imageUtilisateur : marcus}
+              />
+            </View>
           </TouchableOpacity>
         </View>
         <View
@@ -315,20 +323,29 @@ function Principals (props) {
       </View>
       <View
         style={{
-          backgroundColor: '#bcd0bc',
+          backgroundColor: color.activeColor.primary.light,
           height: 5,
           width: '100%'
         }}
       >
         <View
           style={{
-            backgroundColor: '#00ff00',
+            backgroundColor: color.activeColor.primary.dark,
             height: 5,
             borderBottomRightRadius: 5,
             borderTopRightRadius: 5,
-            width: ((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) + '%'
+            width: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'
           }}
         />
+        <Text
+          style={{
+            position: 'absolute',
+            left: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%',
+            top: -20,
+            color: color.activeColor.primary.light
+          }}
+        >{(tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'}
+        </Text>
       </View>
 
       {/* body of application */}
