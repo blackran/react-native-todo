@@ -28,14 +28,9 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
 
   const setState = (data) => {
     // console.log('setState ++============================================================================')
-    // console.log(data)
-    setStateTrue(prev => {
-      const stock1 = prev
-      const stock2 = data
-      const reunion = Object.assign({}, stock1, stock2)
-      return reunion
-    })
-    } // eslint-disable-line
+    // console.log('displays', data)
+    setStateTrue(prev => Object.assign({}, prev, data))
+  } // eslint-disable-line
 
   const convertStringNumber = (date) => {
     const [heure, minute, second] = date.split(':')
@@ -120,6 +115,12 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
     }
   }
 
+  const onPressAjanona = () => {
+    // console.log('onPressAjanona')
+    setState({ edit: false })
+    manindryAjanona()
+  }
+
   const onSave = () => {
     // console.log('onSave')
     const { idTasks, titleTasks, contentTasks, heureDebut, pseudoUtilisateur } = state
@@ -129,13 +130,7 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
       contentTasks,
       heureDebut,
       pseudoUtilisateur
-    }, idTasks, setState)
-  }
-
-  const onPressAjanona = () => {
-    // console.log('onPressAjanona')
-    setState({ edit: false })
-    manindryAjanona()
+    }, idTasks, onPressAjanona)
   }
 
   const setSHowTime = () => {
@@ -153,8 +148,8 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
     >
       <View style={{
         ...styles.body,
-        // backgroundColor: color.primary.dark + '44',
-        height: edit ? null : 50
+        // height: edit ? null : 50,
+        marginBottom: 10
       }}
       >
         <View style={{
@@ -170,7 +165,8 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                   paddingLeft: 10,
                   padding: 2,
                   marginBottom: 2,
-                  color: color.activeColor.fontColor.dark
+                  color: color.activeColor.fontColor.dark,
+                  borderRadius: 10
                 }}
                 selectionColor={color.activeColor.fontColor.dark}
                 placeholder='lohanteny'
@@ -183,7 +179,8 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                   paddingLeft: 10,
                   padding: 2,
                   marginTop: 2,
-                  color: color.activeColor.fontColor.dark
+                  color: color.activeColor.fontColor.dark,
+                  borderRadius: 10
                 }}
                 selectionColor={color.activeColor.fontColor.dark}
                 multiline
@@ -223,7 +220,8 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                   buttonStyle={{
                     backgroundColor: color.activeColor.primary.dark + '33',
                     marginRight: 3,
-                    height: 34
+                    height: 34,
+                    borderRadius: 10
                   }}
                   titleStyle={{
                     color: color.activeColor.fontColor.dark
@@ -236,28 +234,28 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                 }
                 {
                   state.showTime &&
-                  <DateTimePicker
-                    testID='dateTimePicker'
-                    style={{ width: 100 }}
-                    value={convertDate(heureDebut)}
-                    mode='time'
-                    locale='fr-FR'
-                    showIcon={false}
-                    display='clock'
-                    customStyles={{
-                      dateInput: {
-                        marginRight: 10,
-                        backgroundColor: color.activeColor.primary.dark + '33',
-                        padding: 2,
-                        margin: 2,
-                        color: color.activeColor.fontColor.dark,
-                        borderWidth: 0,
-                        height: 33
-                      }
-                    }}
-                    open
-                    onChange={onChangeDate}
-                  />
+                    <DateTimePicker
+                      testID='dateTimePicker'
+                      style={{ width: 100 }}
+                      value={convertDate(heureDebut)}
+                      mode='time'
+                      locale='fr-FR'
+                      showIcon={false}
+                      display='clock'
+                      customStyles={{
+                        dateInput: {
+                          marginRight: 10,
+                          backgroundColor: color.activeColor.primary.dark + '33',
+                          padding: 2,
+                          margin: 2,
+                          color: color.activeColor.fontColor.dark,
+                          borderWidth: 0,
+                          height: 33
+                        }
+                      }}
+                      open
+                      onChange={onChangeDate}
+                    />
                 }
               </View>
               : <Text style={{
@@ -286,7 +284,8 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                   backgroundColor: color.activeColor.primary.dark,
                   height: 40,
                   width: 40,
-                  marginLeft: 5
+                  marginLeft: 5,
+                  borderRadius: 10
                 }}
                 color={color.activeColor.primary.dark + '77'}
                 type='outline'
@@ -305,49 +304,53 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                   marginTop: 5,
                   height: 40,
                   width: 40,
-                  marginLeft: 5
-                }}
-                color={color.activeColor.primary.dark}
-                type='outline'
-              />
-            </View> : <View style={{ flexDirection: 'row' }}>
-              <Button
-                onPress={() => {
-                  // console.log('button edit')
-                  setState({ edit: true })
-                }}
-                icon={
-                  <Icon
-                    name='edit'
-                    size={25}
-                    type='MaterialIcons'
-                    color='white'
-                  />
-                }
-                buttonStyle={{
-                  backgroundColor: color.activeColor.primary.dark
-                }}
-                color={color.activeColor.primary.dark + '77'}
-                type='outline'
-              />
-              <Button
-                onPress={() => onClickBtnDelete(days, idTasks)}
-                icon={
-                  <Icon
-                    name='delete'
-                    size={25}
-                    type='MaterialIcons'
-                    color={color.activeColor.primary.dark}
-                  />
-                }
-                buttonStyle={{
-                  backgroundColor: color.activeColor.secondary.dark,
-                  marginLeft: 5
+                  marginLeft: 5,
+                  borderRadius: 10
                 }}
                 color={color.activeColor.primary.dark}
                 type='outline'
               />
             </View>
+              : <View style={{ flexDirection: 'row' }}>
+                <Button
+                  onPress={() => {
+                  // console.log('button edit')
+                    setState({ edit: true })
+                  }}
+                  icon={
+                    <Icon
+                      name='edit'
+                      size={25}
+                      type='MaterialIcons'
+                      color='white'
+                    />
+                  }
+                  buttonStyle={{
+                    backgroundColor: color.activeColor.primary.dark,
+                    borderRadius: 10
+                  }}
+                  color={color.activeColor.primary.dark + '77'}
+                  type='outline'
+                />
+                <Button
+                  onPress={() => onClickBtnDelete(days, idTasks)}
+                  icon={
+                    <Icon
+                      name='delete'
+                      size={25}
+                      type='MaterialIcons'
+                      color={color.activeColor.primary.dark}
+                    />
+                  }
+                  buttonStyle={{
+                    backgroundColor: color.activeColor.secondary.dark,
+                    marginLeft: 5,
+                    borderRadius: 10
+                  }}
+                  color={color.activeColor.primary.dark}
+                  type='outline'
+                />
+              </View>
           }
         </View>
       </View>
@@ -361,6 +364,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start'
+    // borderColor: 'green',
+    // borderWidth: 1
   },
   title: {
     fontWeight: 'bold'

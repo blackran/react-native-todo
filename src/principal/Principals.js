@@ -149,11 +149,14 @@ function Principals (props) {
   }
 
   const thisorder = (data, column) => {
-    return data.map(value => {
-      return value
-    }).sort(function (a, b) {
-      return a[column] - b[column]
-    })
+    if (data) {
+      return data.map(value => {
+        return value
+      }).sort(function (a, b) {
+        return a[column] - b[column]
+      })
+    }
+    return []
   }
 
   const textColor = color.activeColor.primary.light
@@ -219,10 +222,17 @@ function Principals (props) {
                 borderColor: color.activeColor.primary.dark
               }}
             >
-              <Avatar
-                title={utilisateur?.pseudoUtilisateur ? utilisateur?.pseudoUtilisateur[0].toUpperCase() : ''}
-                source={utilisateur?.imageUtilisateur ? utilisateur.imageUtilisateur : marcus}
-              />
+              {
+                utilisateur?.imageUtilisateur
+                  ? <Avatar
+                    title={utilisateur?.pseudoUtilisateur ? utilisateur?.pseudoUtilisateur[0].toUpperCase() : ''}
+                    source={{ uri: utilisateur?.imageUtilisateur }}
+                  />
+                  : <Avatar
+                    title={utilisateur?.pseudoUtilisateur ? utilisateur?.pseudoUtilisateur[0].toUpperCase() : ''}
+                    source={marcus}
+                  />
+              }
             </View>
           </TouchableOpacity>
         </View>

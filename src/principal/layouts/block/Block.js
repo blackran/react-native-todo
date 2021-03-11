@@ -7,6 +7,8 @@ import clock from './statics/images/clock.png'
 import wait from './statics/images/wait.png'
 import Chrono from './layouts/chrono/Chrono'
 import Move from '../../../animation/Move'
+import { faSync } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
 const { width } = Dimensions.get('window')
 
@@ -88,8 +90,8 @@ function Block (props) {
       : (finish ? color.activeColor.primary.light + '99' : '#688898'),
     opacity: finish ? 0.5 : 1,
     padding: 10,
-    borderRadius: 5,
-    paddingBottom: 15,
+    borderRadius: 10,
+    paddingBottom: 10,
     position: 'relative'
   }
 
@@ -113,19 +115,20 @@ function Block (props) {
             width: width - 4,
             height: dimP.height - 60,
             position: 'absolute',
-            borderRadius: 5,
+            borderRadius: 10,
             top: ((dimP.height - dimC.height) / 2),
             // left: ((dimP.width - dimC.width) / 2),
             left: 2,
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            opacity: (dimC.width !== 0 && dimC.height !== 0 && dimP.width !== 0 && dimP.height !== 0) ? 1 : 0
           }}
         >
           <View
             style={{
               backgroundColor: '#688898',
               height: dimP.height - 30,
-              borderRadius: 5,
+              borderRadius: 10,
               width: width - 11
             }}
           />
@@ -145,6 +148,7 @@ function Block (props) {
               fontSize: 24,
               textDecorationLine: finish ? 'line-through' : 'none',
               fontWeight: '700',
+              width: 160,
               color: start
                 ? color.activeColor.fontColor.light
                 : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.light)
@@ -156,8 +160,8 @@ function Block (props) {
             flex: 1,
             flexDirection: 'row',
             justifyContent: 'flex-end',
-            alignItems: 'center'
-          // borderWidth: 1
+            alignItems: 'center',
+            height: 40
           }}
           >
             <Chrono
@@ -204,16 +208,35 @@ function Block (props) {
             <View
               style={{
                 marginTop: 20,
-                padding: 5,
+                padding: 10,
                 borderTopWidth: 1,
                 borderColor: color.activeColor.fontColor.light
               }}
             >
-              <Text style={{ color: color.activeColor.fontColor.light }}>
-                Vibreur
-              </Text>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center'
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faSync}
+                  color={color.activeColor.fontColor.light}
+                  size={15}
+                />
+                <Text
+                  style={{
+                    color: color.activeColor.fontColor.light,
+                    marginLeft: 10,
+                    fontSize: 15
+                  }}
+                >
+                  {datas.type}
+                </Text>
+              </View>
             </View>
-
         }
 
       </View>

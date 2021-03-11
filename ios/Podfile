@@ -48,6 +48,8 @@ target 'asako' do
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+  pod 'RNSoundPlayer', :path => '../node_modules/react-native-sound-player'
+
   target 'asakoTests' do
     inherit! :search_paths
     # Pods for testing

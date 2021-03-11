@@ -1,0 +1,4 @@
+export const ON_CHANGE_SLIDER = 'ON_CHANGE_SLIDER'
+export const INIT_DATA_ALERT = 'INIT_DATA_ALERT'
+export const ADD_DATA_ALERT = 'ADD_DATA_ALERT'
+export const PUT_ALERT_USER = 'PUT_ALERT_USER'

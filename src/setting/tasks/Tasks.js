@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Dimensions, ScrollView, Text, View, StyleSheet, Keyboard, Alert, TouchableOpacity } from 'react-native'
 import { Icon, ThemeProvider, Card } from 'react-native-elements'
-import Displays from '../display/Displays'
+import Displays from './layouts/displays/Displays'
 import { useSelector, useDispatch } from 'react-redux'
 /* eslint-disable no-unused-vars */
 import { loopObject, InverseLoopObject } from '../filterData/FilterData'
 import { order } from '../array/Array'
-
-import { Button } from 'react-native-elements'
 
 const { width, height } = Dimensions.get('window')
 
@@ -93,8 +91,6 @@ function Tasks (props) {
 
   const updateStock = useCallback(() => {
     // save all modification
-    console.log('PUT_ALL_DATA')
-    console.log(InverseLoopObject(JSON.parse(JSON.stringify(dataLocal))))
     dispatch({
       type: 'PUT_ALL_DATA',
       data: InverseLoopObject(JSON.parse(JSON.stringify(dataLocal))),
@@ -107,21 +103,27 @@ function Tasks (props) {
   }, [dispatch, dataLocal, updateStock, utilisateur.connecterUtilisateur])
 
   const OnPressSave = (days, datas, lastIdTasks, setStateOther) => {
+    let isDisableEdit = true
     Keyboard.dismiss()
     // get all heure debut de task
-    let heureRest = []
+    let isExistHeure = true
     Object.entries(dataLocal.rest).map(([key, subjects]) => {
-      subjects.map(e => {
-        if (e.heureDebut) {
-          heureRest = [...heureRest, e.heureDebut]
-        }
-        return null
-      })
+      if (key === days || days === 'unknown') {
+        subjects.map(e => {
+          if (e.heureDebut === datas.heureDebut) {
+            isExistHeure = false
+          }
+          return null
+        })
+      }
       return null
     })
     // fusion de deux heure de debut
-    const heures = [...dataLocal.finish.map(k => k.heureDebut), ...heureRest]
-    // console.log({ heures, heureDebut: datas.heureDebut, inc: heures.includes(datas.heureDebut) })
+    dataLocal.finish.map(k => {
+      if (k.heureDebut === datas.heureDebut) {
+        isExistHeure = false
+      }
+    })
     if (datas.title !== '' && datas.heureDebut !== '00:00:00') {
       if (days === 'unknown' && dataLocal.finish !== undefined) {
         let exist = true
@@ -134,13 +136,12 @@ function Tasks (props) {
           return null
         })
         if (exist) {
-          if (!heures.includes(datas.heureDebut)) {
-            console.log('arive ici ........1')
+          if (isExistHeure) {
             const mocks = [...dataLocal.finish, datas]
-            console.log({ ...dataLocal, finish: order(mocks, 'idTasks') })
             // setState({ data: Object.assign({}, data, { finish: order(mocks, 'idTasks') }) })
             setDataLocal({ ...dataLocal, finish: order(mocks, 'idTasks') })
           } else {
+            isDisableEdit = false
             Alert.alert(
               'Misy olana',
               'Azafady efa misy io ora io',
@@ -164,7 +165,6 @@ function Tasks (props) {
           if (key === days) {
             let exist = true
             subjects.map((e, i) => {
-              console.log('idTasks: ', e.idTasks, ', lastIdTasks: ', lastIdTasks)
               if (e.idTasks === lastIdTasks) {
                 exist = false
                 const stock = JSON.parse(JSON.stringify(dataLocal))
@@ -182,13 +182,13 @@ function Tasks (props) {
               return null
             })
             if (exist) {
-              if (!heures.includes(datas.heureDebut)) {
+              if (isExistHeure) {
                 const stock = JSON.parse(JSON.stringify(dataLocal))
                 const mocks = [...dataLocal.rest[key], datas]
                 stock.rest[key] = order(mocks, 'idTasks')
                 setDataLocal({ ...stock })
               } else {
-                console.log('Alert ')
+                isDisableEdit = false
                 Alert.alert(
                   'Misy olana',
                   'Azafady efa misy io ora io',
@@ -206,12 +206,15 @@ function Tasks (props) {
           return null
         })
       }
-      setState({
-        show: false,
-        default: '00:00:00',
-        showEdit: 'other'
-      })
-      setStateOther({ edit: false })
+      if (isDisableEdit) {
+        console.log('')
+        setState({
+          show: false,
+          default: '00:00:00',
+          showEdit: 'other'
+        })
+        setStateOther()
+      }
     }
   }
 
@@ -303,29 +306,26 @@ function Tasks (props) {
           height: 60
         }}
       >
-        <Button
-          icon={
-            <Icon
-              name='chevron-left'
-              size={20}
-              type='MaterialIcons'
-              color='white'
-            />
-          }
+        <TouchableOpacity
           onPress={() => props.navigation.navigate('Principal', { color: color })}
-          buttonStyle={{
+          style={{
             width: 40,
             height: 40,
             borderRadius: 10,
             borderWidth: 1,
             borderColor: color.activeColor.primary.dark,
+            justifyContent: 'center',
+            alignItems: 'center',
             marginLeft: 10
           }}
-          titleStyle={{
-            color: color.activeColor.fontColor.light
-          }}
-          type='clear'
-        />
+        >
+          <Icon
+            name='chevron-left'
+            size={20}
+            type='MaterialIcons'
+            color='white'
+          />
+        </TouchableOpacity>
       </View>
 
       <View style={{
@@ -341,7 +341,7 @@ function Tasks (props) {
               // backgroundColor: color.activeColor.primary.default,
               flex: 1,
               flexDirection: 'column',
-              paddingBottom: 80 + keyboardOpen
+              paddingBottom: 100 + keyboardOpen
             }}
           >
             <Text style={{
@@ -350,24 +350,8 @@ function Tasks (props) {
             }}
             >MIVERIMBERINA
             </Text>
-            <Card titleStyle={{ textAlign: 'left' }} title='REHETRA'>
+            <Card containerStyle={{ borderRadius: 10 }} titleStyle={{ textAlign: 'left' }} title='REHETRA'>
               <View>
-                {
-                  dataLocal.finish.map(e => {
-                    return (
-                      <Displays
-                        key={e.idTasks}
-                        datas={e}
-                        days='unknown'
-                        manindryAjanona={manindryAjanona}
-                        OnPressSave={OnPressSave}
-                        editP={false}
-                        onClickBtnDelete={onClickBtnDelete}
-                        OnFocusHeureDebut={OnFocusHeureDebut}
-                      />
-                    )
-                  })
-                }
                 {
                   state.showEdit === 'unknown'
                     ? (
@@ -401,6 +385,22 @@ function Tasks (props) {
                       </TouchableOpacity>
                     )
                 }
+                {
+                  dataLocal.finish.map(e => {
+                    return (
+                      <Displays
+                        key={e.idTasks}
+                        datas={e}
+                        days='unknown'
+                        manindryAjanona={manindryAjanona}
+                        OnPressSave={OnPressSave}
+                        editP={false}
+                        onClickBtnDelete={onClickBtnDelete}
+                        OnFocusHeureDebut={OnFocusHeureDebut}
+                      />
+                    )
+                  })
+                }
               </View>
             </Card>
             <View style={styles.block}>
@@ -414,27 +414,12 @@ function Tasks (props) {
                 Object.entries(dataLocal.rest).map(([key, subject]) => {
                   return (
                     <Card
+                      containerStyle={{ borderRadius: 10 }}
                       key={key}
                       titleStyle={{ textAlign: 'left' }}
                       title={key.toUpperCase()}
                     >
                       <View>
-                        {
-                          subject.map(e => {
-                            return (
-                              <Displays
-                                key={e.idTasks}
-                                days={key}
-                                datas={e}
-                                editP={false}
-                                onClickBtnDelete={onClickBtnDelete}
-                                manindryAjanona={manindryAjanona}
-                                OnPressSave={OnPressSave}
-                                OnFocusHeureDebut={OnFocusHeureDebut}
-                              />
-                            )
-                          })
-                        }
                         {
                           state.showEdit === key
                             ? <Displays
@@ -464,6 +449,22 @@ function Tasks (props) {
                                 color={color.activeColor.fontColor.dark}
                               />
                             </TouchableOpacity>
+                        }
+                        {
+                          subject.map(e => {
+                            return (
+                              <Displays
+                                key={e.idTasks}
+                                days={key}
+                                datas={e}
+                                editP={false}
+                                onClickBtnDelete={onClickBtnDelete}
+                                manindryAjanona={manindryAjanona}
+                                OnPressSave={OnPressSave}
+                                OnFocusHeureDebut={OnFocusHeureDebut}
+                              />
+                            )
+                          })
                         }
                       </View>
                     </Card>

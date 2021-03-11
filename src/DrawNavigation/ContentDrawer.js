@@ -2,11 +2,13 @@ import React from 'react'
 import backgroundImage from '../statics/images/IMG_80411.jpg'
 import me from '../statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
 import { View, Image, Text, TouchableOpacity, Alert } from 'react-native'
-import { faSignOutAlt, faCogs, faTasks, faMusic } from '@fortawesome/free-solid-svg-icons'
+import { faSignOutAlt, faCogs, faTasks, faBullhorn } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { useSelector } from 'react-redux'
 
 export default function ContentDrawer (props) {
-  const { color } = props.navigation.state.params
+  const { color, utilisateur } = useSelector(state => ({ other: state.Other, task: state.Tasks, color: state.Color, utilisateur: state.Utilisateur.connecterUtilisateur }))
+  // const { color } = props.navigation.state.params
   return (
     <View
       style={{
@@ -31,13 +33,25 @@ export default function ContentDrawer (props) {
             position: 'absolute'
           }}
         />
-        <Image
-          source={me} style={{
-            height: 110,
-            width: 110,
-            borderRadius: 10
-          }}
-        />
+        {
+          utilisateur.imageUtilisateur
+            ? <Image
+              source={{ uri: utilisateur.imageUtilisateur }}
+              style={{
+                height: 110,
+                width: 110,
+                borderRadius: 10
+              }}
+            />
+            : <Image
+              source={me}
+              style={{
+                height: 110,
+                width: 110,
+                borderRadius: 10
+              }}
+            />
+        }
       </View>
       <View
         style={{
@@ -48,11 +62,13 @@ export default function ContentDrawer (props) {
         }}
       >
         <Text style={{
-          margin: 16,
+          margin: 10,
           fontWeight: 'bold',
-          color: color ? color.activeColor.fontColor.light : '#ffb21d'
+          color: color ? color.activeColor.fontColor.light : '#ffb21d',
+          textAlign: 'center'
         }}
-        >Blackran
+        >
+          {utilisateur.pseudoUtilisateur}
         </Text>
         <View>
           <TouchableOpacity
@@ -69,7 +85,7 @@ export default function ContentDrawer (props) {
             >
               <FontAwesomeIcon
                 icon={faTasks}
-                color={ color ? color.activeColor.fontColor.light : '#ffb21d' }
+                color={color ? color.activeColor.fontColor.light : '#ffb21d'}
                 size={24}
               />
               <Text style={{
@@ -120,7 +136,7 @@ export default function ContentDrawer (props) {
             }}
             >
               <FontAwesomeIcon
-                icon={faMusic}
+                icon={faBullhorn}
                 color={color ? color.activeColor.fontColor.light : '#ffb21d'}
                 size={24}
               />
@@ -129,7 +145,7 @@ export default function ContentDrawer (props) {
                 fontWeight: 'bold',
                 color: color ? color.activeColor.fontColor.light : '#ffb21d'
               }}
-              >Hira
+              >Mailo
               </Text>
             </View>
           </TouchableOpacity>

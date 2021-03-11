@@ -6,7 +6,7 @@ export default StyleSheet.create({
     flex: 1,
     paddingTop: 5
   },
-    flex: 2,
+  flex: 2,
   inputStyle: {
     fontSize: 18,
     height: height
@@ -16,6 +16,7 @@ export default StyleSheet.create({
     marginRight: 10,
     borderWidth: 1,
     borderColor: 'green',
-    backgroundColor: '#00ff0022'
+    backgroundColor: '#00ff0022',
+    borderRadius: 10
   }
 })

@@ -1,4 +1,4 @@
-import { CHANGE_COLOR, ADD_COLOR } from './actions/ColorActions'
+import { CHANGE_COLOR, ADD_COLOR, PUT_COLOR_USER } from './actions/ColorActions'
 import invert from 'invert-color'
 
 const listColor = {
@@ -60,13 +60,22 @@ const initState = {
 }
 
 const ColorReducers = (state = initState, action) => {
+  let stock
   switch (action.type) {
-    case CHANGE_COLOR:
-      return Object.assign({}, state, { activeColor: listColor[action.data] })
-    case ADD_COLOR:
-      return Object.assign({}, state, { dataColor: [...state.dataColor, listColor[action.data]] })
-    default:
-      return state
+  case CHANGE_COLOR:
+    return Object.assign({}, state, { activeColor: listColor[action.data] })
+  case ADD_COLOR:
+    return Object.assign({}, state, { dataColor: [...state.dataColor, listColor[action.data]] })
+  case PUT_COLOR_USER:
+    stock = state.dataColor.map((e) => {
+      if (e.pseudoUtilisateur === action.data.lastPseudoUtilisateur) {
+        return { ...e, pseudoUtilisateur: action.data.pseudoUtilisateur }
+      }
+      return e
+    })
+    return Object.assign({}, state, { dataColor: stock })
+  default:
+    return state
   }
 }
 

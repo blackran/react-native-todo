@@ -10,8 +10,6 @@ import Songs from '../setting/songs/Songs'
 import Tasks from '../setting/tasks/Tasks'
 import ContentDrawer from './ContentDrawer'
 
-import { connect } from 'react-redux'
-
 const AppStackPrincipal = createDrawerNavigator({
   HomeScreen: {
     screen: Principals,
@@ -70,7 +68,7 @@ const AppStackTasks = createDrawerNavigator({
   contentComponent: ({ navigation }) => <ContentDrawer navigation={navigation} />
 })
 
-const AppStackSong = createDrawerNavigator({
+const AppStackSongs = createDrawerNavigator({
   SettingScreen: {
     screen: Songs,
     navigationOptions: {
@@ -102,13 +100,9 @@ const AppStackSong = createDrawerNavigator({
 const DrawNavigation = createSwitchNavigator(
   {
     Principal: AppStackPrincipal,
-    Song: AppStackSong,
+    Songs: AppStackSongs,
     Tasks: AppStackTasks
   }
 )
 
-function mapStateToProps (state) {
-  return { color: state.Color }
-}
-
-export default createAppContainer(connect(mapStateToProps)(DrawNavigation))
+export default createAppContainer(DrawNavigation)

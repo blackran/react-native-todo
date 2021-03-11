@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Text, Vibration, StyleSheet, View } from 'react-native'
 import { betweenTwoDate } from '../../../DatePicker/DatePicker'
 import Dialog from 'react-native-dialog'
+import SoundPlayer from 'react-native-sound-player'
 
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -9,6 +10,7 @@ import PushNotification from 'react-native-push-notification'
 
 function Chrono (props) {
   const tasks = useSelector(state => state.Tasks)
+  const { dataAlert } = useSelector(state => state.Alert)
   const [visible, setVisible] = useState(false)
   const [state, setStateTrue] = useState({
     date: null,
@@ -16,6 +18,22 @@ function Chrono (props) {
     start: false,
     style: {}
   })
+
+  const [vibreur, setVibreur] = useState(false)
+  const [songUrl, setSongUrl] = useState('')
+
+  const [dureeAlert, setDureeAlert] = useState(0)
+  const [dureeVibreurAlert, setDureeVibreurAlert] = useState(0)
+
+  useEffect(() => {
+    if (dataAlert) {
+      const { dureeAlert, vibreurAlert, songUrl, dureeVibreurAlert } = dataAlert
+      setDureeAlert(dureeAlert)
+      setVibreur(vibreurAlert)
+      setSongUrl(songUrl)
+      setDureeVibreurAlert(dureeVibreurAlert)
+    }
+  }, [dataAlert])
 
   const [nextTask, setNextTask] = useState('')
 
@@ -30,16 +48,31 @@ function Chrono (props) {
       message: mes // (required)
     })
   }
+
+  const runSong = useCallback(() => {
+    if (vibreur) {
+      if (songUrl) {
+        try {
+        // play the file tone.mp3
+          SoundPlayer.playSoundFile(songUrl, 'mp3')
+        } catch (e) {
+          console.log('cannot play the sound file', e)
+        }
+      }
+    } else {
+      Vibration.vibrate(1000, true)
+      setTimeout(() => {
+        Vibration.cancel()
+      }, 1000 * dureeVibreurAlert)
+    }
+  }, []) // eslint-disable-line
   // chrono ==================================================================
 
   const dispatch = useDispatch()
   const dispatchOne = useCallback(() => {
     setTimeout(() => {
-      Vibration.vibrate([500, 1000, 1000], true)
-      setTimeout(() => {
-        Vibration.cancel()
-      }, 10000)
-
+      // Vibration.vibrate([1000, 1000, 1000], true)
+      runSong()
       dispatch({
         type: 'DATA_FILTER',
         active: props.active
@@ -48,21 +81,17 @@ function Chrono (props) {
       setVisible(false)
     }, 2000)
     pushNotification(nextTask)
-  }, [dispatch, nextTask, props.active])
+  }, [dispatch, nextTask, props.active, runSong])
 
   useEffect(() => {
     if (visible && state.date > 1 && state.date < 2000) {
       dispatchOne()
     }
-  }, [dispatchOne, state.date, visible])
+  }, [dispatchOne, runSong, state.date, visible])
 
   useEffect(() => {
-    const dureeVibreur = 10000
-    if (state.date > 1 && state.date < 5 * 60 * 1000) {
-      Vibration.vibrate([500, 1000, 1000], true)
-      setTimeout(() => {
-        Vibration.cancel()
-      }, dureeVibreur)
+    if (state.date > 1 && state.date < dureeAlert * 60 * 1000) {
+      runSong()
       setVisible(true)
     }
   }, [state.date]) // eslint-disable-line
@@ -120,44 +149,45 @@ function Chrono (props) {
       >
         {!props.finish ? secondToDate(state.date) : ''}
       </Text>
-      <View style={styles.container}>
-        <Dialog.Container visible={visible}>
-          <Dialog.Title style={{ textAlign: 'center' }}>Fotoana Fialana Sasatra</Dialog.Title>
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingBottom: 20
-
-            }}
-          >
+      {visible &&
+        <View style={styles.container}>
+          <Dialog.Container visible={visible}>
+            <Dialog.Title style={{ textAlign: 'center' }}>FIALANA SASATRA KELY</Dialog.Title>
             <View
               style={{
-                borderWidth: 3,
-                borderColor: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'black',
-                width: 150,
-                height: 150,
-                borderRadius: 150,
-                justifyContent: 'center',
+                width: '100%',
                 alignItems: 'center',
-                marginTop: 20
+                justifyContent: 'center',
+                paddingBottom: 40
+
               }}
             >
-              <Text
+              <View
                 style={{
-                  ...props.style,
-                  fontSize: 30,
-                  color: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'black'
+                  borderWidth: 3,
+                  borderColor: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'black',
+                  width: 150,
+                  height: 150,
+                  borderRadius: 150,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginTop: 20
                 }}
               >
-                {secondToDate(state.date)}
-              </Text>
+                <Text
+                  style={{
+                    ...props.style,
+                    fontSize: 30,
+                    color: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'black'
+                  }}
+                >
+                  {secondToDate(state.date)}
+                </Text>
+              </View>
             </View>
-          </View>
-          <Dialog.Button label='Actualise' onPress={dispatchOne} />
-        </Dialog.Container>
-      </View>
+            {/* <Dialog.Button label='Actualise' onPress={dispatchOne} /> */}
+          </Dialog.Container>
+        </View>}
     </View>
   )
 }

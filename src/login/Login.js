@@ -26,13 +26,14 @@ import {
   faEyeSlash
 } from '@fortawesome/free-solid-svg-icons'
 // import AsyncStorage from '@react-native-community/async-storage'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 const { height, width } = Dimensions.get('window')
 
 function Login (props) {
   const dispatch = useDispatch()
-  const { color, utilisateur, tasks } = useSelector(state => {
-    return { color: state.Color, utilisateur: state.Utilisateur, tasks: state.Tasks }
+  const { color, utilisateur, alert, tasks } = useSelector(state => {
+    return { color: state.Color, utilisateur: state.Utilisateur, tasks: state.Tasks, alert: state.Alert }
   })
 
   const [state, setStateTrue] = useState({
@@ -107,6 +108,20 @@ function Login (props) {
             passwordUtilisateur: state.pass
           }
         })
+        dispatch({
+          type: 'ADD_DATA_ALERT',
+          data: {
+            pseudoUtilisateur: state.pseudo,
+            data:
+              {
+                idAlert: new Date().getTime(),
+                dureeAlert: 10,
+                vibreurAlert: true,
+                songUrl: '/',
+                dureeVibreurAlert: 5
+              }
+          }
+        })
         const dat = {
           pseudoUtilisateur: state.pseudo,
           data: [
@@ -161,6 +176,14 @@ function Login (props) {
           dispatch({ type: 'INIT_DATA_TASKS', data: dat.data })
         }
 
+        const datAlert = alert.dataAlerts && alert.dataAlerts.find(e => {
+          return e.pseudoUtilisateur === isValid.pseudoUtilisateur
+        })
+
+        if (datAlert) {
+          dispatch({ type: 'INIT_DATA_ALERT', data: datAlert.data })
+        }
+
         setTimeout(() => {
           setState({
             pseudo: '',
@@ -193,11 +216,7 @@ function Login (props) {
   }
 
   return (
-    <KeyboardAwareScrollView
-      onKeyboardWillShow={(frames) => {
-        console.log('Keyboard event', frames)
-      }}
-    >
+    <KeyboardAwareScrollView>
       <AnimationLogin
         styles={{
           backgroundColor: color.activeColor.primary.light
@@ -206,6 +225,11 @@ function Login (props) {
         headerBackgroundColor='white'
         backgroundColor={color.activeColor.primary.light}
       >
+        <Spinner
+          visible={state.loading}
+          textContent='Miandry...'
+          textStyle={{ color: '#FFF' }}
+        />
         <View>
           <Text
             style={{
@@ -301,7 +325,6 @@ function Login (props) {
 
           <Move delais={1000} xD={0} yD={height / 2} change={state.isLogin}>
             <Button
-              loading={state.loading}
               buttonStyle={{
                 ...DefaultStyles.buttonReactNativeElement,
                 backgroundColor: color.activeColor.primary.dark

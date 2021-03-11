@@ -5,11 +5,14 @@ export default function def () {
 }
 
 export function order (data, column) {
-  return data.map(value => {
-    return value
-  }).sort(function (a, b) {
-    return a[column] - b[column]
-  })
+  if (data) {
+    return data.map(value => {
+      return value
+    }).sort(function (a, b) {
+      return a[column] - b[column]
+    })
+  }
+  return []
 }
 
 export const listJours = [
@@ -43,9 +46,7 @@ export function dateDAF ({ dataTask, idTaskActive }, active) {
       } else {
         fin = newDataTask[0].idTasks
       }
-        
-      // console.log('debut', debut, 'datenow', datenow, 'fin', fin, isBetweenTwoNumber(debut, fin, datenow))
-      if (isBetweenTwoNumber(debut, fin, datenow)) {
+      if (isBetweenTwoNumber(debut, fin, datenow) || newDataTask.length === 1) {
         active = newDataTask[i].idTasks
         indexActive = i
       }

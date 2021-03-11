@@ -5,7 +5,8 @@ import {
   ON_CHANGE_DATE_PICKER,
   DATA_ACTIVE,
   PUT_ALL_DATA,
-  SHOW_DETAILS
+  SHOW_DETAILS,
+  PUT_TASKS_USER
 } from './actions/TasksActions'
 import {
   listJours,
@@ -15,19 +16,19 @@ import {
 const initState = {
   dataTask: null,
   dataTasks: [
-    {
-      pseudoUtilisateur: 'blackran',
-      data: [
-        // {
-        //   idTasks: 80040000,
-        //   titleTasks: 'hyt',
-        //   contentTasks: 'Ty',
-        //   heureDebut: '22:14:00',
-        //   day: 'Alahady',
-        //   type: 'miverimberina'
-        // }
-      ]
-    }
+    // {
+    //   pseudoUtilisateur: 'blackran',
+    //   data: [
+    //     // {
+    //     //   idTasks: 80040000,
+    //     //   titleTasks: 'hyt',
+    //     //   contentTasks: 'Ty',
+    //     //   heureDebut: '22:14:00',
+    //     //   day: 'Alahady',
+    //     //   type: 'miverimberina'
+    //     // }
+    //   ]
+    // }
   ],
   showEdit: false,
   length: 0,
@@ -41,11 +42,14 @@ const initState = {
 }
 
 function thisorder (data, column) {
-  return data.map(value => {
-    return value
-  }).sort(function (a, b) {
-    return a[column] - b[column]
-  })
+  if (data) {
+    return data.map(value => {
+      return value
+    }).sort(function (a, b) {
+      return a[column] - b[column]
+    })
+  }
+  return []
 }
 
 function FilterAffiche (datas) {
@@ -110,10 +114,18 @@ const TasksReducers = (state = initState, action) => {
   case ADD_DATA_TASKS:
     if (action.data) {
       response = Object.assign({}, state, {
-        dataTask: [...state.dataTask, action.data]
+        dataTasks: [...state.dataTask, action.data]
       })
     }
     return response
+
+  case PUT_TASKS_USER:
+    response = state.dataTasks.map(e => {
+      if (e.pseudoUtilisateur === action.data.lastPseudoUtilisateur) {
+        return { ...e, pseudoUtilisateur: action.data.pseudoUtilisateur }
+      }
+    })
+    return Object.assign({}, state, { dataTasks: response })
 
   case DATA_ACTIVE:
     if (state) {
@@ -151,7 +163,6 @@ const TasksReducers = (state = initState, action) => {
     return Object.assign({}, state, { heureDebut: action.data })
 
   case PUT_ALL_DATA:
-    console.log('PUT_ALL_DATA')
     stock = state.dataTasks.map((e) => {
       if (e.pseudoUtilisateur === action.user.pseudoUtilisateur) {
         return { data: action.data, pseudoUtilisateur: e.pseudoUtilisateur }
