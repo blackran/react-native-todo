@@ -113,9 +113,15 @@ const TasksReducers = (state = initState, action) => {
 
   case ADD_DATA_TASKS:
     if (action.data) {
-      response = Object.assign({}, state, {
-        dataTasks: [...state.dataTask, action.data]
-      })
+      if (state.dataTask) {
+        response = Object.assign({}, state, {
+          dataTasks: [...state.dataTask, action.data]
+        })
+      } else {
+        response = Object.assign({}, state, {
+          dataTasks: [action.data]
+        })
+      }
     }
     return response
 

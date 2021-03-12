@@ -7,8 +7,8 @@ import clock from './statics/images/clock.png'
 import wait from './statics/images/wait.png'
 import Chrono from './layouts/chrono/Chrono'
 import Move from '../../../animation/Move'
-import { faSync } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+
+import IconIonic from 'react-native-ionicons'
 
 const { width } = Dimensions.get('window')
 
@@ -221,10 +221,10 @@ function Block (props) {
                   alignItems: 'center'
                 }}
               >
-                <FontAwesomeIcon
-                  icon={faSync}
+                <IconIonic
+                  name='refresh'
                   color={color.activeColor.fontColor.light}
-                  size={15}
+                  size={20}
                 />
                 <Text
                   style={{

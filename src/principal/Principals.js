@@ -11,11 +11,13 @@ import styles from './statics/styles/Style'
 import { useDispatch, useSelector } from 'react-redux'
 import Block from './layouts/block/Block'
 
-import { faBars } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+// import { faBars } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { Avatar } from 'react-native-elements'
 // import userDefault from './statics/images/user.png'
 import marcus from './statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
+import Icon from 'react-native-ionicons'
+
 
 const { width } = Dimensions.get('window')
 
@@ -196,10 +198,11 @@ function Principals (props) {
           }}
         >
           <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-            <FontAwesomeIcon
-              icon={faBars}
+            <Icon
+              name='menu'
               color='white'
               size={30}
+              style={{ padding: 10 }}
             />
           </TouchableOpacity>
 
@@ -362,42 +365,51 @@ function Principals (props) {
 
       <ScrollView style={{ width: width, ...styles.root }}>
         {
-          tasks?.dataFilter.map((e, i) => {
-            if (e) {
-              const stock = state.active === state.now
-              let resp = 0
-              tasks.dataFilter.map((e, i) => {
-                if (e.idTasks === tasks.idTaskActive) {
-                  resp = i
-                }
-                return null
-              })
-              return (
-                <Block
-                  key={e.idTasks}
-                  i={i}
-                  idTasks={e.idTasks}
-                  finish={
-                    (state.active < state.now)
-                      ? false
-                      : (i < resp)
+          tasks?.dataFilter.length > 0
+            ? tasks?.dataFilter.map((e, i) => {
+              if (e) {
+                const stock = state.active === state.now
+                let resp = 0
+                tasks.dataFilter.map((e, i) => {
+                  if (e.idTasks === tasks.idTaskActive) {
+                    resp = i
                   }
-                  datas={e}
-                  start={tasks.idTaskActive === e.idTasks}
-                  now={stock}
-                  debut={
-                    (stock && e.idTasks < tasks.idTaskActive)
-                      ? nextData(e, thisorder(tasks.dataTask, 'idTasks'))
-                      : newArrayDate(e)
-                  }
-                  navigation={props.navigation}
-                  fin={nextData(e, thisorder(tasks.dataTask, 'idTasks'))}
-                  active={state.active}
-                />
-              )
-            }
-            return null
-          })
+                  return null
+                })
+                return (
+                  <Block
+                    key={e.idTasks}
+                    i={i}
+                    idTasks={e.idTasks}
+                    finish={
+                      (state.active < state.now)
+                        ? false
+                        : (i < resp)
+                    }
+                    datas={e}
+                    start={tasks.idTaskActive === e.idTasks}
+                    now={stock}
+                    debut={
+                      (stock && e.idTasks < tasks.idTaskActive)
+                        ? nextData(e, thisorder(tasks.dataTask, 'idTasks'))
+                        : newArrayDate(e)
+                    }
+                    navigation={props.navigation}
+                    fin={nextData(e, thisorder(tasks.dataTask, 'idTasks'))}
+                    active={state.active}
+                  />
+                )
+              }
+              return null
+            })
+            : <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 20,
+                opacity: 0.6,
+                marginTop: height * 2
+              }}
+            >Mampidira asa vaovao</Text>
         }
         <View style={{ height: 20 }} />
       </ScrollView>

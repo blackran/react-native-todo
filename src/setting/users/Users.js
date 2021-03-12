@@ -1,20 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { TextInput, View, Image, TouchableOpacity } from 'react-native'
-import { Button, Icon } from 'react-native-elements'
+import { Icon } from 'react-native-elements'
 import marcus from '../../statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
 import DefaultStyles from '../../statics/styles/DefaultStyles'
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import {
-  faCamera,
-  faKey,
-  faUser,
-  faEye,
-  faEyeSlash
-} from '@fortawesome/free-solid-svg-icons'
+import IconIonic from 'react-native-ionicons'
 
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+// import {
+//   faCamera,
+//   faKey,
+//   faUser,
+//   faEye,
+//   faEyeSlash
+// } from '@fortawesome/free-solid-svg-icons'
+//
+// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
 import ImagePicker from 'react-native-image-picker'
 import { useSelector, useDispatch } from 'react-redux'
@@ -119,7 +121,7 @@ function Users (props) {
           <Icon
             name='chevron-left'
             size={20}
-            type='MaterialIcons'
+            type='Ionicons'
             color='white'
           />
         </TouchableOpacity>
@@ -180,8 +182,8 @@ function Users (props) {
                 left: 5
               }}
             >
-              <FontAwesomeIcon
-                icon={faCamera}
+              <IconIonic
+                name='camera'
                 color={color.activeColor.fontColor.light}
                 size={24}
               />
@@ -191,11 +193,11 @@ function Users (props) {
             style={{ marginTop: 20 }}
           >
             <View>
-              <FontAwesomeIcon
-                icon={faUser}
+              <IconIonic
+                name='person'
                 color='black'
-                size={20}
-                style={{ position: 'absolute', top: 15, left: 18 }}
+                size={25}
+                style={{ position: 'absolute', top: 12, left: 18 }}
               />
               <TextInput
                 placeholder='Anarana'
@@ -210,11 +212,11 @@ function Users (props) {
               />
             </View>
             <View>
-              <FontAwesomeIcon
-                icon={faKey}
+              <IconIonic
+                name='key'
                 color='black'
-                size={20}
-                style={{ position: 'absolute', top: 15, left: 18 }}
+                size={25}
+                style={{ position: 'absolute', top: 12, left: 18 }}
               />
               <TextInput
                 placeholder='Famantarana'
@@ -232,8 +234,8 @@ function Users (props) {
                 onPress={() => setState({ isShow: !state.isShow })}
                 style={{ position: 'absolute', right: 20, top: 10 }}
               >
-                <FontAwesomeIcon
-                  icon={state.isShow ? faEye : faEyeSlash}
+                <IconIonic
+                  name={state.isShow ? 'eye' : 'eye-off'}
                   color='black'
                   size={30}
                 />
@@ -241,11 +243,11 @@ function Users (props) {
             </View>
 
             <View>
-              <FontAwesomeIcon
-                icon={faKey}
+              <IconIonic
+                name='key'
                 color='black'
-                size={20}
-                style={{ position: 'absolute', top: 15, left: 18 }}
+                size={25}
+                style={{ position: 'absolute', top: 12, left: 18 }}
               />
               <TextInput
                 placeholder='Fanamarinana'
@@ -264,8 +266,8 @@ function Users (props) {
                 onPress={() => setState({ isShowF: !state.isShowF })}
                 style={{ position: 'absolute', right: 20, top: 10 }}
               >
-                <FontAwesomeIcon
-                  icon={state.isShowF ? faEye : faEyeSlash}
+                <IconIonic
+                  name={state.isShowF ? 'eye' : 'eye-off'}
                   color='black'
                   size={30}
                 />

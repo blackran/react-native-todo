@@ -12,7 +12,8 @@ import { persistStore, persistReducer } from 'redux-persist'
 
 const rootPersistConfig = {
   key: 'asako',
-  storage: AsyncStorage
+  storage: AsyncStorage,
+  debug: true
 }
 
 // const middleware = [thunk]

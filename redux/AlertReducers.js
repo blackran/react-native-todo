@@ -46,9 +46,15 @@ const reducers = (state = initState, action) => {
 
   case ADD_DATA_ALERT:
     if (action.data) {
-      response = Object.assign({}, state, {
-        dataAlerts: [...state.dataTask, action.data]
-      })
+      if (!state.dataAlert) {
+        response = Object.assign({}, state, {
+          dataAlerts: [action.data]
+        })
+      } else {
+        response = Object.assign({}, state, {
+          dataAlerts: [...state.dataAlert, action.data]
+        })
+      }
     }
     return response
 

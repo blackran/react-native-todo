@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { Text, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
 import { Icon, Image, CheckBox, Slider } from 'react-native-elements'
 import songImage from './statics/images/music.png'
-import { faStopwatch, faMusic } from '@fortawesome/free-solid-svg-icons'
+// import { faStopwatch, faMusic } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import IconIonic from 'react-native-ionicons'
+
 import { useSelector, useDispatch } from 'react-redux'
 
 const { width } = Dimensions.get('window')
@@ -81,7 +83,7 @@ function Songs (props) {
           <Icon
             name='chevron-left'
             size={20}
-            type='MaterialIcons'
+            type='ionicons'
             color='white'
           />
         </TouchableOpacity>
@@ -112,8 +114,8 @@ function Songs (props) {
               // justifyContent: 'center'
             }}
           >
-            <FontAwesomeIcon
-              icon={faStopwatch}
+            <IconIonic
+              name='timer'
               color={color.activeColor.fontColor.dark}
               size={30}
             />
@@ -153,8 +155,8 @@ function Songs (props) {
               alignItems: 'center'
             }}
           >
-            <FontAwesomeIcon
-              icon={faMusic}
+            <IconIonic
+              name='musical-notes'
               color={color.activeColor.fontColor.dark}
               size={30}
             />
@@ -207,7 +209,8 @@ function Songs (props) {
                   key={e.indice}
                   title={e.indice}
                   onPress={() => setNameSong(e.name)}
-                  checked={e.name === nameSong}
+                  checked={!isVibreur && e.name === nameSong}
+                  disabled={isVibreur}
                   checkedColor={color.activeColor.fontColor.dark}
                 />
               )

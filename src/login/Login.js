@@ -16,15 +16,15 @@ import DefaultStyles from '../statics/styles/DefaultStyles'
 import { useSelector, useDispatch } from 'react-redux'
 import Move from '../animation/Move'
 import AnimationLogin from '../animation/AnimationLogin'
-// import AsyncStorage from '@react-native-community/async-storage'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import {
-  faKey,
-  faUser,
-  faEye,
-  faEyeSlash
-} from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+// import {
+//   faKey,
+//   faUser,
+//   faEye,
+//   faEyeSlash
+// } from '@fortawesome/free-solid-svg-icons'
+import Icon from 'react-native-ionicons'
 // import AsyncStorage from '@react-native-community/async-storage'
 import Spinner from 'react-native-loading-spinner-overlay'
 
@@ -64,12 +64,12 @@ function Login (props) {
     setState({ passF: e })
   }
 
+  // const removeData = async () => {
+  //   await AsyncStorage.clear()
+  // }
+
   // React.useEffect(() => {
-  //   AsyncStorage
-  //     .getAllKeys((err, keys) => {
-  //       AsyncStorage.multiRemove(keys)
-  //     })
-  //     .then(() => console.log('finis'))
+  //   removeData()
   // }, [])
 
   React.useEffect(() => {
@@ -241,12 +241,13 @@ function Login (props) {
             {state.error ? 'pseudo ou password incorrect' : ''}
           </Text>
           <Move delais={1000} xD={-width} yD={0} change={state.isLogin}>
-            <FontAwesomeIcon
-              icon={faUser}
+            <Icon
+              name='person'
               color='black'
-              size={20}
-              style={{ position: 'absolute', top: 15, left: 18 }}
+              size={25}
+              style={{ position: 'absolute', top: 12, left: 18 }}
             />
+
             <TextInput
               placeholder='Anarana'
               onChangeText={OnChangeLogin}
@@ -260,11 +261,11 @@ function Login (props) {
             />
           </Move>
           <Move delais={1000} xD={width / 2} yD={0} change={state.isLogin}>
-            <FontAwesomeIcon
-              icon={faKey}
+            <Icon
+              name='key'
               color='black'
-              size={20}
-              style={{ position: 'absolute', top: 15, left: 18 }}
+              size={25}
+              style={{ position: 'absolute', top: 12, left: 18 }}
             />
             <TextInput
               placeholder='Famantarana'
@@ -283,8 +284,8 @@ function Login (props) {
               onPress={() => setState({ isShow: !state.isShow })}
               style={{ position: 'absolute', right: 20, top: 10 }}
             >
-              <FontAwesomeIcon
-                icon={state.isShow ? faEye : faEyeSlash}
+              <Icon
+                name={state.isShow ? 'eye' : 'eye-off'}
                 color='black'
                 size={30}
               />
@@ -292,11 +293,11 @@ function Login (props) {
           </Move>
           {!state.isLogin &&
             <Move delais={1000} xD={width / 2} yD={0} change={state.isLogin}>
-              <FontAwesomeIcon
-                icon={faKey}
+              <Icon
+                name='key'
                 color='black'
-                size={20}
-                style={{ position: 'absolute', top: 15, left: 18 }}
+                size={25}
+                style={{ position: 'absolute', top: 12, left: 18 }}
               />
               <TextInput
                 placeholder='Fanamarinana'
@@ -315,8 +316,8 @@ function Login (props) {
                 onPress={() => setState({ isShowF: !state.isShowF })}
                 style={{ position: 'absolute', right: 20, top: 10 }}
               >
-                <FontAwesomeIcon
-                  icon={state.isShowF ? faEye : faEyeSlash}
+                <Icon
+                  name={state.isShowF ? 'eye' : 'eye-off'}
                   color='black'
                   size={30}
                 />

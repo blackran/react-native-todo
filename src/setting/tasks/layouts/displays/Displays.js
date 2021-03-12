@@ -62,7 +62,6 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
   }
 
   const OnChangeLohanteny = (e) => {
-    // console.log('OnChangeLohanteny')
     setState({ titleTasks: e })
   }
 

@@ -4,6 +4,8 @@ import me from '../statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
 import { View, Image, Text, TouchableOpacity, Alert } from 'react-native'
 import { faSignOutAlt, faCogs, faTasks, faBullhorn } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import IconIonic from 'react-native-ionicons'
+
 import { useSelector } from 'react-redux'
 
 export default function ContentDrawer (props) {
@@ -83,8 +85,8 @@ export default function ContentDrawer (props) {
               marginLeft: 20
             }}
             >
-              <FontAwesomeIcon
-                icon={faTasks}
+              <IconIonic
+                name='list'
                 color={color ? color.activeColor.fontColor.light : '#ffb21d'}
                 size={24}
               />
@@ -109,8 +111,8 @@ export default function ContentDrawer (props) {
               marginLeft: 20
             }}
             >
-              <FontAwesomeIcon
-                icon={faCogs}
+              <IconIonic
+                name='options'
                 color={color ? color.activeColor.fontColor.light : '#ffb21d'}
                 size={24}
               />
@@ -135,8 +137,8 @@ export default function ContentDrawer (props) {
               marginLeft: 20
             }}
             >
-              <FontAwesomeIcon
-                icon={faBullhorn}
+              <IconIonic
+                name='megaphone'
                 color={color ? color.activeColor.fontColor.light : '#ffb21d'}
                 size={24}
               />
@@ -178,8 +180,9 @@ export default function ContentDrawer (props) {
               marginLeft: 20
             }}
             >
-              <FontAwesomeIcon
-                icon={faSignOutAlt} color={color ? color.activeColor.fontColor.light : '#ffb21d'} size={24}
+              <IconIonic
+                name='log-out'
+                color={color ? color.activeColor.fontColor.light : '#ffb21d'} size={24}
               />
               <Text style={{
                 margin: 16,
