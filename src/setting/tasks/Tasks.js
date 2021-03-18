@@ -362,7 +362,8 @@ function Tasks (props) {
                           titleTasks: '',
                           contentTasks: '',
                           heureDebut: '00:00:00',
-                          pseudoUtilisateur: 'blackran'
+                          pseudoUtilisateur: utilisateur.connecterUtilisateur.pseudoUtilisateur,
+                          categorieTasks: []
                         }}
                         days='unknown'
                         OnPressSave={OnPressSave}
@@ -429,7 +430,8 @@ function Tasks (props) {
                                 titleTasks: '',
                                 contentTasks: '',
                                 heureDebut: '00:00:00',
-                                pseudoUtilisateur: 'blackran'
+                                pseudoUtilisateur: utilisateur.connecterUtilisateur.pseudoUtilisateur,
+                                categorieTasks: [] 
                               }}
                               days={key}
                               onClickBtnDelete={onClickBtnDelete}

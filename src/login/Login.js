@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   View,
   TextInput,
@@ -16,6 +16,7 @@ import DefaultStyles from '../statics/styles/DefaultStyles'
 import { useSelector, useDispatch } from 'react-redux'
 import Move from '../animation/Move'
 import AnimationLogin from '../animation/AnimationLogin'
+import Loading from '../animation/Loading'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 // import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 // import {
@@ -26,7 +27,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 // } from '@fortawesome/free-solid-svg-icons'
 import Icon from 'react-native-ionicons'
 // import AsyncStorage from '@react-native-community/async-storage'
-import Spinner from 'react-native-loading-spinner-overlay'
+// import Spinner from 'react-native-loading-spinner-overlay'
 
 const { height, width } = Dimensions.get('window')
 
@@ -48,9 +49,9 @@ function Login (props) {
     isShowF: false
   })
 
-  const setState = (data) => {
+  const setState = useCallback((data) => {
     setStateTrue(Object.assign({}, state, data))
-  }
+  }, []) // eslint-disable-line
 
   const OnChangeLogin = (e) => {
     setState({ pseudo: e })
@@ -72,7 +73,15 @@ function Login (props) {
   //   removeData()
   // }, [])
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // setState({
+    //   pseudo: '',
+    //   pass: '',
+    //   passF: ''
+    // })
+  }, []) // eslint-disable-line
+
+  useEffect(() => {
     dispatch({
       type: 'CHANGE_COLOR',
       data: 'gray'
@@ -85,6 +94,7 @@ function Login (props) {
       const isValid = utilisateur.dataUtilisateur.find(e => {
         return e.pseudoUtilisateur === state.pseudo
       })
+
       if (!state.isLogin && isValid) {
         return setState({
           loading: false,
@@ -142,7 +152,8 @@ function Login (props) {
         setTimeout(() => {
           setState({
             pseudo: '',
-            pass: ''
+            pass: '',
+            passF: ''
           })
           props.navigation.navigate('Principal',
             {
@@ -150,20 +161,28 @@ function Login (props) {
               color: color
             }
           )
-          setState({
+          return setState({
             loading: false,
             error: false
           })
         }, 2000)
       }
 
-      if (isValid && (isValid.passwordUtilisateur === state.pass)) {
+      if (state.isLogin) {
+        if (!(isValid && (isValid.passwordUtilisateur === state.pass))) {
+          return setState({
+            loading: false,
+            error: true
+          })
+        }
+
         dispatch({
           type: 'CHANGE_COLOR',
           data: color.dataColor.find(e => {
             return isValid.pseudoUtilisateur === e.pseudoUtilisateur
           }).nameColor
         })
+
         dispatch({
           type: 'INIT_UTILISATEUR',
           data: isValid
@@ -195,16 +214,11 @@ function Login (props) {
               color: color
             }
           )
-          setState({
+          return setState({
             loading: false,
             error: false
           })
         }, 2000)
-      } else {
-        setState({
-          loading: false,
-          error: true
-        })
       }
     }
     return null
@@ -225,11 +239,11 @@ function Login (props) {
         headerBackgroundColor='white'
         backgroundColor={color.activeColor.primary.light}
       >
-        <Spinner
-          visible={state.loading}
-          textContent='Miandry...'
-          textStyle={{ color: '#FFF' }}
-        />
+        {/* <Spinner */}
+        {/*   visible={state.loading} */}
+        {/*   textContent='Miandry ...' */}
+        {/*   textStyle={{ color: '#FFF' }} */}
+        {/* /> */}
         <View>
           <Text
             style={{
@@ -325,15 +339,23 @@ function Login (props) {
             </Move>}
 
           <Move delais={1000} xD={0} yD={height / 2} change={state.isLogin}>
-            <Button
-              buttonStyle={{
+            <Loading
+              animation={state.loading}
+              styles={{
                 ...DefaultStyles.buttonReactNativeElement,
                 backgroundColor: color.activeColor.primary.dark
-
               }}
-              onPress={() => OnSubmit()}
-              title={state.isLogin ? ' HIDITRA' : 'TAHIRIZO'}
-            />
+            >
+              <Button
+                buttonStyle={{
+                  ...DefaultStyles.buttonReactNativeElement,
+                  backgroundColor: color.activeColor.primary.dark
+
+                }}
+                onPress={() => OnSubmit()}
+                title={state.isLogin ? ' HIDITRA' : 'TAHIRIZO'}
+              />
+            </Loading>
           </Move>
           <Move delais={2000} xD={0} yD={height / 2} change={state.isLogin}>
             <TouchableWithoutFeedback

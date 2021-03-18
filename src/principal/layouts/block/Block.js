@@ -6,7 +6,7 @@ import check from './statics/images/check_cool.png'
 import clock from './statics/images/clock.png'
 import wait from './statics/images/wait.png'
 import Chrono from './layouts/chrono/Chrono'
-import Move from '../../../animation/Move'
+import Opacitys from '../../../animation/Opacitys'
 
 import IconIonic from 'react-native-ionicons'
 
@@ -78,6 +78,22 @@ function Block (props) {
 
   const { idTasks, active, datas, fin, start, i, finish } = props
 
+  const { icons } = useSelector(state => ({ icons: state.Tasks.dataIcons }))
+  const [iconActive, setIconActive] = useState([])
+
+  const findIcon = (e) => {
+    const sto = icons
+      .filter(h => e.includes(h.name))
+      .map(h => h.icon)
+    if (sto) {
+      setIconActive(sto)
+    }
+  }
+
+  useEffect((e) => {
+    findIcon(datas.categorieTasks)
+  }, [datas.categorieTasks]) //eslint-disable-line
+
   const style1 = {
     flex: 1,
     justifyContent: 'space-between',
@@ -98,11 +114,7 @@ function Block (props) {
   const style2 = Object.assign({}, style1, styles.shadow)
 
   return (
-    <Move
-      delais={i * 10}
-      xD={(i + 1) * width}
-      yD={0}
-    >
+    <Opacitys delais={(i + 1) * 500}>
       {start &&
         <View
           onLayout={(event) => {
@@ -210,22 +222,42 @@ function Block (props) {
                 marginTop: 20,
                 padding: 10,
                 borderTopWidth: 1,
-                borderColor: color.activeColor.fontColor.light
+                borderColor: color.activeColor.fontColor.light + 'aa',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center'
               }}
             >
               <View
                 style={{
-                  flex: 1,
+                  marginRight: 5,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'row'
+                }}
+              >
+                {iconActive && iconActive.map(e =>
+                  <IconIonic
+                    key={e}
+                    name={e}
+                    color={color.activeColor.fontColor.light}
+                    size={25}
+                    style={{ margin: 3 }}
+                  />
+                )}
+              </View>
+
+              <View
+                style={{
                   flexDirection: 'row',
-                  justifyContent: 'flex-start',
                   alignItems: 'center'
                 }}
               >
-                <IconIonic
-                  name='refresh'
-                  color={color.activeColor.fontColor.light}
-                  size={20}
-                />
+                {/* <IconIonic */}
+                {/*   name='bulb' */}
+                {/*   color={color.activeColor.fontColor.light} */}
+                {/*   size={20} */}
+                {/* /> */}
                 <Text
                   style={{
                     color: color.activeColor.fontColor.light,
@@ -238,9 +270,8 @@ function Block (props) {
               </View>
             </View>
         }
-
       </View>
-    </Move>
+    </Opacitys>
   )
 }
 

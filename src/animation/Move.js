@@ -37,9 +37,6 @@ function Move ({ xD, yD, onLayout, change, styles, children, delais }) {
       }}
       onLayout={onLayout}
     >
-      {
-        // console.log(fadeAnim.getTranslateTransform())
-      }
       {children}
     </Animated.View>
   )

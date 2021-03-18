@@ -20,15 +20,18 @@ const UtilisateurReducers = (state = initState, action) => {
     // console.log(Object.assign({}, state, { dataUtilisateur: [...state.dataUtilisateur, action.data] }))
     return Object.assign({}, state, { dataUtilisateur: [...state.dataUtilisateur, action.data], connecterUtilisateur: action.data })
   case PUT_UTILISATEUR:
-    console.log('PUT_UTILISATEUR')
+    console.log('PUT_UTILISATEUR', action.data)
     stock = { ...state }
+    if (stock.dataUtilisateur) {
+      stock.dataUtilisateur = stock.dataUtilisateur.map(e => {
+        if (e.pseudoUtilisateur === state.connecterUtilisateur.pseudoUtilisateur) {
+          return action.data
+        }
+        return e
+      })
+    }
     stock.connecterUtilisateur = action.data
-    stock.dataUtilisateur = stock.dataUtilisateur.map(e => {
-      if (e.pseudoUtilisateur === action.data.pseudoUtilisateur) {
-        return action.data
-      }
-      return e
-    })
+      console.log({ stock })
     return Object.assign({}, state, stock)
   default:
     return state

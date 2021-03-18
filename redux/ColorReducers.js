@@ -13,14 +13,8 @@ const listColor = {
       default: invert('#607d8b', true), // 500
       dark: invert('#37474f', true) // 800
     },
-    // secondary: {
-    //     light: '#ffcdd2', // 100
-    //     default: '#f44336', // 500
-    //     dark: '#c62828' // 800
-    // },
     fontColor: {
       light: '#eceff1', // 50
-      // dark: '#263238' // 900
       dark: '#000000' // 900
     }
   },
@@ -35,11 +29,6 @@ const listColor = {
       default: invert('#f44336'), // 500
       dark: invert('#c62828') // 800
     },
-    // secondary: {
-    //     light: '#bbdefb', // 100
-    //     default: '#2196f3', // 500
-    //     dark: '#1565c0' // 800
-    // },
     fontColor: {
       light: '#ffebee', // 50
       dark: '#b71c1c' // 900
@@ -52,24 +41,24 @@ const nameColor = 'gray'
 const initState = {
   activeColor: listColor[nameColor],
   dataColor: [
-    {
-      nameColor: 'gray',
-      pseudoUtilisateur: 'blackran'
-    }
+    // {
+    //   nameColor: 'gray',
+    //   pseudoUtilisateur: 'blackran'
+    // }
   ]
 }
 
-const ColorReducers = (state = initState, action) => {
+const reducers = (state = initState, action) => {
   let stock
   switch (action.type) {
   case CHANGE_COLOR:
     return Object.assign({}, state, { activeColor: listColor[action.data] })
   case ADD_COLOR:
-    return Object.assign({}, state, { dataColor: [...state.dataColor, listColor[action.data]] })
+    return Object.assign({}, state, { dataColor: [...state.dataColor, action.data] })
   case PUT_COLOR_USER:
     stock = state.dataColor.map((e) => {
       if (e.pseudoUtilisateur === action.data.lastPseudoUtilisateur) {
-        return { ...e, pseudoUtilisateur: action.data.pseudoUtilisateur }
+        return ({ ...e, pseudoUtilisateur: action.data.pseudoUtilisateur })
       }
       return e
     })
@@ -79,4 +68,4 @@ const ColorReducers = (state = initState, action) => {
   }
 }
 
-export default ColorReducers
+export default reducers

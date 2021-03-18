@@ -13,7 +13,17 @@ import {
   dateDAF
 } from './utils/Tasks'
 
+const dataIcons = [
+  { name: 'Other', icon: 'warning' },
+  { name: 'Sport', icon: 'basketball' },
+  { name: 'Eat', icon: 'restaurant' },
+  { name: 'Sleep', icon: 'bed' },
+  { name: 'Study', icon: 'book' },
+  { name: 'Dev', icon: 'cafe' }
+]
+
 const initState = {
+  dataIcons: dataIcons,
   dataTask: null,
   dataTasks: [
     // {
@@ -25,6 +35,7 @@ const initState = {
     //     //   contentTasks: 'Ty',
     //     //   heureDebut: '22:14:00',
     //     //   day: 'Alahady',
+    //     //   icon: 'Other',
     //     //   type: 'miverimberina'
     //     // }
     //   ]
@@ -130,6 +141,7 @@ const TasksReducers = (state = initState, action) => {
       if (e.pseudoUtilisateur === action.data.lastPseudoUtilisateur) {
         return { ...e, pseudoUtilisateur: action.data.pseudoUtilisateur }
       }
+      return e
     })
     return Object.assign({}, state, { dataTasks: response })
 

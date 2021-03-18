@@ -8,16 +8,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import IconIonic from 'react-native-ionicons'
 
-// import {
-//   faCamera,
-//   faKey,
-//   faUser,
-//   faEye,
-//   faEyeSlash
-// } from '@fortawesome/free-solid-svg-icons'
-//
-// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-
 import ImagePicker from 'react-native-image-picker'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -25,9 +15,9 @@ function Users (props) {
   const dispatch = useDispatch()
   const { color, utilisateur } = useSelector(state => ({ other: state.Other, task: state.Tasks, color: state.Color, utilisateur: state.Utilisateur.connecterUtilisateur }))
   const [state, setStateTrue] = useState({
-    pseudo: 'blackran',
-    pass: 'password',
-    passF: 'password',
+    pseudo: '',
+    pass: '',
+    passF: '',
     loading: false,
     error: false,
     delais: 100,
@@ -38,30 +28,50 @@ function Users (props) {
   })
 
   const setState = useCallback((data) => {
-    setStateTrue(Object.assign({}, state, data))
+    setStateTrue((e) => ({ ...e, ...data }))
   }, []) // eslint-disable-line
+
+  useEffect(() => {
+    const lastPseudoUtilisateur = utilisateur.pseudoUtilisateur
+
+    if (state.pseudo) {
+      dispatch({
+        type: 'PUT_TASKS_USER',
+        data: ({
+          lastPseudoUtilisateur,
+          pseudoUtilisateur: state.pseudo
+        })
+      })
+      dispatch({
+        type: 'PUT_COLOR_USER',
+        data: ({
+          lastPseudoUtilisateur,
+          pseudoUtilisateur: state.pseudo
+        })
+      })
+      dispatch({
+        type: 'PUT_UTILISATEUR',
+        data: ({ ...utilisateur, pseudoUtilisateur: state.pseudo })
+      })
+    }
+  }, [dispatch, state.pseudo]) // eslint-disable-line
 
   const OnChangeLogin = (e) => {
     setState({ pseudo: e })
-    dispatch({ type: 'PUT_COLOR_USER', data: { lastPseudoUtilisateur: utilisateur.pseudoUtilisateur, pseudoUtilisateur: e } })
-    dispatch({ type: 'PUT_TASKS_USER', data: { lastPseudoUtilisateur: utilisateur.pseudoUtilisateur, pseudoUtilisateur: e } })
-    dispatch({ type: 'PUT_UTILISATEUR', data: { ...utilisateur, pseudoUtilisateur: e } })
   }
 
-  const isPassEqualPassF = () => {
-    if (state.pass === state.passF) {
-      dispatch({ type: 'PUT_UTILISATEUR', data: { ...utilisateur, passwordUtilisateur: state.pass } })
+  useEffect(() => {
+    if (state.pass && state.passF && state.pass === state.passF) {
+      dispatch({ type: 'PUT_UTILISATEUR', data: ({ ...utilisateur, passwordUtilisateur: state.pass }) })
     }
-  }
+  }, [dispatch, state.pass, state.passF]) // eslint-disable-line
 
   const OnChangePass = (e) => {
     setState({ pass: e })
-    isPassEqualPassF()
   }
 
   const OnChangePassF = (e) => {
     setState({ passF: e })
-    isPassEqualPassF()
   }
 
   useEffect(() => {
@@ -71,7 +81,7 @@ function Users (props) {
       pass: utilisateur.passwordUtilisateur,
       passF: utilisateur.passwordUtilisateur
     })
-  }, [setState, utilisateur.imageUtilisateur, utilisateur.passwordUtilisateur, utilisateur.pseudoUtilisateur])
+  }, []) // eslint-disable-line
 
   const handleChoosePhoto = () => {
     const options = {

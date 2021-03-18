@@ -174,14 +174,14 @@ function Principals (props) {
       <View
         style={{
           overflow: 'hidden',
-          height: 220
+          height: 180
         }}
       >
         <Image
           source={marcus}
           style={{
             width: width + 80,
-            height: 300,
+            height: 200,
             position: 'absolute'
           }}
         />
@@ -243,10 +243,8 @@ function Principals (props) {
           style={{
             width: '100%',
             flexDirection: 'row',
-            // justifyContent: 'space-between',
             alignItems: 'center',
-            // paddingRight: 10,
-            height: 170
+            height: 120
           }}
         >
           <View
@@ -378,7 +376,7 @@ function Principals (props) {
                 })
                 return (
                   <Block
-                    key={e.idTasks}
+                    key={i * e.idTasks}
                     i={i}
                     idTasks={e.idTasks}
                     finish={
