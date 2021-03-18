@@ -14,7 +14,6 @@ function Chrono (props) {
   const [visible, setVisible] = useState(false)
   const [state, setStateTrue] = useState({
     date: null,
-    // stockInterval: null,
     start: false,
     style: {}
   })

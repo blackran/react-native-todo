@@ -5,7 +5,9 @@ import {
   Dimensions,
   Text,
   TouchableOpacity,
-  Image
+  Image,
+  // FlatList,
+  Animated
 } from 'react-native'
 import styles from './statics/styles/Style'
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,27 +20,32 @@ import { Avatar } from 'react-native-elements'
 import marcus from './statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
 import Icon from 'react-native-ionicons'
 
-
 const { width } = Dimensions.get('window')
 
+function useStateF (data) {
+  const [state, setStateTrue] = useState(data)
+  const setState = (data) => {
+    setStateTrue((e) => Object.assign({}, e, data))
+  } // eslint-disable-line
+
+  return [state, setState]
+}
+
 function Principals (props) {
+  // const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
+  const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView)
   const dispatch = useDispatch()
-  // const { color, tasks, utilisateur } = useSelector(state => {
-  //     return { color: state.Color, utilisateur: state.Utilisateur.connecterUtilisateur, tasks: state.Tasks }
-  // })
   const color = useSelector(state => state.Color)
   const utilisateur = useSelector(state => state.Utilisateur.connecterUtilisateur)
   const tasks = useSelector(state => state.Tasks)
 
-  const [state, setStateTrue] = useState({
+  const [state, setState] = useStateF({
     data: [],
     searchValue: '',
     active: new Date().getDay(),
     page: 0,
     now: new Date().getDay()
   })
-
-  const [datenow, setDateNow] = useState([])
 
   const listView = useRef()
 
@@ -52,31 +59,6 @@ function Principals (props) {
     'Zoma',
     'Sabotsy'
   ]
-
-  const setDouble = (e) => {
-    if (e < 10) {
-      return '0' + e
-    } else {
-      return e
-    }
-  }
-
-  const dateNowToString = useCallback(() => {
-    const date = new Date()
-    // return jours[date.getDay()].substring(0, 4) + ' ' + setDouble(date.getHours()) + ':' + setDouble(date.getMinutes()) + ':' + setDouble(date.getSeconds())
-    return [jours[date.getDay()].substring(0, 4) + ' ' + setDouble(date.getHours()) + ':' + setDouble(date.getMinutes()), setDouble(date.getSeconds())]
-  }, [jours])
-
-  useEffect(() => {
-    const stock = setInterval(() => {
-      setDateNow(() => dateNowToString())
-    }, 1000)
-    return () => clearInterval(stock)
-  }, []) // eslint-disable-line
-
-  const setState = useCallback((data) => {
-    setStateTrue((e) => Object.assign({}, e, data))
-  }, []) // eslint-disable-line
 
   useEffect(() => {
     const dat = tasks.dataTasks.find(e => {
@@ -125,12 +107,12 @@ function Principals (props) {
     }
   }
 
-  const newArrayDate = (data) => {
+  const newArrayDate = useCallback((data) => {
     const stock = [jours[Math.floor(parseInt(data.idTasks) / 24 / 60 / 60 / 1000)], data.heureDebut, data.idTasks]
     return stock
-  }
+  }, []) // eslint-disable-line
 
-  const nextData = (h, datas) => {
+  const nextData = useCallback((h, datas) => {
     let indexActive
     datas.map((e, i) => {
       if (e.idTasks === h.idTasks) {
@@ -148,7 +130,7 @@ function Principals (props) {
     }
 
     return newArrayDate(data)
-  }
+  }, []) // eslint-disable-line
 
   const thisorder = (data, column) => {
     if (data) {
@@ -162,6 +144,30 @@ function Principals (props) {
   }
 
   const textColor = color.activeColor.primary.light
+
+  // const y = new Animated.Value(0)
+  const y = new Animated.Value(0)
+
+  const onScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { y } } }],
+    { useNativeDriver: true }
+  )
+
+  const [isScroll, setIsScroll] = useState(0)
+
+  y.addListener(({ value }) => {
+    // if (isScroll < value) {
+    //   console.log('down')
+    // } else {
+    //   console.log('up')
+    // }
+    // setIsScroll(value)
+  })
+
+  useEffect(() => {
+    console.log('test ... ', y)
+    // y.setValue(isScroll)
+  }, [y]) // eslint-disable-line
 
   return (
     <View
@@ -206,7 +212,7 @@ function Principals (props) {
             />
           </TouchableOpacity>
 
-          <Text style={{ color: textColor }}>{datenow[0]}</Text>
+          {/* <Text style={{ color: textColor }}>{datenow[0]}</Text> */}
           <TouchableOpacity
             onPress={() => {
               props.navigation.closeDrawer()
@@ -262,7 +268,6 @@ function Principals (props) {
               }}
               showsVerticalScrollIndicator={false}
               onScroll={(e) => OnScroll(e)}
-              // onScrollEndDrag={ OnEndScroll() }
               onMomentumScrollEnd={(e) => OnEndScroll(e)}
               centerContent={false}
               ref={listView}
@@ -360,46 +365,52 @@ function Principals (props) {
       </View>
 
       {/* body of application */}
+      {/* onScrollBeginDrag={(e) => console.log('start', e.nativeEvent.contentOffset.y)} */}
+      {/* onScrollEndDrag={() => console.log('end')} */}
+      {/* {...{ onScroll }} */}
 
-      <ScrollView style={{ width: width, ...styles.root }}>
+      <View style={{ width: width, ...styles.root }}>
         {
           tasks?.dataFilter.length > 0
-            ? tasks?.dataFilter.map((e, i) => {
-              if (e) {
-                const stock = state.active === state.now
-                let resp = 0
-                tasks.dataFilter.map((e, i) => {
-                  if (e.idTasks === tasks.idTaskActive) {
-                    resp = i
-                  }
-                  return null
-                })
-                return (
-                  <Block
-                    key={i * e.idTasks}
-                    i={i}
-                    idTasks={e.idTasks}
-                    finish={
-                      (state.active < state.now)
-                        ? false
-                        : (i < resp)
-                    }
-                    datas={e}
-                    start={tasks.idTaskActive === e.idTasks}
-                    now={stock}
-                    debut={
-                      (stock && e.idTasks < tasks.idTaskActive)
-                        ? nextData(e, thisorder(tasks.dataTask, 'idTasks'))
-                        : newArrayDate(e)
-                    }
-                    navigation={props.navigation}
-                    fin={nextData(e, thisorder(tasks.dataTask, 'idTasks'))}
-                    active={state.active}
-                  />
-                )
-              }
-              return null
-            })
+            ? (
+              <AnimatedScrollView onScroll={onScroll}>
+                {
+                  tasks.dataFilter.map((item, index) => {
+                    const stock = state.active === state.now
+                    let resp = 0
+                    tasks.dataFilter.map((e, i) => {
+                      if (e.idTasks === tasks.idTaskActive) {
+                        resp = i
+                      }
+                      return null
+                    })
+                    return (
+                      <Block
+                        key={index * item.idTasks}
+                        i={index}
+                        idTasks={item.idTasks}
+                        finish={
+                          (state.active < state.now)
+                            ? false
+                            : (index < resp)
+                        }
+                        datas={item}
+                        start={tasks.idTaskActive === item.idTasks}
+                        now={stock}
+                        debut={
+                          (stock && item.idTasks < tasks.idTaskActive)
+                            ? nextData(item, thisorder(tasks.dataTask, 'idTasks'))
+                            : newArrayDate(item)
+                        }
+                        navigation={props.navigation}
+                        fin={nextData(item, thisorder(tasks.dataTask, 'idTasks'))}
+                        active={state.active}
+                        y={y}
+                      />
+                    )
+                  })
+                }
+              </AnimatedScrollView>)
             : <Text
               style={{
                 textAlign: 'center',
@@ -407,10 +418,11 @@ function Principals (props) {
                 opacity: 0.6,
                 marginTop: height * 2
               }}
-            >Mampidira asa vaovao</Text>
+            >Mampidira asa vaovao
+            </Text>
         }
-        <View style={{ height: 20 }} />
-      </ScrollView>
+        {/* <View style={{ height: 20 }} /> */}
+      </View>
     </View>
   )
 }

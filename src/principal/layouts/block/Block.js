@@ -1,22 +1,34 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, Image, Dimensions, StyleSheet, TouchableOpacity } from 'react-native'
+import {
+  View,
+  Text,
+  Image,
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+  Animated
+} from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 
 import check from './statics/images/check_cool.png'
 import clock from './statics/images/clock.png'
 import wait from './statics/images/wait.png'
 import Chrono from './layouts/chrono/Chrono'
-import Opacitys from '../../../animation/Opacitys'
+// import Opacitys from '../../../animation/Opacitys'
 
 import IconIonic from 'react-native-ionicons'
 
-const { width } = Dimensions.get('window')
+const { width, height: wHeight } = Dimensions.get('window')
+
+const height = wHeight - 180
 
 function Block (props) {
   const dispatch = useDispatch()
   const { color, tasks } = useSelector(state => ({ other: state.Other, tasks: state.Tasks, color: state.Color }))
   const [dimP, setDimP] = useState({ x: 0, y: 0, width: 0, height: 0 })
   const [dimC, setDimC] = useState({ x: 0, y: 0, width: 0, height: 0 })
+
+  const [second, setSecond] = useState(0) //eslint-disable-line
 
   const [state, setStateTrue] = useState({
     // date: props.datas.durationTasks,
@@ -29,10 +41,12 @@ function Block (props) {
     setStateTrue(Object.assign({}, state, data))
     }, []) // eslint-disable-line
 
-  // useEffect(() => {
-  //     setState({ finish: props.finish })
-  //     return () => clearInterval(state.stockInterval)
-  // }, []) // eslint-disable-line
+  useEffect(() => {
+    const stock = setInterval(() => {
+      setSecond(() => new Date().getSeconds())
+    }, 1000)
+    return () => clearInterval(stock)
+  }, [])
 
   useEffect(() => {
     if (state.finish !== props.finish) {
@@ -76,15 +90,22 @@ function Block (props) {
     return phrase && phrase.split(' ').slice(0, len).join(' ') + ' ...'
   }
 
-  const { idTasks, active, datas, fin, start, i, finish } = props
+  const {
+    idTasks, active, datas, fin, start, y,
+    i,
+    finish
+  } = props
 
   const { icons } = useSelector(state => ({ icons: state.Tasks.dataIcons }))
   const [iconActive, setIconActive] = useState([])
 
   const findIcon = (e) => {
-    const sto = icons
-      .filter(h => e.includes(h.name))
-      .map(h => h.icon)
+    let sto
+    if (e) {
+      sto = icons
+        .filter(h => e.includes(h.name))
+        .map(h => h.icon)
+    }
     if (sto) {
       setIconActive(sto)
     }
@@ -94,27 +115,61 @@ function Block (props) {
     findIcon(datas.categorieTasks)
   }, [datas.categorieTasks]) //eslint-disable-line
 
+  const cardHeight = 150
+
   const style1 = {
     flex: 1,
-    justifyContent: 'space-between',
-    marginTop: 5,
+    // justifyContent: 'space-between',
     marginLeft: 10,
     marginRight: 10,
     marginBottom: 5,
     backgroundColor: start
       ? color.activeColor.primary.dark
-      : (finish ? color.activeColor.primary.light + '99' : '#688898'),
-    opacity: finish ? 0.5 : 1,
+      : (finish ? color.activeColor.primary.light : '#688898'),
     padding: 10,
     borderRadius: 10,
     paddingBottom: 10,
-    position: 'relative'
+    position: 'relative',
+    height: cardHeight - 5
   }
 
   const style2 = Object.assign({}, style1, styles.shadow)
 
+  const position = Animated.subtract(i * cardHeight, y)
+  const isDisappeearing = -cardHeight
+  const isTop = 0
+  const isBottom = height - cardHeight
+  const isAppearing = height
+
+  const scale = position.interpolate({
+    inputRange: [isDisappeearing, isTop, isBottom, isAppearing],
+    outputRange: [0.5, 1, 1, 0.5],
+    extrapolate: 'clamp'
+  })
+
+  const opacity = position.interpolate({
+    inputRange: [isDisappeearing, isTop, isBottom, isAppearing],
+    outputRange: [0.5, 1, 1, 0.5]
+  })
+
+  const translateY = Animated.add(
+    Animated.add(
+      y,
+      y.interpolate({
+        inputRange: [0, 0.00001 + i * cardHeight],
+        outputRange: [0, -i * cardHeight],
+        extrapolateRight: 'clamp'
+      })
+    ),
+    position.interpolate({
+      inputRange: [isBottom, isAppearing],
+      outputRange: [0, -cardHeight / 4],
+      extrapolate: 'clamp'
+    })
+  )
+
   return (
-    <Opacitys delais={(i + 1) * 500}>
+    <Animated.View style={{ opacity, transform: [{ translateY }, { scale }] }}>
       {start &&
         <View
           onLayout={(event) => {
@@ -154,7 +209,12 @@ function Block (props) {
         }}
         style={start ? style2 : style1}
       >
-        <View style={{ flexDirection: 'row', marginBottom: 5 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            marginBottom: 5
+          }}
+        >
           <View style={{ flexDirection: 'column' }}>
             <Text style={{
               fontSize: 24,
@@ -214,7 +274,6 @@ function Block (props) {
             </Text>
           </TouchableOpacity>
         </View>
-
         {
           start &&
             <View
@@ -253,11 +312,6 @@ function Block (props) {
                   alignItems: 'center'
                 }}
               >
-                {/* <IconIonic */}
-                {/*   name='bulb' */}
-                {/*   color={color.activeColor.fontColor.light} */}
-                {/*   size={20} */}
-                {/* /> */}
                 <Text
                   style={{
                     color: color.activeColor.fontColor.light,
@@ -271,7 +325,7 @@ function Block (props) {
             </View>
         }
       </View>
-    </Opacitys>
+    </Animated.View>
   )
 }
 
