@@ -19,6 +19,7 @@ import { Avatar } from 'react-native-elements'
 // import userDefault from './statics/images/user.png'
 import marcus from './statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
 import Icon from 'react-native-ionicons'
+import JourLayout from './layouts/jours/Jours'
 
 const { width } = Dimensions.get('window')
 
@@ -34,6 +35,7 @@ function useStateF (data) {
 function Principals (props) {
   // const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
   const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView)
+  const AnimatedScrollViewJour = Animated.createAnimatedComponent(ScrollView)
   const dispatch = useDispatch()
   const color = useSelector(state => state.Color)
   const utilisateur = useSelector(state => state.Utilisateur.connecterUtilisateur)
@@ -74,28 +76,32 @@ function Principals (props) {
     dispatch({ type: 'DATA_ACTIVE' })
   }, [tasks.dataTasks]) // eslint-disable-line
 
-  useEffect(() => {
-    setTimeout(() => listView.current.scrollTo({
-      x: 0,
-      y: (new Date().getDay() * height),
-      animated: true
-    }), 1)
-  }, [listView])
+  // useEffect(() => {
+  //   if (listView.current) {
+  //     setTimeout(() => listView.current.scrollTo({
+  //       x: 0,
+  //       y: (new Date().getDay() * height),
+  //       animated: true
+  //     }), 1)
+  //   }
+  // }, [listView])
 
-  const OnScroll = (e) => {
-    if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
-      setState({ active: Math.abs(Math.round(e.nativeEvent.contentOffset.y / height)) })
-    }
-  }
+  // const OnScroll = (e) => {
+  //   if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
+  //     setState({ active: Math.abs(Math.round(e.nativeEvent.contentOffset.y / height)) })
+  //   }
+  // }
 
   const OnEndScroll = (e) => {
     if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
       const lengthStock = Math.abs(Math.round(e.nativeEvent.contentOffset.y / height))
-      listView.current.scrollTo({
-        x: 0,
-        y: lengthStock * height,
-        animated: true
-      })
+      if (listView.current) {
+        // listView.current.scrollTo({
+        //   x: 0,
+        //   y: lengthStock * height,
+        //   animated: true
+        // })
+      }
       setState({
         active: lengthStock
       })
@@ -104,6 +110,7 @@ function Principals (props) {
         active: lengthStock
       })
       dispatch({ type: 'DATA_ACTIVE' })
+      yD.setValue(-lengthStock * height)
     }
   }
 
@@ -145,29 +152,45 @@ function Principals (props) {
 
   const textColor = color.activeColor.primary.light
 
-  // const y = new Animated.Value(0)
-  const y = new Animated.Value(0)
+  const [topPostion, setTopPostion] = useState(0)
+
+  const setTopPostionFuction = (e) => {
+    setTopPostion(e)
+  }
+
+  const y = useRef(new Animated.Value(0)).current
 
   const onScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y } } }],
-    { useNativeDriver: true }
+    {
+      // listener: event => {
+      //   setTopPostionFuction(event.nativeEvent.contentOffset.y)
+      // },
+      useNativeDriver: true
+    }
   )
 
-  const [isScroll, setIsScroll] = useState(0)
+  const yD = useRef(new Animated.Value(0)).current
 
-  y.addListener(({ value }) => {
-    // if (isScroll < value) {
-    //   console.log('down')
-    // } else {
-    //   console.log('up')
-    // }
-    // setIsScroll(value)
-  })
-
+  const onScrollD = Animated.event(
+    [{ nativeEvent: { contentOffset: { y: yD } } }],
+    {
+      // listener: event => {
+      //   setTopPostionFuction(event.nativeEvent.contentOffset.y)
+      // },
+      useNativeDriver: true
+    }
+  )
   useEffect(() => {
-    console.log('test ... ', y)
-    // y.setValue(isScroll)
-  }, [y]) // eslint-disable-line
+    // setTimeout(() => {
+    //   console.log({ topPostion })
+    //   listViewFlat.current.scrollTo({
+    //     x: 0,
+    //     y: topPostion,
+    //     animated: true
+    //   })
+    // }, 10)
+  }, [topPostion])
 
   return (
     <View
@@ -180,7 +203,9 @@ function Principals (props) {
       <View
         style={{
           overflow: 'hidden',
-          height: 180
+          height: 180,
+          position: 'relative',
+          bottom: -topPostion
         }}
       >
         <Image
@@ -260,16 +285,14 @@ function Principals (props) {
               marginLeft: 10
             }}
           >
-            <ScrollView
+            <AnimatedScrollViewJour
               style={{
                 ...styles.myscroll,
                 height: height * 3,
                 width: 190
               }}
-              showsVerticalScrollIndicator={false}
-              onScroll={(e) => OnScroll(e)}
+              onScroll={onScrollD}
               onMomentumScrollEnd={(e) => OnEndScroll(e)}
-              centerContent={false}
               ref={listView}
             >
               <View
@@ -278,102 +301,71 @@ function Principals (props) {
                   width: 190
                 }}
               >
-                <View
-                  style={{
-                    height: height,
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: textColor,
-                      fontSize: 12
-                    }}
-                  />
-                </View>
-
+                <JourLayout
+                  jour=''
+                  i={0}
+                  yD={yD}
+                />
                 {
                   jours.map((e, index) => {
                     return (
-                      <View
-                        key={index}
-                        style={{
-                          height: height,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          padding: 0
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: textColor,
-                            fontSize: state.active === index ? (width / 10) : 14,
-                            opacity: state.now === index ? 1 : (state.now === index ? 1 : 0.8)
-                          }}
-                        > {e}
-                        </Text>
-                      </View>
+                      <JourLayout
+                        jour={e}
+                        i={index + 1}
+                        yD={yD}
+                        key={index + 1}
+                      />
                     )
                   })
                 }
-
-                <View
-                  style={{
-                    height: height,
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: 12
-                    }}
-                  />
-                </View>
+                <JourLayout
+                  jour=''
+                  i={jours.length + 2}
+                  yD={yD}
+                />
               </View>
-            </ScrollView>
+            </AnimatedScrollViewJour>
           </View>
         </View>
-      </View>
-      <View
-        style={{
-          backgroundColor: color.activeColor.primary.light,
-          height: 5,
-          width: '100%'
-        }}
-      >
         <View
           style={{
-            backgroundColor: color.activeColor.primary.dark,
+            backgroundColor: color.activeColor.primary.light,
             height: 5,
-            borderBottomRightRadius: 5,
-            borderTopRightRadius: 5,
-            width: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'
-          }}
-        />
-        <Text
-          style={{
+            width: '100%',
             position: 'absolute',
-            left: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%',
-            top: -20,
-            color: color.activeColor.primary.light
+            bottom: 0
           }}
-        >{(tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'}
-        </Text>
+        >
+          <View
+            style={{
+              backgroundColor: color.activeColor.primary.dark,
+              height: 5,
+              borderBottomRightRadius: 5,
+              borderTopRightRadius: 5,
+              width: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'
+            }}
+          />
+          <Text
+            style={{
+              position: 'absolute',
+              left: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%',
+              top: -20,
+              color: color.activeColor.primary.light
+            }}
+          >{(tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'}
+          </Text>
+        </View>
       </View>
 
       {/* body of application */}
-      {/* onScrollBeginDrag={(e) => console.log('start', e.nativeEvent.contentOffset.y)} */}
-      {/* onScrollEndDrag={() => console.log('end')} */}
-      {/* {...{ onScroll }} */}
 
       <View style={{ width: width, ...styles.root }}>
         {
           tasks?.dataFilter.length > 0
             ? (
-              <AnimatedScrollView onScroll={onScroll}>
+              <AnimatedScrollView
+                onScroll={onScroll}
+              >
                 {
                   tasks.dataFilter.map((item, index) => {
                     const stock = state.active === state.now
