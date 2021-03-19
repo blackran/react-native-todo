@@ -13,6 +13,8 @@ import styles from './statics/styles/Style'
 import { useDispatch, useSelector } from 'react-redux'
 import Block from './layouts/block/Block'
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
 // import { faBars } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { Avatar } from 'react-native-elements'
@@ -32,14 +34,87 @@ function useStateF (data) {
   return [state, setState]
 }
 
+const yD = new Animated.Value(0)
+const AnimatedScrollViewJour = Animated.createAnimatedComponent(ScrollView)
+
+function ScollDay ({ jours, height, OnEndScroll, setTopPostion }) {
+  const listView = useRef()
+  const onScrollD = Animated.event(
+    [{ nativeEvent: { contentOffset: { y: yD } } }],
+    {
+      useNativeDriver: true
+    }
+  )
+  return (
+    <View
+      style={{
+        height: height * 3,
+        width: 300,
+        marginLeft: 10
+      }}
+    >
+      <AnimatedScrollViewJour
+        ref={listView}
+        style={{
+          ...styles.myscroll,
+          height: height * 3,
+          width: 190
+        }}
+        scrollEventThrottle={16}
+        onScroll={onScrollD}
+        onMomentumScrollEnd={(e) => {
+          OnEndScroll(e, listView)
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View
+          style={{
+            height: height * (jours.length + 2),
+            width: 190
+          }}
+        >
+          <JourLayout
+            jour=''
+            i={0}
+            yD={yD}
+          />
+          {
+            jours.map((e, index) => {
+              return (
+                <JourLayout
+                  jour={e}
+                  i={index + 1}
+                  yD={yD}
+                  key={index + 1}
+                />
+              )
+            })
+          }
+          <JourLayout
+            jour=''
+            i={jours.length + 2}
+            yD={yD}
+          />
+        </View>
+      </AnimatedScrollViewJour>
+    </View>
+  )
+}
+
+const HEADER_HEIGHT = 200
+const y = new Animated.Value(0)
+const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView)
+
+const AnimatedHeader = Animated.createAnimatedComponent(View)
+
 function Principals (props) {
+  const insets = useSafeAreaInsets()
   // const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
-  const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView)
-  const AnimatedScrollViewJour = Animated.createAnimatedComponent(ScrollView)
   const dispatch = useDispatch()
   const color = useSelector(state => state.Color)
   const utilisateur = useSelector(state => state.Utilisateur.connecterUtilisateur)
   const tasks = useSelector(state => state.Tasks)
+  const listViewBody = useRef()
 
   const [state, setState] = useStateF({
     data: [],
@@ -48,8 +123,6 @@ function Principals (props) {
     page: 0,
     now: new Date().getDay()
   })
-
-  const listView = useRef()
 
   const height = 40
   const jours = [
@@ -76,32 +149,30 @@ function Principals (props) {
     dispatch({ type: 'DATA_ACTIVE' })
   }, [tasks.dataTasks]) // eslint-disable-line
 
-  // useEffect(() => {
-  //   if (listView.current) {
-  //     setTimeout(() => listView.current.scrollTo({
-  //       x: 0,
-  //       y: (new Date().getDay() * height),
-  //       animated: true
-  //     }), 1)
-  //   }
-  // }, [listView])
-
-  // const OnScroll = (e) => {
-  //   if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
-  //     setState({ active: Math.abs(Math.round(e.nativeEvent.contentOffset.y / height)) })
-  //   }
-  // }
-
-  const OnEndScroll = (e) => {
+  const OnEndScroll = (e, listView) => {
     if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
       const lengthStock = Math.abs(Math.round(e.nativeEvent.contentOffset.y / height))
-      if (listView.current) {
-        // listView.current.scrollTo({
-        //   x: 0,
-        //   y: lengthStock * height,
-        //   animated: true
-        // })
-      }
+      // change le active en bon couleur
+      Animated.spring(yD, {
+        toValue: lengthStock * height,
+        useNativeDriver: true
+      }).start()
+
+      listView.current.getNode().scrollTo({
+        y: (lengthStock * height),
+        animated: true
+      })
+
+      Animated.spring(y, {
+        toValue: 0,
+        useNativeDriver: true
+      }).start()
+
+      listViewBody.current.getNode().scrollTo({
+        y: 0,
+        animated: true
+      })
+
       setState({
         active: lengthStock
       })
@@ -110,7 +181,6 @@ function Principals (props) {
         active: lengthStock
       })
       dispatch({ type: 'DATA_ACTIVE' })
-      yD.setValue(-lengthStock * height)
     }
   }
 
@@ -150,16 +220,6 @@ function Principals (props) {
     return []
   }
 
-  const textColor = color.activeColor.primary.light
-
-  const [topPostion, setTopPostion] = useState(0)
-
-  const setTopPostionFuction = (e) => {
-    setTopPostion(e)
-  }
-
-  const y = useRef(new Animated.Value(0)).current
-
   const onScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y } } }],
     {
@@ -170,27 +230,11 @@ function Principals (props) {
     }
   )
 
-  const yD = useRef(new Animated.Value(0)).current
-
-  const onScrollD = Animated.event(
-    [{ nativeEvent: { contentOffset: { y: yD } } }],
-    {
-      // listener: event => {
-      //   setTopPostionFuction(event.nativeEvent.contentOffset.y)
-      // },
-      useNativeDriver: true
-    }
-  )
-  useEffect(() => {
-    // setTimeout(() => {
-    //   console.log({ topPostion })
-    //   listViewFlat.current.scrollTo({
-    //     x: 0,
-    //     y: topPostion,
-    //     animated: true
-    //   })
-    // }, 10)
-  }, [topPostion])
+  // const headerHeight = y.interpolate({
+  //    inputRange: [0, HEADER_HEIGHT + insets.top],
+  //    outputRange: [HEADER_HEIGHT + insets.top, insets.top + 44],
+  //   extrapolate: 'clamp'
+  // })
 
   return (
     <View
@@ -201,62 +245,69 @@ function Principals (props) {
       }}
     >
       <View
+        className='header'
         style={{
-          overflow: 'hidden',
-          height: 180,
-          position: 'relative',
-          bottom: -topPostion
+          width: '100%',
+          position: 'relative'
         }}
       >
-        <Image
-          source={marcus}
+        <AnimatedHeader
           style={{
-            width: width + 80,
-            height: 200,
-            position: 'absolute'
-          }}
-        />
-        <View
-          style={{
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            height: 50,
-            width: width,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingLeft: 10,
-            paddingRight: 10
+            overflow: 'hidden',
+            height: HEADER_HEIGHT
+            // top: -HEADER_HEIGHT,
+            // transform: [{ translateY: headerHeight }]
           }}
         >
-          <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-            <Icon
-              name='menu'
-              color='white'
-              size={30}
-              style={{ padding: 10 }}
-            />
-          </TouchableOpacity>
-
-          {/* <Text style={{ color: textColor }}>{datenow[0]}</Text> */}
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.closeDrawer()
-              props.navigation.navigate('Users',
-                {
-                  color: color
-                }
-              )
+          <Image
+            source={marcus}
+            style={{
+              width: width + 80,
+              height: 200,
+              position: 'absolute'
+            }}
+          />
+          <View
+            style={{
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              height: 50,
+              width: width,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingLeft: 10,
+              paddingRight: 10
             }}
           >
-            <View
-              style={{
-                borderRadius: 10,
-                overflow: 'hidden',
-                borderWidth: 1,
-                borderColor: color.activeColor.primary.dark
+            <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+              <Icon
+                name='menu'
+                color='white'
+                size={30}
+                style={{ padding: 10 }}
+              />
+            </TouchableOpacity>
+
+            {/* <Text style={{ color: textColor }}>{datenow[0]}</Text> */}
+            <TouchableOpacity
+              onPress={() => {
+                props.navigation.closeDrawer()
+                props.navigation.navigate('Users',
+                  {
+                    color: color
+                  }
+                )
               }}
             >
-              {
+              <View
+                style={{
+                  borderRadius: 10,
+                  overflow: 'hidden',
+                  borderWidth: 1,
+                  borderColor: color.activeColor.primary.dark
+                }}
+              >
+                {
                 utilisateur?.imageUtilisateur
                   ? <Avatar
                     title={utilisateur?.pseudoUtilisateur ? utilisateur?.pseudoUtilisateur[0].toUpperCase() : ''}
@@ -266,104 +317,66 @@ function Principals (props) {
                     title={utilisateur?.pseudoUtilisateur ? utilisateur?.pseudoUtilisateur[0].toUpperCase() : ''}
                     source={marcus}
                   />
-              }
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            height: 120
-          }}
-        >
+                }
+              </View>
+            </TouchableOpacity>
+          </View>
           <View
             style={{
-              height: height * 3,
-              width: 300,
-              marginLeft: 10
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+              height: 120
             }}
           >
-            <AnimatedScrollViewJour
-              style={{
-                ...styles.myscroll,
-                height: height * 3,
-                width: 190
-              }}
-              onScroll={onScrollD}
-              onMomentumScrollEnd={(e) => OnEndScroll(e)}
-              ref={listView}
-            >
-              <View
-                style={{
-                  height: height * (jours.length + 2),
-                  width: 190
-                }}
-              >
-                <JourLayout
-                  jour=''
-                  i={0}
-                  yD={yD}
-                />
-                {
-                  jours.map((e, index) => {
-                    return (
-                      <JourLayout
-                        jour={e}
-                        i={index + 1}
-                        yD={yD}
-                        key={index + 1}
-                      />
-                    )
-                  })
-                }
-                <JourLayout
-                  jour=''
-                  i={jours.length + 2}
-                  yD={yD}
-                />
-              </View>
-            </AnimatedScrollViewJour>
+            <ScollDay {...{ jours, height, OnEndScroll }} />
           </View>
-        </View>
-        <View
-          style={{
-            backgroundColor: color.activeColor.primary.light,
-            height: 5,
-            width: '100%',
-            position: 'absolute',
-            bottom: 0
-          }}
-        >
           <View
             style={{
-              backgroundColor: color.activeColor.primary.dark,
+              backgroundColor: color.activeColor.primary.light,
               height: 5,
-              borderBottomRightRadius: 5,
-              borderTopRightRadius: 5,
-              width: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'
-            }}
-          />
-          <Text
-            style={{
+              width: '100%',
               position: 'absolute',
-              left: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%',
-              top: -20,
-              color: color.activeColor.primary.light
+              bottom: 0
             }}
-          >{(tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'}
-          </Text>
-        </View>
+          >
+            <View
+              style={{
+                backgroundColor: color.activeColor.primary.dark,
+                height: 5,
+                borderBottomRightRadius: 5,
+                borderTopRightRadius: 5,
+                width: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'
+              }}
+            />
+            <Text
+              style={{
+                position: 'absolute',
+                left: (tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%',
+                top: -20,
+                color: color.activeColor.primary.light
+              }}
+            >{(tasks.dataFilter.length !== 0 ? parseInt((tasks.lenTaskFinish / tasks.dataFilter.length) * 100) : 0) + '%'}
+            </Text>
+          </View>
+        </AnimatedHeader>
       </View>
 
       {/* body of application */}
 
-      <View style={{ width: width, ...styles.root }}>
+      <View
+        style={{
+          width: width,
+          ...styles.root
+          // height: wHeight - 100
+        }}
+      >
         {
           tasks?.dataFilter.length > 0
             ? (
               <AnimatedScrollView
+                scrollEventThrottle={16}
+                ref={listViewBody}
                 onScroll={onScroll}
               >
                 {

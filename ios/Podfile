@@ -50,6 +50,8 @@ target 'asako' do
 
   pod 'RNSoundPlayer', :path => '../node_modules/react-native-sound-player'
 
+  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
+
   target 'asakoTests' do
     inherit! :search_paths
     # Pods for testing

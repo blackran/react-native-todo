@@ -143,30 +143,32 @@ function Block (props) {
 
   const scale = position.interpolate({
     inputRange: [isDisappeearing, isTop, isBottom, isAppearing],
-    outputRange: [0.5, 1, 1, 0.5],
+    // outputRange: [0.5, 1, 1, 0.5]
+    outputRange: [0.5, 1, 1, 1],
     extrapolate: 'clamp'
   })
 
   const opacity = position.interpolate({
     inputRange: [isDisappeearing, isTop, isBottom, isAppearing],
-    outputRange: [0.5, 1, 1, 0.5]
+    // outputRange: [0.5, 1, 1, 0.5]
+    outputRange: [0.5, 1, 1, 1]
   })
 
   const translateY = Animated.add(
-    Animated.add(
-      y,
-      y.interpolate({
-        inputRange: [0, 0.00001 + i * cardHeight],
-        outputRange: [0, -i * cardHeight],
-        extrapolateRight: 'clamp'
-      })
-    ),
-    position.interpolate({
-      inputRange: [isBottom, isAppearing],
-      outputRange: [0, -cardHeight / 4],
-      extrapolate: 'clamp'
+    // Animated.add(
+    y,
+    y.interpolate({
+      inputRange: [0, 0.00001 + i * cardHeight],
+      outputRange: [0, -i * cardHeight],
+      extrapolateRight: 'clamp'
     })
   )
+  //   ,position.interpolate({
+  //     inputRange: [isBottom, isAppearing],
+  //     outputRange: [0, -cardHeight / 4],
+  //     extrapolate: 'clamp'
+  //   })
+  // )
 
   return (
     <Animated.View style={{ opacity, transform: [{ translateY }, { scale }] }}>
