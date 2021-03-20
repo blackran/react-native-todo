@@ -77,14 +77,12 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
   }
 
   const OnChangeLohanteny = (e) => {
-    console.log({ e })
     // const toUppercase = e.toUpperCase()
     const toUppercase = e
     setState({ titleTasks: toUppercase })
   }
 
   const onChangeCategorieTasks = (e) => {
-    console.log({ categorieTasks: e })
     setState({ categorieTasks: e })
   }
 
@@ -178,7 +176,6 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
         .map(h => h.icon)
     }
     if (sto) {
-      console.log({ sto })
       setIconActive(sto)
     }
   }, [state.categorieTasks]) //eslint-disable-line
@@ -186,7 +183,6 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
   return (
     <KeyboardAwareScrollView
       onKeyboardWillShow={(frames) => {
-        console.log('Keyboard event', frames)
       }}
     >
       <ThemeProvider theme={theme}>
@@ -335,7 +331,6 @@ function Displays ({ days, datas, editP, OnPressSave, manindryAjanona, onClickBt
                     {
                       iconActive.length > 0
                         ? iconActive.map(e => {
-                          console.log(e)
                           return (
                             <IconIonic
                               key={e}

@@ -13,17 +13,10 @@ import {
   dateDAF
 } from './utils/Tasks'
 
-const dataIcons = [
-  { name: 'Other', icon: 'warning' },
-  { name: 'Sport', icon: 'basketball' },
-  { name: 'Eat', icon: 'restaurant' },
-  { name: 'Sleep', icon: 'bed' },
-  { name: 'Study', icon: 'book' },
-  { name: 'Dev', icon: 'cafe' }
-]
+import { Icons } from './utils/Icons'
 
 const initState = {
-  dataIcons: dataIcons,
+  dataIcons: [],
   dataTask: null,
   dataTasks: [
     // {
@@ -115,10 +108,12 @@ const TasksReducers = (state = initState, action) => {
   let stockDataFilter = []
   switch (action.type) {
   case INIT_DATA_TASKS:
+    stock = {
+      dataTask: action.data,
+      dataIcons: Icons()
+    }
     if (action.data) {
-      response = Object.assign({}, state, {
-        dataTask: action.data
-      })
+      response = Object.assign({}, state, stock)
     }
     return response
 

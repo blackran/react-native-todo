@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Text, Vibration, StyleSheet, View } from 'react-native'
+import { Text, View, Image } from 'react-native'
 import { betweenTwoDate } from '../../../DatePicker/DatePicker'
 import Dialog from 'react-native-dialog'
-import SoundPlayer from 'react-native-sound-player'
 
 import { useSelector, useDispatch } from 'react-redux'
 
 import PushNotification from 'react-native-push-notification'
 
+import watchdog from '../../../../statics/images/watch-dog-2-marcus-holloway.jpg'
+
 function Chrono (props) {
   const tasks = useSelector(state => state.Tasks)
-  const { dataAlert } = useSelector(state => state.Alert)
   const [visible, setVisible] = useState(false)
   const [state, setStateTrue] = useState({
     date: null,
@@ -18,21 +18,9 @@ function Chrono (props) {
     style: {}
   })
 
-  const [vibreur, setVibreur] = useState(false)
-  const [songUrl, setSongUrl] = useState('')
-
+  const { dataAlert } = useSelector(state => state.Alert)
   const [dureeAlert, setDureeAlert] = useState(0)
-  const [dureeVibreurAlert, setDureeVibreurAlert] = useState(0)
-
-  useEffect(() => {
-    if (dataAlert) {
-      const { dureeAlert, vibreurAlert, songUrl, dureeVibreurAlert } = dataAlert
-      setDureeAlert(dureeAlert)
-      setVibreur(vibreurAlert)
-      setSongUrl(songUrl)
-      setDureeVibreurAlert(dureeVibreurAlert)
-    }
-  }, [dataAlert])
+  const [one, setOne] = useState(false)
 
   const [nextTask, setNextTask] = useState('')
 
@@ -48,55 +36,44 @@ function Chrono (props) {
     })
   }
 
-  const runSong = useCallback(() => {
-    if (vibreur) {
-      if (songUrl) {
-        try {
-        // play the file tone.mp3
-          SoundPlayer.playSoundFile(songUrl, 'mp3')
-        } catch (e) {
-          console.log('cannot play the sound file', e)
-        }
-      }
-    } else {
-      Vibration.vibrate(1000, true)
-      setTimeout(() => {
-        Vibration.cancel()
-      }, 1000 * dureeVibreurAlert)
+  useEffect(() => {
+    if (dataAlert) {
+      const { dureeAlert } = dataAlert
+      setDureeAlert(dureeAlert)
     }
-  }, []) // eslint-disable-line
+  }, [dataAlert])
   // chrono ==================================================================
 
   const dispatch = useDispatch()
   const dispatchOne = useCallback(() => {
     setTimeout(() => {
-      // Vibration.vibrate([1000, 1000, 1000], true)
-      runSong()
+      props.runSong()
       dispatch({
         type: 'DATA_FILTER',
         active: props.active
       })
       dispatch({ type: 'DATA_ACTIVE' })
       setVisible(false)
+      props.setUpdateAt()
     }, 2000)
     pushNotification(nextTask)
-  }, [dispatch, nextTask, props.active, runSong])
+  }, [dispatch, nextTask, props.active , props.runSong ]) //eslint-disable-line
 
   useEffect(() => {
     if (visible && state.date > 1 && state.date < 2000) {
       dispatchOne()
     }
-  }, [dispatchOne, runSong, state.date, visible])
+  }, [dispatchOne, props.runSong, state.date, visible])
 
   useEffect(() => {
-    if (state.date > 1 && state.date < dureeAlert * 60 * 1000) {
-      runSong()
+    if (state.date > 1 && state.date < dureeAlert * 60 * 1000 && !one) {
+      setOne(true)
+      props.runSong()
       setVisible(true)
     }
   }, [state.date]) // eslint-disable-line
 
   // chrono ==================================================================
-
   useEffect(() => {
     const { debut, fin } = props
     const stock = betweenTwoDate(debut, fin)
@@ -143,61 +120,64 @@ function Chrono (props) {
           textDecorationLine: props.finish ? 'line-through' : 'none',
           color: props.start
             ? props.color.activeColor.fontColor.light
-            : (props.finish ? props.color.activeColor.fontColor.dark : props.color.activeColor.fontColor.light)
+            : (props.finish ? props.color.activeColor.fontColor.dark : props.color.activeColor.fontColor.dark + '99')
         }}
       >
         {!props.finish ? secondToDate(state.date) : ''}
       </Text>
       {visible &&
-        <View style={styles.container}>
-          <Dialog.Container visible={visible}>
-            <Dialog.Title style={{ textAlign: 'center' }}>FIALANA SASATRA KELY</Dialog.Title>
+        <Dialog.Container style={{ width: 300, height: 300 }} visible={visible}>
+          <Dialog.Title
+            style={{
+              textAlign: 'center',
+              color: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'transparent',
+              zIndex: 100
+            }}
+          >FIALANA SASATRA KELY
+          </Dialog.Title>
+          <Image
+            source={watchdog}
+            style={{
+              width: 300,
+              height: 300,
+              position: 'absolute'
+            }}
+          />
+          <View
+            style={{
+              width: '100%',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+              paddingTop: 40
+            }}
+          >
             <View
               style={{
-                width: '100%',
-                alignItems: 'center',
+                borderWidth: 3,
+                borderColor: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'black',
+                width: 100,
+                height: 100,
+                borderRadius: 100,
                 justifyContent: 'center',
-                paddingBottom: 40
-
+                alignItems: 'center',
+                backgroundColor: '#00000099'
               }}
             >
-              <View
+              <Text
                 style={{
-                  borderWidth: 3,
-                  borderColor: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'black',
-                  width: 150,
-                  height: 150,
-                  borderRadius: 150,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop: 20
+                  ...props.style,
+                  fontSize: 20,
+                  color: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'white'
                 }}
               >
-                <Text
-                  style={{
-                    ...props.style,
-                    fontSize: 30,
-                    color: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'black'
-                  }}
-                >
-                  {secondToDate(state.date)}
-                </Text>
-              </View>
+                {secondToDate(state.date)}
+              </Text>
             </View>
-            {/* <Dialog.Button label='Actualise' onPress={dispatchOne} /> */}
-          </Dialog.Container>
-        </View>}
+          </View>
+          {/* <Dialog.Button label='Actualise' onPress={dispatchOne} /> */}
+        </Dialog.Container>}
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
-})
 
 export default Chrono

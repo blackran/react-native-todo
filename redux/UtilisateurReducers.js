@@ -20,7 +20,6 @@ const UtilisateurReducers = (state = initState, action) => {
     // console.log(Object.assign({}, state, { dataUtilisateur: [...state.dataUtilisateur, action.data] }))
     return Object.assign({}, state, { dataUtilisateur: [...state.dataUtilisateur, action.data], connecterUtilisateur: action.data })
   case PUT_UTILISATEUR:
-    console.log('PUT_UTILISATEUR', action.data)
     stock = { ...state }
     if (stock.dataUtilisateur) {
       stock.dataUtilisateur = stock.dataUtilisateur.map(e => {
@@ -31,7 +30,6 @@ const UtilisateurReducers = (state = initState, action) => {
       })
     }
     stock.connecterUtilisateur = action.data
-      console.log({ stock })
     return Object.assign({}, state, stock)
   default:
     return state

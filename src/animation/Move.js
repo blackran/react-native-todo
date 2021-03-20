@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react'
 import { Animated } from 'react-native'
 
-function Move ({ xD, yD, onLayout, change, styles, children, delais }) {
+function Move ({ isFinish, xD, yD, onLayout, change, styles, children, delais, fama }) {
   const fadeAnim = useRef(new Animated.ValueXY({ x: xD, y: yD })).current
 
   const fadeIn = useCallback(() => {
@@ -9,24 +9,31 @@ function Move ({ xD, yD, onLayout, change, styles, children, delais }) {
     Animated.timing(fadeAnim, {
       toValue: { x: 0, y: 0 },
       duration: delais
-    }).start()
-  }, [delais, fadeAnim])
+    }).start(() => {
+      if (isFinish) {
+        isFinish()
+      }
+    })
+  }, [delais, fadeAnim]) // eslint-disable-line
 
   const fadeOut = useCallback(() => {
     // Will change fadeAnim value to 0 in 5 seconds
-    Animated.timing(fadeAnim, {
-      toValue: { x: 0, y: 0 },
-      duration: delais
-    }).start()
-  }, [delais, fadeAnim])
+    if (isFinish) {
+      Animated.timing(fadeAnim, {
+        toValue: { x: -xD * 2, y: -yD },
+        duration: delais
+      }).start(() => isFinish())
+    }
+  }, [delais, fadeAnim]) // eslint-disable-line
 
   useEffect(() => {
-    if (change) {
-      fadeIn()
-    } else {
+    console.log({ change, fama })
+    if (change && fama) {
       fadeOut()
+    } else {
+      fadeIn()
     }
-  }, [change, fadeIn, fadeOut])
+  }, [change, fadeIn, fadeOut, fama])
 
   return (
     <Animated.View

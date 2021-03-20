@@ -207,7 +207,6 @@ function Tasks (props) {
         })
       }
       if (isDisableEdit) {
-        console.log('')
         setState({
           show: false,
           default: '00:00:00',

@@ -6,14 +6,16 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  Vibration,
   // FlatList,
   Animated
 } from 'react-native'
 import styles from './statics/styles/Style'
 import { useDispatch, useSelector } from 'react-redux'
 import Block from './layouts/block/Block'
+import SoundPlayer from 'react-native-sound-player'
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+// import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 // import { faBars } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
@@ -60,6 +62,7 @@ function ScollDay ({ jours, height, OnEndScroll, setTopPostion }) {
           height: height * 3,
           width: 190
         }}
+        snapToInterval={height}
         scrollEventThrottle={16}
         onScroll={onScrollD}
         onMomentumScrollEnd={(e) => {
@@ -107,14 +110,22 @@ const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView)
 
 const AnimatedHeader = Animated.createAnimatedComponent(View)
 
+const cardHeight = 150
+
+
 function Principals (props) {
-  const insets = useSafeAreaInsets()
+  // const insets = useSafeAreaInsets()
   // const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
   const dispatch = useDispatch()
   const color = useSelector(state => state.Color)
   const utilisateur = useSelector(state => state.Utilisateur.connecterUtilisateur)
   const tasks = useSelector(state => state.Tasks)
   const listViewBody = useRef()
+
+  const { dataAlert } = useSelector(state => state.Alert)
+
+  const [vibreur, setVibreur] = useState(false)
+  const [songUrl, setSongUrl] = useState('')
 
   const [state, setState] = useStateF({
     data: [],
@@ -123,6 +134,10 @@ function Principals (props) {
     page: 0,
     now: new Date().getDay()
   })
+
+  const [dureeVibreurAlert, setDureeVibreurAlert] = useState(0)
+
+  const [updateAt, setUpdateAt] = useState(new Date()) //eslint-disable-line
 
   const height = 40
   const jours = [
@@ -134,6 +149,15 @@ function Principals (props) {
     'Zoma',
     'Sabotsy'
   ]
+
+  useEffect(() => {
+    if (dataAlert) {
+      const { vibreurAlert, songUrl, dureeVibreurAlert } = dataAlert
+      setVibreur(vibreurAlert)
+      setSongUrl(songUrl)
+      setDureeVibreurAlert(dureeVibreurAlert)
+    }
+  }, [dataAlert])
 
   useEffect(() => {
     const dat = tasks.dataTasks.find(e => {
@@ -152,16 +176,6 @@ function Principals (props) {
   const OnEndScroll = (e, listView) => {
     if (state.value !== Math.round(e.nativeEvent.contentOffset.y / height)) {
       const lengthStock = Math.abs(Math.round(e.nativeEvent.contentOffset.y / height))
-      // change le active en bon couleur
-      Animated.spring(yD, {
-        toValue: lengthStock * height,
-        useNativeDriver: true
-      }).start()
-
-      listView.current.getNode().scrollTo({
-        y: (lengthStock * height),
-        animated: true
-      })
 
       Animated.spring(y, {
         toValue: 0,
@@ -235,6 +249,25 @@ function Principals (props) {
   //    outputRange: [HEADER_HEIGHT + insets.top, insets.top + 44],
   //   extrapolate: 'clamp'
   // })
+
+  const runSong = () => {
+    console.log('runSong..', vibreur)
+    if (vibreur) {
+      Vibration.vibrate(1000 * dureeVibreurAlert, true)
+    } else {
+      if (songUrl) {
+        try {
+        // play the file tone.mp3
+          SoundPlayer.playSoundFile(songUrl, 'mp3', 1000 * dureeVibreurAlert)
+        } catch (e) {
+          console.log('cannot play the sound file', e)
+        }
+      }
+      // setTimeout(() => {
+      //   Vibration.cancel()
+      // }, 1000 * dureeVibreurAlert)
+    }
+  }
 
   return (
     <View
@@ -378,6 +411,7 @@ function Principals (props) {
                 scrollEventThrottle={16}
                 ref={listViewBody}
                 onScroll={onScroll}
+                snapToInterval={cardHeight}
               >
                 {
                   tasks.dataFilter.map((item, index) => {
@@ -399,6 +433,8 @@ function Principals (props) {
                             ? false
                             : (index < resp)
                         }
+                        {...{ setUpdateAt, cardHeight}}
+                        runSong={runSong}
                         datas={item}
                         start={tasks.idTaskActive === item.idTasks}
                         now={stock}

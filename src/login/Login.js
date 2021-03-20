@@ -18,16 +18,7 @@ import Move from '../animation/Move'
 import AnimationLogin from '../animation/AnimationLogin'
 import Loading from '../animation/Loading'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-// import {
-//   faKey,
-//   faUser,
-//   faEye,
-//   faEyeSlash
-// } from '@fortawesome/free-solid-svg-icons'
 import Icon from 'react-native-ionicons'
-// import AsyncStorage from '@react-native-community/async-storage'
-// import Spinner from 'react-native-loading-spinner-overlay'
 
 const { height, width } = Dimensions.get('window')
 
@@ -49,6 +40,8 @@ function Login (props) {
     isShowF: false
   })
 
+  const [isFinish, setIsFinish] = useState(false)
+
   const setState = useCallback((data) => {
     setStateTrue(Object.assign({}, state, data))
   }, []) // eslint-disable-line
@@ -64,14 +57,6 @@ function Login (props) {
   const OnChangePassF = (e) => {
     setState({ passF: e })
   }
-
-  // const removeData = async () => {
-  //   await AsyncStorage.clear()
-  // }
-
-  // React.useEffect(() => {
-  //   removeData()
-  // }, [])
 
   useEffect(() => {
     // setState({
@@ -225,6 +210,7 @@ function Login (props) {
   }
 
   const OnClickSign = () => {
+    setIsFinish(true)
     setState({ isLogin: !state.isLogin, error: false })
     return null
   }
@@ -239,16 +225,11 @@ function Login (props) {
         headerBackgroundColor='white'
         backgroundColor={color.activeColor.primary.light}
       >
-        {/* <Spinner */}
-        {/*   visible={state.loading} */}
-        {/*   textContent='Miandry ...' */}
-        {/*   textStyle={{ color: '#FFF' }} */}
-        {/* /> */}
         <View>
           <Text
             style={{
-              fontSize: 12,
               color: 'red',
+              fontSize: 12,
               textAlign: 'center'
             }}
           >
@@ -305,8 +286,17 @@ function Login (props) {
               />
             </TouchableOpacity>
           </Move>
-          {!state.isLogin &&
-            <Move delais={1000} xD={width / 2} yD={0} change={state.isLogin}>
+          {(!state.isLogin || isFinish) &&
+            <Move
+              delais={1000}
+              xD={width / 2}
+              yD={0}
+              fama
+              isFinish={() => {
+                setIsFinish(false)
+              }}
+              change={state.isLogin}
+            >
               <Icon
                 name='key'
                 color='black'

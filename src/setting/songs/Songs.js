@@ -32,20 +32,21 @@ function Songs (props) {
       setIsVibreur(vibreurAlert)
       setNameSong(songUrl)
     }
-  }, [alert]) // eslint-disable-line
+  }, []) // eslint-disable-line
 
   useEffect(() => {
-    if (vibreur && duree) {
-      dispatch({
-        type: 'ON_CHANGE_SLIDER',
-        pseudoUtilisateur: utilisateur.pseudoUtilisateur,
-        vibreur: vibreur,
-        isVibreur: isVibreur,
-        duree: duree,
-        song: nameSong
-      })
+    if (vibreur && duree && utilisateur.pseudoUtilisateur) {
+      setTimeout(() =>
+        dispatch({
+          type: 'ON_CHANGE_SLIDER',
+          pseudoUtilisateur: utilisateur.pseudoUtilisateur,
+          vibreur: vibreur,
+          isVibreur: isVibreur,
+          duree: duree,
+          song: nameSong
+        }), 10)
     }
-  }, [vibreur, duree, nameSong, dispatch]) // eslint-disable-line
+  }, [vibreur, duree, nameSong, dispatch, isVibreur]) // eslint-disable-line
 
   return (
     <View>
@@ -115,13 +116,14 @@ function Songs (props) {
             }}
           >
             <IconIonic
-              name='timer'
+              name='stopwatch'
               color={color.activeColor.fontColor.dark}
               size={30}
             />
 
             <Slider
-              onSlidingComplete={(e) => setDuree(Math.round(e * 10) / 10)}
+              onSlidingComplete={(e) => setDuree(e)}
+              step={5 / 60}
               value={duree}
               trackStyle={{
                 width: 200,
@@ -161,7 +163,10 @@ function Songs (props) {
               size={30}
             />
             <Slider
-              onSlidingComplete={(e) => setVibreur(Math.round(e * 10) / 10)}
+              onSlidingComplete={(e) => {
+                // setVibreur(Math.round(e * 10) / 10)
+                setVibreur(e)
+              }}
               value={vibreur}
               trackStyle={{
                 width: 200,
@@ -169,6 +174,7 @@ function Songs (props) {
                 marginRight: 20
                 // height: 10, backgroundColor: 'transparent'
               }}
+              step={5 / 60}
               thumbStyle={{
                 height: 30,
                 width: 30,
@@ -184,7 +190,7 @@ function Songs (props) {
                 height: 20,
                 fontSize: 15
               }}
-            > {((vibreur * 60) + '').split('.')[0]} Min
+            > {((vibreur * 60) + '').split('.')[0]} Sec
             </Text>
           </View>
           <View style={{ marginTop: 10 }}>

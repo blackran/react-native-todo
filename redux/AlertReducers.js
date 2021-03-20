@@ -70,18 +70,21 @@ const reducers = (state = initState, action) => {
   case ON_CHANGE_SLIDER:
     response = state.dataAlerts.map((e) => {
       if (e.pseudoUtilisateur === action.pseudoUtilisateur) {
-        e.data = {
-          ...e.data,
-          dureeAlert: parseInt(action.duree * 60),
-          dureeVibreurAlert: parseInt(action.vibreur * 60),
-          vibreurAlert: action.isVibreur,
-          songUrl: action.song
+        stock = {
+          pseudoUtilisateur: e.pseudoUtilisateur,
+          data: {
+            idAlert: e.data.idAlert,
+            dureeAlert: parseInt(action.duree * 60),
+            dureeVibreurAlert: parseInt(action.vibreur * 60),
+            vibreurAlert: action.isVibreur,
+            songUrl: action.song
+          }
         }
-        return e
+        return stock
       }
-      return null
+      return e
     })
-    return Object.assign({}, state, { dataAlerts: response, dataAlert: stock })
+    return Object.assign({}, state, { dataAlerts: response, dataAlert: stock.data })
 
   default:
     return state

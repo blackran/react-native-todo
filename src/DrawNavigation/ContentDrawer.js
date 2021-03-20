@@ -2,8 +2,6 @@ import React from 'react'
 import backgroundImage from '../statics/images/IMG_80411.jpg'
 import me from '../statics/images/watch-dogs-2-wallpapers-pc-game.jpg'
 import { View, Image, Text, TouchableOpacity, Alert } from 'react-native'
-import { faSignOutAlt, faCogs, faTasks, faBullhorn } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import IconIonic from 'react-native-ionicons'
 
 import { useSelector } from 'react-redux'
@@ -138,7 +136,7 @@ export default function ContentDrawer (props) {
             }}
             >
               <IconIonic
-                name='megaphone'
+                name='paper'
                 color={color ? color.activeColor.fontColor.light : '#ffb21d'}
                 size={24}
               />

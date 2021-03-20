@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import check from './statics/images/check_cool.png'
 import clock from './statics/images/clock.png'
-import wait from './statics/images/wait.png'
+import wait from './statics/images/wait_cool.png'
 import Chrono from './layouts/chrono/Chrono'
 // import Opacitys from '../../../animation/Opacitys'
 
@@ -28,6 +28,8 @@ function Block (props) {
   const [dimP, setDimP] = useState({ x: 0, y: 0, width: 0, height: 0 })
   const [dimC, setDimC] = useState({ x: 0, y: 0, width: 0, height: 0 })
 
+  const stock = useRef()
+
   const [second, setSecond] = useState(0) //eslint-disable-line
 
   const [state, setStateTrue] = useState({
@@ -41,12 +43,19 @@ function Block (props) {
     setStateTrue(Object.assign({}, state, data))
     }, []) // eslint-disable-line
 
+  const {
+    idTasks, active, datas, fin, start, y,
+    i,
+    finish,
+    setUpdateAt
+  } = props
+
   useEffect(() => {
-    const stock = setInterval(() => {
+    stock.current = setInterval(() => {
       setSecond(() => new Date().getSeconds())
     }, 1000)
-    return () => clearInterval(stock)
-  }, [])
+    return () => clearInterval(stock.current)
+  }, [start]) //eslint-disable-line
 
   useEffect(() => {
     if (state.finish !== props.finish) {
@@ -90,12 +99,6 @@ function Block (props) {
     return phrase && phrase.split(' ').slice(0, len).join(' ') + ' ...'
   }
 
-  const {
-    idTasks, active, datas, fin, start, y,
-    i,
-    finish
-  } = props
-
   const { icons } = useSelector(state => ({ icons: state.Tasks.dataIcons }))
   const [iconActive, setIconActive] = useState([])
 
@@ -115,7 +118,7 @@ function Block (props) {
     findIcon(datas.categorieTasks)
   }, [datas.categorieTasks]) //eslint-disable-line
 
-  const cardHeight = 150
+  const { cardHeight } = props
 
   const style1 = {
     flex: 1,
@@ -125,12 +128,12 @@ function Block (props) {
     marginBottom: 5,
     backgroundColor: start
       ? color.activeColor.primary.dark
-      : (finish ? color.activeColor.primary.light : '#688898'),
+      : (finish ? color.activeColor.primary.light : color.activeColor.primary.light),
     padding: 10,
     borderRadius: 10,
-    paddingBottom: 10,
     position: 'relative',
-    height: cardHeight - 5
+    height: cardHeight - 5,
+    paddingBottom: 0
   }
 
   const style2 = Object.assign({}, style1, styles.shadow)
@@ -144,14 +147,14 @@ function Block (props) {
   const scale = position.interpolate({
     inputRange: [isDisappeearing, isTop, isBottom, isAppearing],
     // outputRange: [0.5, 1, 1, 0.5]
-    outputRange: [0.5, 1, 1, 1],
+    outputRange: [0.8, 1, 1, 1],
     extrapolate: 'clamp'
   })
 
   const opacity = position.interpolate({
     inputRange: [isDisappeearing, isTop, isBottom, isAppearing],
     // outputRange: [0.5, 1, 1, 0.5]
-    outputRange: [0.5, 1, 1, 1]
+    outputRange: [0.8, 1, 1, 1]
   })
 
   const translateY = Animated.add(
@@ -214,7 +217,7 @@ function Block (props) {
         <View
           style={{
             flexDirection: 'row',
-            marginBottom: 5
+            marginBottom: 0
           }}
         >
           <View style={{ flexDirection: 'column' }}>
@@ -225,7 +228,7 @@ function Block (props) {
               width: 160,
               color: start
                 ? color.activeColor.fontColor.light
-                : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.light)
+                : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.dark)
             }}
             >{datas.titleTasks}
             </Text>
@@ -239,14 +242,11 @@ function Block (props) {
           }}
           >
             <Chrono
-              finish={finish}
-              color={color}
               navigation={props.navigation}
               content={datas.contentTasks}
               debut={debut()}
-              fin={fin}
-              start={start}
-              active={active}
+              {...{ setUpdateAt, finish, color, fin, start, active }}
+              runSong={props.runSong}
             />
             <Image
               source={start ? clock : (finish ? check : wait)}
@@ -265,7 +265,7 @@ function Block (props) {
               style={{
                 color: start
                   ? color.activeColor.fontColor.light
-                  : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.light),
+                  : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.dark + '99'),
                 opacity: 0.8,
                 width: 180
               }}
@@ -276,56 +276,66 @@ function Block (props) {
             </Text>
           </TouchableOpacity>
         </View>
-        {
-          start &&
-            <View
+        <View
+          style={{
+            marginTop: 20,
+            padding: 10,
+            borderTopWidth: 1,
+            width: '100%',
+            borderColor:
+                start
+                  ? color.activeColor.fontColor.light
+                  : (finish ? color.activeColor.fontColor.dark + '55' : color.activeColor.fontColor.dark + '55'),
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            position: 'absolute',
+            bottom: 5,
+            left: 10
+          }}
+        >
+          <View
+            style={{
+              marginRight: 5,
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'row'
+            }}
+          >
+            {iconActive && iconActive.map(e =>
+              <IconIonic
+                key={e}
+                name={e}
+                color={
+                  start
+                    ? color.activeColor.fontColor.light
+                    : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.dark + '99')
+                }
+                size={20}
+                style={{ marginRight: 10 }}
+              />
+            )}
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}
+          >
+            <Text
               style={{
-                marginTop: 20,
-                padding: 10,
-                borderTopWidth: 1,
-                borderColor: color.activeColor.fontColor.light + 'aa',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center'
+                color: start
+                  ? color.activeColor.fontColor.light
+                  : (finish ? color.activeColor.fontColor.dark : color.activeColor.fontColor.dark + '99'),
+                marginLeft: 10,
+                fontSize: 15
               }}
             >
-              <View
-                style={{
-                  marginRight: 5,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flexDirection: 'row'
-                }}
-              >
-                {iconActive && iconActive.map(e =>
-                  <IconIonic
-                    key={e}
-                    name={e}
-                    color={color.activeColor.fontColor.light}
-                    size={25}
-                    style={{ margin: 3 }}
-                  />
-                )}
-              </View>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={{
-                    color: color.activeColor.fontColor.light,
-                    marginLeft: 10,
-                    fontSize: 15
-                  }}
-                >
-                  {datas.type}
-                </Text>
-              </View>
-            </View>
-        }
+              {datas.type}
+            </Text>
+          </View>
+        </View>
       </View>
     </Animated.View>
   )

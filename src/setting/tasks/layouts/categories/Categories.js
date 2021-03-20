@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { View, TouchableOpacity, Text } from 'react-native'
-import { Button } from 'react-native-elements'
+import React, { useState, useEffect, useRef } from 'react'
+import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
 import Dialog from 'react-native-dialog'
 import IconIonic from 'react-native-ionicons'
 import { useSelector } from 'react-redux'
+import Opacitys from '../../../../animation/Opacitys'
 
 function Categories ({ categorie, onChangeCategorieTasks }) {
   const [active, setActive] = useState([])
   const [visible, setVisible] = useState(false)
   const { color, tasks } = useSelector(state => ({ color: state.Color, tasks: state.Tasks }))
-  const Icons = tasks.dataIcons
+  const [Icons, setIcons] = useState([])
   const [iconActive, setIconActive] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const timer = useRef(null)
 
   const findIcon = (e) => {
     const sto = Icons
@@ -21,6 +24,15 @@ function Categories ({ categorie, onChangeCategorieTasks }) {
       setIconActive(sto)
     }
   }
+
+  useEffect(() => {
+    setLoading(true)
+    timer.current = setTimeout(() => {
+      setIcons(tasks.dataIcons)
+      setLoading(false)
+    }, 10000)
+    return () => clearInterval(timer.current)
+  }, []) //eslint-disable-line
 
   useEffect(() => {
     if (categorie) {
@@ -36,8 +48,10 @@ function Categories ({ categorie, onChangeCategorieTasks }) {
       findIcon(newActive)
       onChangeCategorieTasks(newActive)
     } else {
-      findIcon([...active, e])
-      onChangeCategorieTasks([...active, e])
+      if (active.length < 3) {
+        findIcon([...active, e])
+        onChangeCategorieTasks([...active, e])
+      }
     }
   }
 
@@ -74,48 +88,51 @@ function Categories ({ categorie, onChangeCategorieTasks }) {
       </TouchableOpacity>
       {visible &&
         <Dialog.Container visible={visible}>
+          <Text style={{ textAlign: 'right' }}>{active.length}/3</Text>
           <Dialog.Title style={{ textAlign: 'center' }}>Karazana</Dialog.Title>
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'row',
-              flexWrap: 'wrap'
-            }}
-          >
-            {
-              Icons && Icons.map(({ name, icon }) => {
-                const dark = color.activeColor.fontColor.dark
-                const light = color.activeColor.fontColor.light
-                const transparent = 'transparent'
-                return (
-                  <Button
-                    key={name}
-                    icon={
-                      <IconIonic
-                        name={icon}
-                        color={active.includes(name) ? light : dark}
-                        size={20}
-                      />
-                    }
-                    buttonStyle={{
-                      backgroundColor: active.includes(name) ? dark : transparent,
-                      borderRadius: 10,
-                      width: 33,
-                      height: 33,
-                      padding: 0,
-                      marginRight: 5
-                    }}
-                    color={color.activeColor.primary.dark + '77'}
-                    type='outline'
-                    onPress={() => changeIcon(name)}
-                  />
-                )
-              })
-            }
-          </View>
-          <Dialog.Button label='Ajanona' onPress={() => setVisible(!visible)} />
+          <ScrollView style={{ width: '100%' }}>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                flexWrap: 'wrap'
+              }}
+            >
+              {
+                loading ? <Text style={{ textAlign: 'center', marginTop: 30 }}>Miandry kely ...</Text>
+                  : Icons.length > 0 && Icons?.map(({ name, icon }, i) => {
+                    const dark = color.activeColor.fontColor.dark
+                    const light = color.activeColor.fontColor.light
+                    const transparent = 'transparent'
+                    return (
+                      <Opacitys delais={(i + 1) * 100} key={name}>
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: active.includes(name) ? dark : transparent,
+                            borderRadius: 10,
+                            width: 33,
+                            height: 33,
+                            padding: 0,
+                            marginRight: 5,
+                            marginBottom: 5,
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                          }}
+                          onPress={() => changeIcon(name)}
+                        >
+                          <IconIonic
+                            name={icon}
+                            color={active.includes(name) ? light : dark}
+                            size={20}
+                          />
+                        </TouchableOpacity>
+                      </Opacitys>
+                    )
+                  })
+              }
+            </View>
+          </ScrollView>
+          <Dialog.Button label='Akatona' onPress={() => setVisible(!visible)} />
         </Dialog.Container>}
     </View>
   )
