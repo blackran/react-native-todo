@@ -8,13 +8,14 @@ import {
 } from 'react-native'
 import {
   Button,
-  // Icon,
-  Text
+  Text,
+  CheckBox
 } from 'react-native-elements'
 
 import DefaultStyles from '../statics/styles/DefaultStyles'
 import { useSelector, useDispatch } from 'react-redux'
 import Move from '../animation/Move'
+import Opacitys from '../animation/Opacitys'
 import AnimationLogin from '../animation/AnimationLogin'
 import Loading from '../animation/Loading'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -24,14 +25,20 @@ const { height, width } = Dimensions.get('window')
 
 function Login (props) {
   const dispatch = useDispatch()
-  const { color, utilisateur, alert, tasks } = useSelector(state => {
-    return { color: state.Color, utilisateur: state.Utilisateur, tasks: state.Tasks, alert: state.Alert }
+  const { color, utilisateur, alert, tasks, memo } = useSelector(state => {
+    return {
+      color: state.Color,
+      utilisateur: state.Utilisateur,
+      tasks: state.Tasks,
+      alert: state.Alert,
+      memo: state.Memo
+    }
   })
 
   const [state, setStateTrue] = useState({
-    pseudo: 'blackran',
-    pass: 'password',
-    passF: 'password',
+    pseudo: '',
+    pass: '',
+    passF: '',
     loading: false,
     error: false,
     delais: 100,
@@ -42,12 +49,22 @@ function Login (props) {
 
   const [isFinish, setIsFinish] = useState(false)
 
+  const [isTadidio, setIsTadidio] = useState(false)
+
   const setState = useCallback((data) => {
-    setStateTrue(Object.assign({}, state, data))
+    setStateTrue((e) => Object.assign({}, e, data))
   }, []) // eslint-disable-line
 
   const OnChangeLogin = (e) => {
-    setState({ pseudo: e })
+    const result = memo.dataMemo.find((h) => {
+      return h.pseudoUtilisateur === e
+    })
+    const res = { pseudo: e }
+    if (result) {
+      res.pass = result.passwordUtilisateur
+    }
+    console.log({ res })
+    setState(res)
   }
 
   const OnChangePass = (e) => {
@@ -59,11 +76,19 @@ function Login (props) {
   }
 
   useEffect(() => {
-    // setState({
-    //   pseudo: '',
-    //   pass: '',
-    //   passF: ''
-    // })
+    console.log({ memo })
+    const { lastUtilisateur } = memo
+    let stock = {}
+    if (JSON.stringify(lastUtilisateur) !== '{}') {
+      setIsTadidio(true)
+      stock = {
+        pseudo: lastUtilisateur.pseudoUtilisateur,
+        pass: lastUtilisateur.passwordUtilisateur,
+        passF: lastUtilisateur.passwordUtilisateur
+      }
+    }
+
+    setState(stock)
   }, []) // eslint-disable-line
 
   useEffect(() => {
@@ -103,6 +128,7 @@ function Login (props) {
             passwordUtilisateur: state.pass
           }
         })
+
         dispatch({
           type: 'ADD_DATA_ALERT',
           data: {
@@ -140,6 +166,7 @@ function Login (props) {
             pass: '',
             passF: ''
           })
+          setIsTadidio(false)
           props.navigation.navigate('Principal',
             {
               user: isValid,
@@ -172,6 +199,19 @@ function Login (props) {
           type: 'INIT_UTILISATEUR',
           data: isValid
         })
+
+        if (isTadidio) {
+          dispatch({
+            type: 'ADD_MEMO',
+            data: isValid
+          })
+        } else {
+          dispatch({
+            type: 'SET_OFF_MEMO',
+            data: isValid
+          })
+        }
+
         const dat = tasks.dataTasks && tasks.dataTasks.find(e => {
           return e.pseudoUtilisateur === isValid.pseudoUtilisateur
         })
@@ -193,6 +233,7 @@ function Login (props) {
             pseudo: '',
             pass: ''
           })
+          setIsTadidio(false)
           props.navigation.navigate('Principal',
             {
               user: isValid,
@@ -273,7 +314,9 @@ function Login (props) {
                 borderColor: color.activeColor.fontColor.dark
               }}
               secureTextEntry={!state.isShow}
-              onSubmitEditing={() => OnSubmit()}
+              onSubmitEditing={() => {
+                if (state.isLogin) { OnSubmit() }
+              }}
             />
             <TouchableOpacity
               onPress={() => setState({ isShow: !state.isShow })}
@@ -286,6 +329,24 @@ function Login (props) {
               />
             </TouchableOpacity>
           </Move>
+          {
+            !(!state.isLogin || isFinish) &&
+              <Opacitys delais={1000}>
+                <CheckBox
+                  containerStyle={{
+                    backgroundColor: 'transparent',
+                    margin: 0,
+                    padding: 0,
+                    borderWidth: 0
+                  }}
+                  title='Tatidio'
+                  onPress={(e) => setIsTadidio(!isTadidio)}
+                  checked={isTadidio}
+                  checkedColor={color.activeColor.fontColor.dark}
+                />
+              </Opacitys>
+          }
+
           {(!state.isLogin || isFinish) &&
             <Move
               delais={1000}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Text, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
 import { Icon, Image, CheckBox, Slider } from 'react-native-elements'
 import songImage from './statics/images/music.png'
+
+import SoundPlayer from 'react-native-sound-player'
 // import { faStopwatch, faMusic } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
@@ -32,6 +34,7 @@ function Songs (props) {
       setIsVibreur(vibreurAlert)
       setNameSong(songUrl)
     }
+    return () => SoundPlayer.unmount()
   }, []) // eslint-disable-line
 
   useEffect(() => {
@@ -47,6 +50,35 @@ function Songs (props) {
         }), 10)
     }
   }, [vibreur, duree, nameSong, dispatch, isVibreur]) // eslint-disable-line
+
+  const runSong = (songUrl) => {
+    try {
+      // play the file tone.mp3
+      SoundPlayer.playSoundFile(songUrl, 'mp3')
+    } catch (e) {
+      console.log('cannot play the sound file', e)
+    }
+  }
+
+  const stopSong = () => {
+    try {
+      // play the file tone.mp3
+      SoundPlayer.stop()
+    } catch (e) {
+      console.log('cannot play the sound file', e)
+    }
+  }
+
+  const lignSong = () => {
+    try {
+      // play the file tone.mp3
+      SoundPlayer.addEventListener((ResultObject) => {
+        console.log({ ResultObject })
+      })
+    } catch (e) {
+      console.log('cannot play the sound file', e)
+    }
+  }
 
   return (
     <View>
@@ -207,18 +239,46 @@ function Songs (props) {
             {
             alert?.nameSong.map(e => {
               return (
-                <CheckBox
-                  containerStyle={{
-                    backgroundColor: 'transparent',
-                    marginBottom: 0
-                  }}
-                  key={e.indice}
-                  title={e.indice}
-                  onPress={() => setNameSong(e.name)}
-                  checked={!isVibreur && e.name === nameSong}
-                  disabled={isVibreur}
-                  checkedColor={color.activeColor.fontColor.dark}
-                />
+                <View>
+                  <CheckBox
+                    containerStyle={{
+                      backgroundColor: 'transparent',
+                      marginBottom: 0
+                    }}
+                    key={e.indice}
+                    title={e.indice}
+                    onPress={() => setNameSong(e.name)}
+                    checked={!isVibreur && e.name === nameSong}
+                    disabled={isVibreur}
+                    checkedColor={color.activeColor.fontColor.dark}
+                  />
+                  <View>
+                    {lignSong()}
+                    <View style={{ flexDirection: 'row' }}>
+
+                      <TouchableOpacity
+                        onPress={() => runSong(e.name)}
+                      >
+                        <Icon
+                          name='menu'
+                          color='white'
+                          size={30}
+                          style={{ padding: 10 }}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => stopSong()}
+                      >
+                        <Icon
+                          name='menu'
+                          color='white'
+                          size={30}
+                          style={{ padding: 10 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
               )
             })
             }

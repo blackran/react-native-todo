@@ -258,7 +258,10 @@ function Principals (props) {
       if (songUrl) {
         try {
         // play the file tone.mp3
-          SoundPlayer.playSoundFile(songUrl, 'mp3', 1000 * dureeVibreurAlert)
+          SoundPlayer.playSoundFile(songUrl, 'mp3')
+          setTimeout(() => {
+            SoundPlayer.stop()
+          }, 1000 * dureeVibreurAlert)
         } catch (e) {
           console.log('cannot play the sound file', e)
         }
