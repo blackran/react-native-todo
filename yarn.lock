@@ -6512,6 +6512,11 @@ react-native-sound-player@^0.10.6:
   resolved "https://registry.yarnpkg.com/react-native-sound-player/-/react-native-sound-player-0.10.6.tgz#cba4fc6b079bc9f92e64b77308eedbb04ab07de6"
   integrity sha512-gK3a5d5iLBLqOQREVlGuTvHk8Qorx/HySPH1ZFpKhHExhXN6r/P036pYAGeUTSmhxwdJ5vnjsFE6Qq1BM9TRSA==
 
+react-native-sound@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/react-native-sound/-/react-native-sound-0.11.0.tgz#ad60b55ba8c6dc89917f381ad3713f2738de530f"
+  integrity sha512-4bGAZfni6E2L695NQjOZwNLBQGXgBGYC4Sy+h99K5h0HqNZjCqR0+aLel+ezASxEJDpaH83gylNObXpiqJgdwg==
+
 react-native-status-bar-height@^2.2.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/react-native-status-bar-height/-/react-native-status-bar-height-2.4.0.tgz#de8cee4bb733a196167210d2d0bc1fa10acba3e3"

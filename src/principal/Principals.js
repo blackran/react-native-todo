@@ -182,10 +182,12 @@ function Principals (props) {
         useNativeDriver: true
       }).start()
 
-      listViewBody.current.getNode().scrollTo({
-        y: 0,
-        animated: true
-      })
+      if (listViewBody?.current?.getNode) {
+        listViewBody.current.getNode().scrollTo({
+          y: 0,
+          animated: true
+        })
+      }
 
       setState({
         active: lengthStock

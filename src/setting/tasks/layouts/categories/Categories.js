@@ -126,6 +126,7 @@ function Categories ({ categorie, onChangeCategorieTasks }) {
                             size={20}
                           />
                         </TouchableOpacity>
+                        <Text>{name}</Text>
                       </Opacitys>
                     )
                   })

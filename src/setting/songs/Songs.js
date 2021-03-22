@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Text, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
 import { Icon, Image, CheckBox, Slider } from 'react-native-elements'
 import songImage from './statics/images/music.png'
 
 import SoundPlayer from 'react-native-sound-player'
+// import Sound from 'react-native-sound'
 // import { faStopwatch, faMusic } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
@@ -12,6 +13,8 @@ import IconIonic from 'react-native-ionicons'
 import { useSelector, useDispatch } from 'react-redux'
 
 const { width } = Dimensions.get('window')
+
+// Sound.setCategory('Playback')
 
 function Songs (props) {
   const dispatch = useDispatch()
@@ -34,6 +37,39 @@ function Songs (props) {
       setIsVibreur(vibreurAlert)
       setNameSong(songUrl)
     }
+
+    // const whoosh = new Sound('imany.mp3', Sound.MAIN_BUNDLE, (error) => {
+    //   if (error) {
+    //     console.log('failed to load the sound', error)
+    //     return null
+    //   }
+    //
+    //   // loaded successfully
+    //   console.log('duration in seconds: ' + whoosh.getDuration() + ' number of channells: ' + whoosh.getNumberOfChannels())
+    // })
+    //
+    // whoosh.play((success) => {
+    //   console.log({ success })
+    //   // if (success) {
+    //   //   console.log('successfully finish playing')
+    //   // } else {
+    //   //   console.log('playback failed due to audio decoding errors')
+    //   //
+    //   //   // reset the player
+    //   //   whoosh.reset()
+    //   // }
+    // })
+    //
+    // // whoosh.setVolume(0.5)
+    //
+    // whoosh.getCurrentTime((seconds) => console.log('at: ', seconds))
+    //
+    // // whoosh.stop(() => {
+    // //   // whoosh.play()
+    // // })
+    //
+    // whoosh.release()
+
     return () => SoundPlayer.unmount()
   }, []) // eslint-disable-line
 
@@ -51,10 +87,43 @@ function Songs (props) {
     }
   }, [vibreur, duree, nameSong, dispatch, isVibreur]) // eslint-disable-line
 
+  const stock = useRef()
+
+  const [play, setPlay] = useState(false)
+  const [curent, setCurent] = useState({
+    currentTime: 0,
+    duration: 0
+  })
+
+  useEffect(() => {
+    if (play) {
+      stock.current = setInterval(() => {
+        getInfo()
+      }, 1000)
+    }
+    return () => clearInterval(stock.current)
+  }, [play])
+
+  const getInfo = async () => {
+    try {
+      const info = await SoundPlayer.getInfo()
+      if (info) {
+        setCurent(info)
+      }
+    } catch (e) {
+      console.log('ther is no song playing', e)
+    }
+  }
+
   const runSong = (songUrl) => {
     try {
       // play the file tone.mp3
       SoundPlayer.playSoundFile(songUrl, 'mp3')
+      setPlay(true)
+      SoundPlayer.onFinishedPlaying(() => {
+        setPlay(false)
+        setCurent({ currentTime: 0, duration: 0 })
+      })
     } catch (e) {
       console.log('cannot play the sound file', e)
     }
@@ -64,17 +133,8 @@ function Songs (props) {
     try {
       // play the file tone.mp3
       SoundPlayer.stop()
-    } catch (e) {
-      console.log('cannot play the sound file', e)
-    }
-  }
-
-  const lignSong = () => {
-    try {
-      // play the file tone.mp3
-      SoundPlayer.addEventListener((ResultObject) => {
-        console.log({ ResultObject })
-      })
+      setCurent({ currentTime: 0, duration: 0 })
+      setPlay(false)
     } catch (e) {
       console.log('cannot play the sound file', e)
     }
@@ -121,24 +181,8 @@ function Songs (props) {
           />
         </TouchableOpacity>
       </View>
-      <ScrollView>
-        <View
-          style={{
-            width: width,
-            height: (width * 2) / 3,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <Image
-            source={songImage}
-            style={{
-              width: 128,
-              height: 128
-            }}
-          />
-        </View>
-        <View style={{ padding: 10 }}>
+      <ScrollView style={{ marginBottom: 50 }}>
+        <View style={{ padding: 10, marginTop: 20 }}>
           <View
             style={{
               flex: 1,
@@ -229,7 +273,14 @@ function Songs (props) {
             <CheckBox
               containerStyle={{ paddingLeft: 0, marginLeft: 0, backgroundColor: 'transparent' }}
               title='Vibreur'
-              onPress={(e) => setIsVibreur(!isVibreur)}
+              onPress={(e) => {
+                setIsVibreur(!isVibreur)
+                if (isVibreur) {
+                  setNameSong(alert.nameSong[0].name)
+                } else {
+                  setNameSong('')
+                }
+              }}
               checked={isVibreur}
               checkedColor={color.activeColor.fontColor.dark}
             />
@@ -239,45 +290,79 @@ function Songs (props) {
             {
             alert?.nameSong.map(e => {
               return (
-                <View>
+                <View
+                  key={e.indice}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: color.activeColor.fontColor.light,
+                    borderRadius: 10,
+                    margin: 2,
+                    backgroundColor: 'white',
+                    paddingTop: 10,
+                    padding: 5,
+                    paddingBottom: e.name === nameSong ? 0 : 10
+                  }}
+                >
                   <CheckBox
                     containerStyle={{
                       backgroundColor: 'transparent',
-                      marginBottom: 0
+                      margin: 0,
+                      padding: 0,
+                      borderWidth: 0
                     }}
-                    key={e.indice}
                     title={e.indice}
-                    onPress={() => setNameSong(e.name)}
-                    checked={!isVibreur && e.name === nameSong}
-                    disabled={isVibreur}
+                    onPress={() => {
+                      setIsVibreur(false)
+                      setNameSong(e.name)
+                    }}
+                    checked={e.name === nameSong}
                     checkedColor={color.activeColor.fontColor.dark}
                   />
-                  <View>
-                    {lignSong()}
-                    <View style={{ flexDirection: 'row' }}>
 
-                      <TouchableOpacity
-                        onPress={() => runSong(e.name)}
-                      >
-                        <Icon
-                          name='menu'
-                          color='white'
-                          size={30}
-                          style={{ padding: 10 }}
-                        />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => stopSong()}
-                      >
-                        <Icon
-                          name='menu'
-                          color='white'
-                          size={30}
-                          style={{ padding: 10 }}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
+                  {e.name === nameSong &&
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingLeft: 10
+                      }}
+                    >
+                      <Slider
+                        value={curent.duration ? (curent.currentTime / curent.duration) : 0.01}
+                        trackStyle={{
+                          width: 180
+                        // height: 10, backgroundColor: 'transparent'
+                        }}
+                        thumbStyle={{
+                          height: 20,
+                          width: 5,
+                          backgroundColor: 'white',
+                          borderWidth: 2
+                        }}
+                      />
+                      <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity
+                          onPress={() => runSong(e.name)}
+                        >
+                          <IconIonic
+                            name='play'
+                            color='black'
+                            size={20}
+                            style={{ padding: 10 }}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => stopSong()}
+                        >
+                          <IconIonic
+                            name='square'
+                            color='black'
+                            size={20}
+                            style={{ padding: 10 }}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>}
                 </View>
               )
             })

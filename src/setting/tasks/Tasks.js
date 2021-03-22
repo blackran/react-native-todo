@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Dimensions, ScrollView, Text, View, StyleSheet, Keyboard, Alert, TouchableOpacity } from 'react-native'
 import { Icon, ThemeProvider, Card } from 'react-native-elements'
 import Displays from './layouts/displays/Displays'
@@ -6,6 +6,9 @@ import { useSelector, useDispatch } from 'react-redux'
 /* eslint-disable no-unused-vars */
 import { loopObject, InverseLoopObject } from '../filterData/FilterData'
 import { order } from '../array/Array'
+
+import IonicIcon from 'react-native-ionicons'
+
 
 const { width, height } = Dimensions.get('window')
 
@@ -16,6 +19,7 @@ const theme = {
 }
 
 function Tasks (props) {
+  const listView = useRef()
   const dispatch = useDispatch()
   const { other, task, color, utilisateur } = useSelector(state => ({ other: state.Other, task: state.Tasks, color: state.Color, utilisateur: state.Utilisateur }))
   const [state, setStateTrue] = useState({
@@ -283,6 +287,21 @@ function Tasks (props) {
     )
   }
 
+  const [isShowButton, setIsShowButton] = useState(false)
+  const OnEndScroll = (e, listView) => {
+    setIsShowButton(e.nativeEvent.contentOffset.y > 0)
+  }
+
+  const onClickButtonRunTop = () => {
+    if (listView.current.scrollTo) {
+      listView.current.scrollTo({
+        y: 0,
+        animated: true
+      })
+      setIsShowButton(false)
+    }
+  }
+
   return (
     <ThemeProvider
       ThemeProvider={theme}
@@ -332,7 +351,12 @@ function Tasks (props) {
         justifyContent: 'flex-end'
       }}
       >
-        <ScrollView>
+        <ScrollView
+          ref={listView}
+          onMomentumScrollEnd={(e) => {
+            OnEndScroll(e, listView)
+          }}
+        >
           <View
             style={{
               ...styles.block,
@@ -430,7 +454,7 @@ function Tasks (props) {
                                 contentTasks: '',
                                 heureDebut: '00:00:00',
                                 pseudoUtilisateur: utilisateur.connecterUtilisateur.pseudoUtilisateur,
-                                categorieTasks: [] 
+                                categorieTasks: []
                               }}
                               days={key}
                               onClickBtnDelete={onClickBtnDelete}
@@ -474,6 +498,7 @@ function Tasks (props) {
               }
             </View>
           </View>
+
         </ScrollView>
         {/* <ScrollDatePicker */}
         {/*     style={{ */}
@@ -494,6 +519,31 @@ function Tasks (props) {
         {/*     onChange={this.onChangeScrollDatePicker} */}
         {/* /> */}
 
+        {
+          isShowButton &&
+              <TouchableOpacity
+                onPress={onClickButtonRunTop}
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 1000,
+                  backgroundColor: 'red',
+                  position: 'absolute',
+                  right: 10,
+                  top: 10,
+                  borderRadius: 60,
+                  width: 60,
+                  height: 60,
+                  opacity: 0.8
+                }}
+              >
+                <IonicIcon
+                  name='arrow-up'
+                  size={30}
+                  color='white'
+                />
+              </TouchableOpacity>
+        }
       </View>
     </ThemeProvider>
   )
