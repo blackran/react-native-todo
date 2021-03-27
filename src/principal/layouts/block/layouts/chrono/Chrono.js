@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { Text, View, Image } from 'react-native'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { Text, View, Image, TouchableOpacity } from 'react-native'
 import { betweenTwoDate } from '../../../DatePicker/DatePicker'
 import Dialog from 'react-native-dialog'
 
@@ -21,6 +21,10 @@ function Chrono (props) {
   const { dataAlert } = useSelector(state => state.Alert)
   const [dureeAlert, setDureeAlert] = useState(0)
   const [one, setOne] = useState(false)
+
+  const [showStop, setShowStop] = useState(false)
+
+  const stopSong = useRef()
 
   const [nextTask, setNextTask] = useState('')
 
@@ -52,8 +56,9 @@ function Chrono (props) {
         type: 'DATA_FILTER',
         active: props.active
       })
+      setShowStop(true)
       dispatch({ type: 'DATA_ACTIVE' })
-      setVisible(false)
+      // setVisible(false)
       props.setUpdateAt()
     }, 2000)
     pushNotification(nextTask)
@@ -67,8 +72,17 @@ function Chrono (props) {
 
   useEffect(() => {
     if (state.date > 1 && state.date < dureeAlert * 60 * 1000 && !one) {
+      setShowStop(false)
       setOne(true)
-      props.runSong()
+      stopSong.current = props.runSong()
+      setTimeout(() => {
+        console.log(stopSong.current)
+        if (stopSong.current.cancel) {
+          stopSong.current.cancel()
+        } else {
+          stopSong.current.stop()
+        }
+      }, 10000)
       setVisible(true)
     }
   }, [state.date]) // eslint-disable-line
@@ -145,12 +159,41 @@ function Chrono (props) {
           />
           <View
             style={{
-              width: '100%',
+              // width: '100%',
               alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-              paddingTop: 40
+              justifyContent: 'space-between',
+              paddingTop: 40,
+              flexDirection: 'row'
             }}
           >
+            <View>
+              {showStop &&
+                <TouchableOpacity
+                  onPress={() => {
+                    stopSong.current.cancel ? stopSong.current.cancel() : stopSong.current.stop()
+                    setVisible(false)
+                  }}
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 1000,
+                    marginLeft: 10,
+                    borderWidth: 1,
+                    borderColor: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'white',
+                    borderRadius: 10,
+                    padding: 5
+                  }}
+                >
+                  <Text
+                    style={{
+                      ...props.style,
+                      fontSize: 18,
+                      color: (state.date > 1 && state.date < 1 * 60 * 1000) ? 'red' : 'white'
+                    }}
+                  >Akatona
+                  </Text>
+                </TouchableOpacity>}
+            </View>
             <View
               style={{
                 borderWidth: 3,
@@ -174,7 +217,6 @@ function Chrono (props) {
               </Text>
             </View>
           </View>
-          {/* <Dialog.Button label='Actualise' onPress={dispatchOne} /> */}
         </Dialog.Container>}
     </View>
   )

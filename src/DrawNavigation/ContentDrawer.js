@@ -153,8 +153,8 @@ export default function ContentDrawer (props) {
         <View>
           <TouchableOpacity onPress={() =>
             Alert.alert(
-              'Deconection',
-              'Voulez-vous vous déconnecter?',
+              'Fialana',
+              'Tena hiala ve ianao?',
               [
                 {
                   text: 'Annuler',

@@ -533,8 +533,7 @@ function Tasks (props) {
                   top: 10,
                   borderRadius: 60,
                   width: 60,
-                  height: 60,
-                  opacity: 0.8
+                  height: 60
                 }}
               >
                 <IonicIcon
